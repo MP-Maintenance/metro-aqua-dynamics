@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,6 +15,27 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+
+  const handleAnchorClick = (path: string, hash: string) => {
+    if (location.pathname === path) {
+      // Same page, just scroll
+      const element = document.getElementById(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } else {
+      // Different page, navigate then scroll
+      navigate(path);
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +63,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-6">
             <Link
               to="/"
               className={`text-sm font-medium transition-colors hover:text-primary ${
@@ -61,20 +83,14 @@ const Navbar = () => {
                     All Services
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/services#maintenance" className="cursor-pointer">
-                    Maintenance & Cleaning
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/services", "maintenance")}>
+                  Maintenance & Cleaning
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/services#inspection" className="cursor-pointer">
-                    Inspection & Repairs
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/services", "inspection")}>
+                  Inspection & Repairs
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/services#renovation" className="cursor-pointer">
-                    Renovation
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/services", "renovation")}>
+                  Renovation
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -89,20 +105,17 @@ const Navbar = () => {
                     All Products
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/products#filtration" className="cursor-pointer">
-                    Filtration Systems
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "filtration")}>
+                  Filtration Systems
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/products#heating" className="cursor-pointer">
-                    Heating & Chillers
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "heating")}>
+                  Heating & Chillers
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/products#lighting" className="cursor-pointer">
-                    Pool Lighting
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "lighting")}>
+                  Pool Lighting
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "pumps")}>
+                  Pumps
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -117,20 +130,14 @@ const Navbar = () => {
                     All Projects
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/projects#villas" className="cursor-pointer">
-                    Private Villas
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/projects", "villas")}>
+                  Private Villas
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/projects#hotels" className="cursor-pointer">
-                    Hotels
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/projects", "hotels")}>
+                  Hotels
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/projects#compounds" className="cursor-pointer">
-                    Compounds
-                  </Link>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/projects", "parks")}>
+                  Parks
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -138,19 +145,43 @@ const Navbar = () => {
             <Button asChild variant="default">
               <Link to="/quote">Get a Quote</Link>
             </Button>
+
+            {/* Theme Toggle */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="relative"
+            >
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+          {/* Mobile Menu Button & Theme Toggle */}
+          <div className="lg:hidden flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="relative"
+            >
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}

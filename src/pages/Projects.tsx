@@ -10,12 +10,12 @@ const Projects = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const categories = [
-    { id: "all", name: "All Projects" },
-    { id: "villas", name: "Private Villas" },
-    { id: "compounds", name: "Compounds" },
-    { id: "hotels", name: "Hotels" },
-    { id: "parks", name: "Parks" },
-    { id: "malls", name: "Malls" },
+    { id: "all", name: "All Projects", hash: "" },
+    { id: "villas", name: "Private Villas", hash: "villas" },
+    { id: "compounds", name: "Compounds", hash: "compounds" },
+    { id: "hotels", name: "Hotels", hash: "hotels" },
+    { id: "parks", name: "Parks", hash: "parks" },
+    { id: "malls", name: "Malls", hash: "malls" },
   ];
 
   const projects = [
@@ -77,7 +77,7 @@ const Projects = () => {
       {/* Projects Grid */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div id={selectedCategory !== "all" ? selectedCategory : undefined} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProjects.map((project) => (
               <Card
                 key={project.id}

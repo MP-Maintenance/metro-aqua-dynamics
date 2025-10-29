@@ -4,10 +4,18 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import Hero from "@/components/Hero";
 import ServiceCard from "@/components/ServiceCard";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 import maintenanceImg from "@/assets/service-maintenance.jpg";
 import inspectionImg from "@/assets/service-inspection.jpg";
 import renovationImg from "@/assets/service-renovation.jpg";
@@ -108,15 +116,46 @@ const Index = () => {
               Working with industry-leading brands
             </p>
           </div>
-          <div className="flex flex-wrap justify-center items-center gap-12 max-w-5xl mx-auto">
-            {["AstralPool", "Hayward", "Emaux", "Pentair", "Zodiac"].map((partner, idx) => (
-              <div
-                key={idx}
-                className="text-4xl font-bold text-muted-foreground/30 hover:text-primary transition-colors cursor-pointer grayscale hover:grayscale-0"
-              >
-                {partner}
-              </div>
-            ))}
+          <div className="max-w-4xl mx-auto">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                })
+              ]}
+              className="w-full"
+            >
+              <CarouselContent>
+                {[
+                  { name: "AstralPool", tagline: "Innovative Water Solutions" },
+                  { name: "Hayward", tagline: "Efficiency & Performance" },
+                  { name: "Emaux", tagline: "Quality Pool Equipment" },
+                  { name: "Pentair", tagline: "Smart & Sustainable" },
+                  { name: "Zodiac", tagline: "Advanced Pool Technology" },
+                ].map((partner, idx) => (
+                  <CarouselItem key={idx} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-4">
+                      <Card className="border-2 hover:border-primary transition-all duration-300">
+                        <CardContent className="flex flex-col items-center justify-center p-8 min-h-[200px]">
+                          <div className="text-4xl font-bold text-primary mb-4 text-center">
+                            {partner.name}
+                          </div>
+                          <p className="text-sm text-muted-foreground text-center italic">
+                            {partner.tagline}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="-left-12" />
+              <CarouselNext className="-right-12" />
+            </Carousel>
           </div>
         </div>
       </section>
