@@ -1,0 +1,178 @@
+import { useState } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import heroImage from "@/assets/hero-pool.jpg";
+
+const Quote = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // Simulate form submission
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    toast({
+      title: "Quote Request Sent!",
+      description: "We'll get back to you within 24 hours.",
+    });
+
+    setIsSubmitting(false);
+    (e.target as HTMLFormElement).reset();
+  };
+
+  return (
+    <div className="min-h-screen bg-background font-['Inter',sans-serif]">
+      <Navbar />
+      <WhatsAppButton />
+
+      {/* Hero Banner */}
+      <section className="relative h-[400px] overflow-hidden">
+        <img
+          src={heroImage}
+          alt="Get a Quote"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-accent/70 to-secondary/80" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-white">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fade-in">
+              Get a Free Quote
+            </h1>
+            <p className="text-xl animate-fade-in-up">
+              Tell us about your project and we'll provide a detailed estimate
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Form Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <Card className="shadow-strong">
+              <CardContent className="pt-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Full Name <span className="text-destructive">*</span>
+                    </label>
+                    <Input
+                      type="text"
+                      name="name"
+                      placeholder="John Doe"
+                      required
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Email Address <span className="text-destructive">*</span>
+                    </label>
+                    <Input
+                      type="email"
+                      name="email"
+                      placeholder="john@example.com"
+                      required
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Phone Number <span className="text-destructive">*</span>
+                    </label>
+                    <Input
+                      type="tel"
+                      name="phone"
+                      placeholder="+973 XXXX XXXX"
+                      required
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Service Type
+                    </label>
+                    <select
+                      name="service"
+                      className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                    >
+                      <option value="">Select a service</option>
+                      <option value="maintenance">Maintenance / Cleaning</option>
+                      <option value="inspection">Inspection / Repairs</option>
+                      <option value="renovation">Renovation</option>
+                      <option value="products">Product Purchase</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Message / Project Details <span className="text-destructive">*</span>
+                    </label>
+                    <Textarea
+                      name="message"
+                      placeholder="Please describe your project requirements, location, and any specific needs..."
+                      rows={6}
+                      required
+                      className="w-full"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending..." : "Submit Request"}
+                  </Button>
+
+                  <p className="text-sm text-muted-foreground text-center">
+                    By submitting this form, you agree to our privacy policy.
+                    We'll respond within 24 hours.
+                  </p>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* Alternative Contact Methods */}
+            <div className="mt-12 text-center">
+              <p className="text-muted-foreground mb-4">
+                Prefer to contact us directly?
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Button asChild variant="outline">
+                  <a href="tel:+97317000000">Call Us</a>
+                </Button>
+                <Button asChild variant="outline">
+                  <a href="mailto:info@metropools.com">Email Us</a>
+                </Button>
+                <Button asChild variant="outline" className="bg-[#25D366] text-white hover:bg-[#20BD5A] border-none">
+                  <a href="https://wa.me/97317000000" target="_blank" rel="noopener noreferrer">
+                    WhatsApp
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default Quote;
