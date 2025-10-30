@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import heroImage from "@/assets/hero-pool.jpg";
 
 const Projects = () => {
@@ -82,11 +82,149 @@ const Projects = () => {
         </div>
       </section>
 
-      {/* Projects Grid */}
-      <section className="py-20">
+      {/* Villas Section */}
+      <section id="villas" className="py-20 scroll-mt-32">
         <div className="container mx-auto px-4">
-          <div id={selectedCategory !== "all" ? selectedCategory : undefined} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project) => (
+          <h2 className="text-3xl font-bold mb-8 text-center">Private Villas</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(selectedCategory === "all" || selectedCategory === "villas") && 
+              projects.filter(p => p.category === "villas").map((project) => (
+              <Card
+                key={project.id}
+                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                onClick={() => setSelectedProject(project)}
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white w-full">
+                      <p className="text-sm font-medium mb-1">View Project</p>
+                    </div>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                  <p className="text-muted-foreground text-sm">{project.location}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Hotels Section */}
+      <section id="hotels" className="py-20 bg-muted/30 scroll-mt-32">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Hotels</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(selectedCategory === "all" || selectedCategory === "hotels") && 
+              projects.filter(p => p.category === "hotels").map((project) => (
+              <Card
+                key={project.id}
+                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                onClick={() => setSelectedProject(project)}
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white w-full">
+                      <p className="text-sm font-medium mb-1">View Project</p>
+                    </div>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                  <p className="text-muted-foreground text-sm">{project.location}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Parks Section */}
+      <section id="parks" className="py-20 scroll-mt-32">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Parks</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(selectedCategory === "all" || selectedCategory === "parks") && 
+              projects.filter(p => p.category === "parks").map((project) => (
+              <Card
+                key={project.id}
+                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                onClick={() => setSelectedProject(project)}
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white w-full">
+                      <p className="text-sm font-medium mb-1">View Project</p>
+                    </div>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                  <p className="text-muted-foreground text-sm">{project.location}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Compounds Section */}
+      <section id="compounds" className="py-20 bg-muted/30 scroll-mt-32">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Compounds</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(selectedCategory === "all" || selectedCategory === "compounds") && 
+              projects.filter(p => p.category === "compounds").map((project) => (
+              <Card
+                key={project.id}
+                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                onClick={() => setSelectedProject(project)}
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white w-full">
+                      <p className="text-sm font-medium mb-1">View Project</p>
+                    </div>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                  <p className="text-muted-foreground text-sm">{project.location}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Malls Section */}
+      <section id="malls" className="py-20 scroll-mt-32">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Malls</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(selectedCategory === "all" || selectedCategory === "malls") && 
+              projects.filter(p => p.category === "malls").map((project) => (
               <Card
                 key={project.id}
                 className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
@@ -119,6 +257,7 @@ const Projects = () => {
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">{selectedProject?.title}</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground capitalize">{selectedProject?.category} Project</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="relative h-96 overflow-hidden rounded-lg">

@@ -66,6 +66,7 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-6">
             <Link
               to="/"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className={`text-sm font-medium transition-colors hover:text-primary ${
                 isActive("/") ? "text-primary" : "text-foreground"
               }`}
@@ -218,7 +219,10 @@ const Navbar = () => {
               <Link
                 to="/"
                 className="text-sm font-medium hover:text-primary transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
               >
                 Home
               </Link>
