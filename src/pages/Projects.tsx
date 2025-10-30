@@ -1,13 +1,21 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import heroImage from "@/assets/hero-pool.jpg";
 
 const Projects = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedProject, setSelectedProject] = useState<{
+    title: string;
+    location: string;
+    image: string;
+    category: string;
+  } | null>(null);
 
   const categories = [
     { id: "all", name: "All Projects", hash: "" },
@@ -82,6 +90,7 @@ const Projects = () => {
               <Card
                 key={project.id}
                 className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                onClick={() => setSelectedProject(project)}
               >
                 <div className="relative h-64 overflow-hidden">
                   <img
@@ -104,6 +113,35 @@ const Projects = () => {
           </div>
         </div>
       </section>
+
+      {/* Project Detail Dialog */}
+      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">{selectedProject?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="relative h-96 overflow-hidden rounded-lg">
+              <img
+                src={selectedProject?.image}
+                alt={selectedProject?.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-2 capitalize">{selectedProject?.category} Project</p>
+              <p className="text-lg font-medium mb-2">{selectedProject?.location}</p>
+              <p className="text-foreground leading-relaxed">
+                This {selectedProject?.category} project showcases our expertise in delivering high-quality pool and wellness solutions. 
+                From initial design to final installation, we ensure every detail meets the highest standards of excellence and safety.
+              </p>
+            </div>
+            <Button asChild className="w-full">
+              <Link to="/quote">Request Similar Project</Link>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

@@ -109,13 +109,34 @@ const Navbar = () => {
                   Filtration Systems
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "heating")}>
-                  Heating & Chillers
+                  Pool Heating / Chiller
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "lighting")}>
                   Pool Lighting
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "pumps")}>
                   Pumps
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "fittings")}>
+                  Pool Fittings
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "surround")}>
+                  Pool Surround
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "fountain")}>
+                  Fountain Accessories
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "spa")}>
+                  Spa Fittings
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "treatment")}>
+                  Water Treatment
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "wellness")}>
+                  Wellness
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/products", "covers")}>
+                  Pool Covers
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -138,6 +159,12 @@ const Navbar = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => handleAnchorClick("/projects", "parks")}>
                   Parks
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/projects", "compounds")}>
+                  Compounds
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/projects", "malls")}>
+                  Malls
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

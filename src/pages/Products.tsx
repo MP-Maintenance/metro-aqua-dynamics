@@ -1,12 +1,21 @@
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield } from "lucide-react";
 
 const Products = () => {
+  const [selectedProduct, setSelectedProduct] = useState<{
+    name: string;
+    description: string;
+    icon: any;
+    category: string;
+  } | null>(null);
+
   const categories = [
     {
       id: "filtration",
@@ -158,7 +167,15 @@ const Products = () => {
                         className="group hover:shadow-medium transition-all duration-300"
                       >
                         <CardContent className="pt-6">
-                          <div className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center">
+                          <div 
+                            className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
+                            onClick={() => setSelectedProduct({
+                              name: product.name,
+                              description: product.description,
+                              icon: Icon,
+                              category: category.name
+                            })}
+                          >
                             <Icon className="w-16 h-16 text-primary/30" />
                           </div>
                           <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
@@ -191,6 +208,27 @@ const Products = () => {
           </Button>
         </div>
       </section>
+
+      {/* Product Detail Dialog */}
+      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">{selectedProduct?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="h-64 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg flex items-center justify-center">
+              {selectedProduct?.icon && <selectedProduct.icon className="w-32 h-32 text-primary/30" />}
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">{selectedProduct?.category}</p>
+              <p className="text-foreground leading-relaxed">{selectedProduct?.description}</p>
+            </div>
+            <Button asChild className="w-full">
+              <Link to="/quote">Request Quote for {selectedProduct?.name}</Link>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
