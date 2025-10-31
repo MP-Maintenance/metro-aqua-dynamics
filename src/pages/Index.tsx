@@ -37,7 +37,8 @@ const Index = () => {
     name: string;
     country: string;
     description: string;
-    image?: string;
+    tagline: string;
+    logo: string;
   } | null>(null);
 
   const teamMembers = [
@@ -76,31 +77,36 @@ const Index = () => {
       name: "AstralPool", 
       tagline: "Innovative Water Solutions",
       country: "Spain",
-      description: "Global leader in pool and wellness equipment, offering filtration systems, pumps, and automation solutions."
+      description: "Global leader in pool and wellness equipment, offering filtration systems, pumps, and automation solutions.",
+      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
     },
     { 
       name: "Hayward", 
       tagline: "Efficiency & Performance",
       country: "United States",
-      description: "Industry pioneer in residential and commercial pool equipment including pumps, filters, heaters, and automation."
+      description: "Industry pioneer in residential and commercial pool equipment including pumps, filters, heaters, and automation.",
+      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
     },
     { 
       name: "Emaux", 
       tagline: "Quality Pool Equipment",
       country: "China",
-      description: "Manufacturer of comprehensive pool equipment including sand filters, heat pumps, and water treatment systems."
+      description: "Manufacturer of comprehensive pool equipment including sand filters, heat pumps, and water treatment systems.",
+      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
     },
     { 
       name: "Pentair", 
       tagline: "Smart & Sustainable",
       country: "United States",
-      description: "Leading provider of smart pool technology, variable speed pumps, and energy-efficient water solutions."
+      description: "Leading provider of smart pool technology, variable speed pumps, and energy-efficient water solutions.",
+      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
     },
     { 
       name: "Zodiac", 
       tagline: "Advanced Pool Technology",
       country: "France",
-      description: "Specialist in robotic pool cleaners, water treatment, and connected pool management systems."
+      description: "Specialist in robotic pool cleaners, water treatment, and connected pool management systems.",
+      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
     },
   ];
 
@@ -202,24 +208,40 @@ const Index = () => {
               Working with industry-leading brands
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {partners.map((partner, idx) => (
-              <Card 
-                key={idx} 
-                className="border-2 hover:border-primary transition-all duration-300 cursor-pointer"
-                onClick={() => setSelectedPartner(partner)}
-              >
-                <CardContent className="flex flex-col items-center justify-center p-6 min-h-[180px]">
-                  <div className="text-3xl font-bold text-primary mb-3 text-center">
-                    {partner.name}
-                  </div>
-                  <p className="text-xs text-muted-foreground text-center italic">
-                    {partner.tagline}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            plugins={[
+              Autoplay({
+                delay: 3000,
+              }),
+            ]}
+            className="w-full max-w-6xl mx-auto"
+          >
+            <CarouselContent className="-ml-4">
+              {partners.map((partner, idx) => (
+                <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                  <Card 
+                    className="border-2 hover:border-primary transition-all duration-300 cursor-pointer h-full"
+                    onClick={() => setSelectedPartner(partner)}
+                  >
+                    <CardContent className="flex flex-col items-center justify-center p-6 min-h-[180px]">
+                      <div className="text-3xl font-bold text-primary mb-3 text-center">
+                        {partner.name}
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center italic">
+                        {partner.tagline}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex" />
+            <CarouselNext className="hidden md:flex" />
+          </Carousel>
         </div>
       </section>
 

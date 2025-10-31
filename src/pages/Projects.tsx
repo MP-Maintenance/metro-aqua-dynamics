@@ -15,6 +15,9 @@ const Projects = () => {
     location: string;
     image: string;
     category: string;
+    client: string;
+    duration: string;
+    description: string;
   } | null>(null);
 
   const categories = [
@@ -27,21 +30,21 @@ const Projects = () => {
   ];
 
   const projects = [
-    { id: 1, category: "villas", title: "Luxury Villa Pool", location: "Riffa, Bahrain", image: heroImage },
-    { id: 2, category: "villas", title: "Modern Villa Spa", location: "Saar, Bahrain", image: heroImage },
-    { id: 3, category: "villas", title: "Infinity Edge Pool", location: "Amwaj Islands", image: heroImage },
-    { id: 4, category: "compounds", title: "Residential Compound Pool", location: "Juffair", image: heroImage },
-    { id: 5, category: "compounds", title: "Family Community Pool", location: "Tubli", image: heroImage },
-    { id: 6, category: "compounds", title: "Gated Community Facility", location: "Budaiya", image: heroImage },
-    { id: 7, category: "hotels", title: "5-Star Hotel Resort Pool", location: "Manama", image: heroImage },
-    { id: 8, category: "hotels", title: "Boutique Hotel Spa", location: "Seef", image: heroImage },
-    { id: 9, category: "hotels", title: "Hotel Rooftop Pool", location: "Bahrain Bay", image: heroImage },
-    { id: 10, category: "parks", title: "Public Park Water Feature", location: "Isa Town", image: heroImage },
-    { id: 11, category: "parks", title: "Community Park Fountain", location: "Al Muharraq", image: heroImage },
-    { id: 12, category: "parks", title: "Recreational Park Pool", location: "Hamad Town", image: heroImage },
-    { id: 13, category: "malls", title: "Shopping Mall Water Display", location: "City Centre", image: heroImage },
-    { id: 14, category: "malls", title: "Mall Fountain Feature", location: "Seef Mall", image: heroImage },
-    { id: 15, category: "malls", title: "Retail Complex Pool", location: "Avenues", image: heroImage },
+    { id: 1, category: "villas", title: "Luxury Villa Pool", location: "Riffa, Bahrain", image: heroImage, client: "Private Client", duration: "3 months", description: "Custom infinity edge pool with integrated spa features and LED lighting system." },
+    { id: 2, category: "villas", title: "Modern Villa Spa", location: "Saar, Bahrain", image: heroImage, client: "Villa Estate", duration: "2 months", description: "Contemporary spa installation with advanced water treatment and heating systems." },
+    { id: 3, category: "villas", title: "Infinity Edge Pool", location: "Amwaj Islands", image: heroImage, client: "Luxury Residence", duration: "4 months", description: "Stunning oceanview infinity pool with premium finishes and automated control system." },
+    { id: 4, category: "compounds", title: "Residential Compound Pool", location: "Juffair", image: heroImage, client: "Compound Management", duration: "5 months", description: "Large community pool with children's area and advanced filtration system." },
+    { id: 5, category: "compounds", title: "Family Community Pool", location: "Tubli", image: heroImage, client: "Community Board", duration: "4 months", description: "Family-friendly pool complex with safety features and entertainment facilities." },
+    { id: 6, category: "compounds", title: "Gated Community Facility", location: "Budaiya", image: heroImage, client: "Residential Association", duration: "6 months", description: "Premium community facility with Olympic-size pool and wellness center." },
+    { id: 7, category: "hotels", title: "5-Star Hotel Resort Pool", location: "Manama", image: heroImage, client: "Luxury Hotel Group", duration: "8 months", description: "Expansive resort-style pool with bar, cabanas, and state-of-the-art lighting." },
+    { id: 8, category: "hotels", title: "Boutique Hotel Spa", location: "Seef", image: heroImage, client: "Boutique Hospitality", duration: "3 months", description: "Elegant spa pool with hydrotherapy jets and ambient mood lighting." },
+    { id: 9, category: "hotels", title: "Hotel Rooftop Pool", location: "Bahrain Bay", image: heroImage, client: "Bay Hotel", duration: "4 months", description: "Rooftop infinity pool with panoramic views and automated climate control." },
+    { id: 10, category: "parks", title: "Public Park Water Feature", location: "Isa Town", image: heroImage, client: "Municipal Authority", duration: "6 months", description: "Interactive water feature with programmable fountains and night illumination." },
+    { id: 11, category: "parks", title: "Community Park Fountain", location: "Al Muharraq", image: heroImage, client: "City Council", duration: "4 months", description: "Decorative fountain system with synchronized water displays." },
+    { id: 12, category: "parks", title: "Recreational Park Pool", location: "Hamad Town", image: heroImage, client: "Parks Department", duration: "7 months", description: "Public swimming facility with multiple pools and safety equipment." },
+    { id: 13, category: "malls", title: "Shopping Mall Water Display", location: "City Centre", image: heroImage, client: "Mall Management", duration: "5 months", description: "Impressive indoor water feature with dynamic lighting and sound effects." },
+    { id: 14, category: "malls", title: "Mall Fountain Feature", location: "Seef Mall", image: heroImage, client: "Retail Complex", duration: "3 months", description: "Central fountain display with choreographed water shows." },
+    { id: 15, category: "malls", title: "Retail Complex Pool", location: "Avenues", image: heroImage, client: "Shopping Center", duration: "4 months", description: "Decorative pool installation with artistic design elements." },
   ];
 
   const filteredProjects = selectedCategory === "all"
@@ -72,7 +75,19 @@ const Projects = () => {
             {categories.map((category) => (
               <Button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => {
+                  setSelectedCategory(category.id);
+                  if (category.id !== "all") {
+                    setTimeout(() => {
+                      const element = document.getElementById(category.id);
+                      if (element) {
+                        const offset = 120;
+                        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                        window.scrollTo({ top: elementPosition - offset, behavior: 'smooth' });
+                      }
+                    }, 100);
+                  }
+                }}
                 variant={selectedCategory === category.id ? "default" : "outline"}
               >
                 {category.name}
@@ -83,201 +98,230 @@ const Projects = () => {
       </section>
 
       {/* Villas Section */}
-      <section id="villas" className="py-20 scroll-mt-32">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-center">Private Villas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(selectedCategory === "all" || selectedCategory === "villas") && 
-              projects.filter(p => p.category === "villas").map((project) => (
-              <Card
-                key={project.id}
-                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
-                onClick={() => setSelectedProject(project)}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white w-full">
-                      <p className="text-sm font-medium mb-1">View Project</p>
+      {(selectedCategory === "all" || selectedCategory === "villas") && (
+        <section id="villas" className="py-20 scroll-mt-32">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8 text-center">Private Villas</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.filter(p => p.category === "villas").map((project) => (
+                <Card
+                  key={project.id}
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  onClick={() => setSelectedProject(project)}
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                      <div className="p-6 text-white w-full">
+                        <p className="text-sm font-medium mb-1">View Project</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm">{project.location}</p>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                    <p className="text-muted-foreground text-sm">{project.location}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Hotels Section */}
-      <section id="hotels" className="py-20 bg-muted/30 scroll-mt-32">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-center">Hotels</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(selectedCategory === "all" || selectedCategory === "hotels") && 
-              projects.filter(p => p.category === "hotels").map((project) => (
-              <Card
-                key={project.id}
-                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
-                onClick={() => setSelectedProject(project)}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white w-full">
-                      <p className="text-sm font-medium mb-1">View Project</p>
+      {(selectedCategory === "all" || selectedCategory === "hotels") && (
+        <section id="hotels" className="py-20 bg-muted/30 scroll-mt-32">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8 text-center">Hotels</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.filter(p => p.category === "hotels").map((project) => (
+                <Card
+                  key={project.id}
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  onClick={() => setSelectedProject(project)}
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                      <div className="p-6 text-white w-full">
+                        <p className="text-sm font-medium mb-1">View Project</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm">{project.location}</p>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                    <p className="text-muted-foreground text-sm">{project.location}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Parks Section */}
-      <section id="parks" className="py-20 scroll-mt-32">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-center">Parks</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(selectedCategory === "all" || selectedCategory === "parks") && 
-              projects.filter(p => p.category === "parks").map((project) => (
-              <Card
-                key={project.id}
-                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
-                onClick={() => setSelectedProject(project)}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white w-full">
-                      <p className="text-sm font-medium mb-1">View Project</p>
+      {(selectedCategory === "all" || selectedCategory === "parks") && (
+        <section id="parks" className="py-20 scroll-mt-32">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8 text-center">Parks</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.filter(p => p.category === "parks").map((project) => (
+                <Card
+                  key={project.id}
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  onClick={() => setSelectedProject(project)}
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                      <div className="p-6 text-white w-full">
+                        <p className="text-sm font-medium mb-1">View Project</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm">{project.location}</p>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                    <p className="text-muted-foreground text-sm">{project.location}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Compounds Section */}
-      <section id="compounds" className="py-20 bg-muted/30 scroll-mt-32">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-center">Compounds</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(selectedCategory === "all" || selectedCategory === "compounds") && 
-              projects.filter(p => p.category === "compounds").map((project) => (
-              <Card
-                key={project.id}
-                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
-                onClick={() => setSelectedProject(project)}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white w-full">
-                      <p className="text-sm font-medium mb-1">View Project</p>
+      {(selectedCategory === "all" || selectedCategory === "compounds") && (
+        <section id="compounds" className="py-20 bg-muted/30 scroll-mt-32">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8 text-center">Compounds</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.filter(p => p.category === "compounds").map((project) => (
+                <Card
+                  key={project.id}
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  onClick={() => setSelectedProject(project)}
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                      <div className="p-6 text-white w-full">
+                        <p className="text-sm font-medium mb-1">View Project</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm">{project.location}</p>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                    <p className="text-muted-foreground text-sm">{project.location}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Malls Section */}
-      <section id="malls" className="py-20 scroll-mt-32">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-center">Malls</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(selectedCategory === "all" || selectedCategory === "malls") && 
-              projects.filter(p => p.category === "malls").map((project) => (
-              <Card
-                key={project.id}
-                className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
-                onClick={() => setSelectedProject(project)}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white w-full">
-                      <p className="text-sm font-medium mb-1">View Project</p>
+      {(selectedCategory === "all" || selectedCategory === "malls") && (
+        <section id="malls" className="py-20 scroll-mt-32">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8 text-center">Malls</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.filter(p => p.category === "malls").map((project) => (
+                <Card
+                  key={project.id}
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  onClick={() => setSelectedProject(project)}
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                      <div className="p-6 text-white w-full">
+                        <p className="text-sm font-medium mb-1">View Project</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm">{project.location}</p>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                    <p className="text-muted-foreground text-sm">{project.location}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Project Detail Dialog */}
       <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-5xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">{selectedProject?.title}</DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground capitalize">{selectedProject?.category} Project</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="relative h-96 overflow-hidden rounded-lg">
+          <div className="grid md:grid-cols-[40%_1fr] gap-6">
+            {/* Image on the left */}
+            <div className="relative h-96 md:h-full overflow-hidden rounded-lg">
               <img
                 src={selectedProject?.image}
                 alt={selectedProject?.title}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-2 capitalize">{selectedProject?.category} Project</p>
-              <p className="text-lg font-medium mb-2">{selectedProject?.location}</p>
-              <p className="text-foreground leading-relaxed">
-                This {selectedProject?.category} project showcases our expertise in delivering high-quality pool and wellness solutions. 
-                From initial design to final installation, we ensure every detail meets the highest standards of excellence and safety.
-              </p>
+            
+            {/* Details on the right */}
+            <div className="flex flex-col justify-between space-y-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Project Details</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Client:</span>
+                      <span className="font-medium">{selectedProject?.client}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Location:</span>
+                      <span className="font-medium">{selectedProject?.location}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Duration:</span>
+                      <span className="font-medium">{selectedProject?.duration}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Description</h3>
+                  <p className="text-foreground leading-relaxed">
+                    {selectedProject?.description}
+                  </p>
+                </div>
+              </div>
+              
+              <Button asChild className="w-full md:w-auto md:self-end">
+                <Link to="/quote">Request Quote</Link>
+              </Button>
             </div>
-            <Button asChild className="w-full">
-              <Link to="/quote">Request Similar Project</Link>
-            </Button>
           </div>
         </DialogContent>
       </Dialog>
