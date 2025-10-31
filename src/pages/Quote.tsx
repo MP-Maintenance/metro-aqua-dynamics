@@ -6,12 +6,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/hero-pool.jpg";
+
+const countries = [
+  { name: "Qatar", code: "+974" },
+  { name: "UAE (Dubai)", code: "+971" },
+  { name: "Saudi Arabia", code: "+966" },
+  { name: "Bahrain", code: "+973" },
+  { name: "Kuwait", code: "+965" },
+  { name: "Oman", code: "+968" },
+  { name: "Egypt", code: "+20" },
+];
 
 const Quote = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+974");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,15 +101,29 @@ const Quote = () => {
 
                   <div>
                     <label className="block text-sm font-medium mb-2">
-                      Phone Number <span className="text-destructive">*</span>
+                      Mobile Number <span className="text-destructive">*</span>
                     </label>
-                    <Input
-                      type="tel"
-                      name="phone"
-                      placeholder="+973 XXXX XXXX"
-                      required
-                      className="w-full"
-                    />
+                    <div className="flex gap-2">
+                      <Select value={selectedCountryCode} onValueChange={setSelectedCountryCode}>
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.map((country) => (
+                            <SelectItem key={country.code} value={country.code}>
+                              {country.name} {country.code}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="tel"
+                        name="mobile"
+                        placeholder="XXXX XXXX"
+                        required
+                        className="flex-1"
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -154,13 +180,13 @@ const Quote = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild variant="outline">
-                  <a href="tel:+97317000000">Call Us</a>
+                  <a href="tel:+97444771588">Call Us</a>
                 </Button>
                 <Button asChild variant="outline">
                   <a href="mailto:info@metropools.com">Email Us</a>
                 </Button>
                 <Button asChild variant="outline" className="bg-[#25D366] text-white hover:bg-[#20BD5A] border-none">
-                  <a href="https://wa.me/97317000000" target="_blank" rel="noopener noreferrer">
+                  <a href="https://wa.me/97444771588" target="_blank" rel="noopener noreferrer">
                     WhatsApp
                   </a>
                 </Button>

@@ -15,6 +15,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +24,16 @@ import Autoplay from "embla-carousel-autoplay";
 import maintenanceImg from "@/assets/service-maintenance.jpg";
 import inspectionImg from "@/assets/service-inspection.jpg";
 import renovationImg from "@/assets/service-renovation.jpg";
+
+const countries = [
+  { name: "Qatar", code: "+974" },
+  { name: "UAE (Dubai)", code: "+971" },
+  { name: "Saudi Arabia", code: "+966" },
+  { name: "Bahrain", code: "+973" },
+  { name: "Kuwait", code: "+965" },
+  { name: "Oman", code: "+968" },
+  { name: "Egypt", code: "+20" },
+];
 
 const Index = () => {
   const [selectedTeamMember, setSelectedTeamMember] = useState<{
@@ -40,6 +51,8 @@ const Index = () => {
     tagline: string;
     logo: string;
   } | null>(null);
+
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+974");
 
   const teamMembers = [
     { 
@@ -280,8 +293,8 @@ const Index = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Phone</h3>
-                      <a href="tel:+97317000000" className="text-muted-foreground hover:text-primary transition-colors">
-                        +973 1700 0000
+                      <a href="tel:+97444771588" className="text-muted-foreground hover:text-primary transition-colors">
+                        +974 4477 1588
                       </a>
                     </div>
                   </div>
@@ -295,7 +308,16 @@ const Index = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Address</h3>
-                      <p className="text-muted-foreground">Bahrain</p>
+                      <a 
+                        href="https://maps.app.goo.gl/hsDcLnTRTu6NYreyk9" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        Building No. 225, Zone 44, Street No. 250<br />
+                        Nuaija Area, P.O. Box: 32163<br />
+                        Doha, Qatar
+                      </a>
                     </div>
                   </div>
                 </CardContent>
@@ -325,6 +347,32 @@ const Index = () => {
                       placeholder="Your Email"
                       required
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Mobile Number <span className="text-destructive">*</span>
+                    </label>
+                    <div className="flex gap-2">
+                      <Select value={selectedCountryCode} onValueChange={setSelectedCountryCode}>
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.map((country) => (
+                            <SelectItem key={country.code} value={country.code}>
+                              {country.name} {country.code}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="tel"
+                        name="mobile"
+                        placeholder="XXXX XXXX"
+                        required
+                        className="flex-1"
+                      />
+                    </div>
                   </div>
                   <div>
                     <Textarea
