@@ -20,21 +20,6 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-accent/60 to-secondary/70" />
       </div>
 
-      {/* Animated Wave Overlay */}
-      <div className="absolute bottom-0 left-0 right-0 waves">
-        <svg className="relative w-full h-full" viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
-          <defs>
-            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-          </defs>
-          <g className="parallax">
-            <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
-            <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
-            <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
-            <use xlinkHref="#gentle-wave" x="48" y="7" fill="rgba(255,255,255,1)" />
-          </g>
-        </svg>
-      </div>
-
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto animate-fade-in-up">

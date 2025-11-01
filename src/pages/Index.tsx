@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Hero from "@/components/Hero";
+import WaveBackground from "@/components/WaveBackground";
 import ServiceCard from "@/components/ServiceCard";
 import ScrollArrows from "@/components/ScrollArrows";
 import StatsCounter from "@/components/StatsCounter";
@@ -124,7 +125,8 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background font-['Inter',sans-serif]">
+    <div className="min-h-screen bg-background font-['Inter',sans-serif] relative">
+      <WaveBackground />
       <Navbar />
       <div id="hero">
         <Hero />
