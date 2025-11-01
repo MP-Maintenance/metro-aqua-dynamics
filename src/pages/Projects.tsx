@@ -274,14 +274,14 @@ const Projects = () => {
 
       {/* Project Detail Dialog */}
       <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
-        <DialogContent className="max-w-5xl">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">{selectedProject?.title}</DialogTitle>
+            <DialogTitle className="text-3xl font-bold">{selectedProject?.title}</DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground capitalize">{selectedProject?.category} Project</DialogDescription>
           </DialogHeader>
-          <div className="grid md:grid-cols-[40%_1fr] gap-6">
-            {/* Image on the left */}
-            <div className="relative h-96 md:h-full overflow-hidden rounded-lg">
+          <div className="grid md:grid-cols-2 gap-8 mt-4">
+            {/* Image Section - Left Side (50%) */}
+            <div className="relative overflow-hidden rounded-lg min-h-[500px]">
               <img
                 src={selectedProject?.image}
                 alt={selectedProject?.title}
@@ -289,36 +289,40 @@ const Projects = () => {
               />
             </div>
             
-            {/* Details on the right */}
-            <div className="flex flex-col justify-between space-y-4">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Project Details</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Client:</span>
-                      <span className="font-medium">{selectedProject?.client}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Location:</span>
-                      <span className="font-medium">{selectedProject?.location}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Duration:</span>
-                      <span className="font-medium">{selectedProject?.duration}</span>
-                    </div>
+            {/* Details Section - Right Side (50%) */}
+            <div className="flex flex-col space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Project Details</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="text-muted-foreground">Client:</span>
+                    <span className="font-medium">{selectedProject?.client}</span>
                   </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Description</h3>
-                  <p className="text-foreground leading-relaxed">
-                    {selectedProject?.description}
-                  </p>
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="text-muted-foreground">Location:</span>
+                    <span className="font-medium">{selectedProject?.location}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="text-muted-foreground">Duration:</span>
+                    <span className="font-medium">{selectedProject?.duration}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="text-muted-foreground">Category:</span>
+                    <span className="font-medium capitalize">{selectedProject?.category}</span>
+                  </div>
                 </div>
               </div>
               
-              <Button asChild className="w-full md:w-auto md:self-end">
+              <div className="pt-4">
+                <h3 className="text-lg font-semibold mb-3">Description</h3>
+                <p className="text-foreground leading-relaxed">
+                  {selectedProject?.description}
+                </p>
+              </div>
+
+              <div className="flex-grow"></div>
+              
+              <Button asChild size="lg" className="w-full">
                 <Link to="/quote">Request Quote</Link>
               </Button>
             </div>
