@@ -8,25 +8,25 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 220 40% 12%;
+    --background: 0 0% 98%;
+    --foreground: 203 100% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 40% 12%;
+    --card-foreground: 203 100% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 40% 12%;
+    --popover-foreground: 203 100% 15%;
 
-    --primary: 200 95% 35%;
+    --primary: 203 100% 29%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 175 70% 40%;
+    --secondary: 160 19% 47%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 30% 94%;
     --muted-foreground: 220 20% 45%;
 
-    --accent: 190 85% 45%;
+    --accent: 160 19% 47%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -34,53 +34,53 @@ All colors MUST be HSL.
 
     --border: 210 25% 88%;
     --input: 210 25% 88%;
-    --ring: 200 95% 35%;
+    --ring: 203 100% 29%;
 
     --radius: 0.75rem;
 
-    --gradient-hero: linear-gradient(135deg, hsl(200, 95%, 35%), hsl(190, 85%, 45%), hsl(175, 70%, 40%));
-    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%), hsl(210, 40%, 98%));
-    --gradient-wave: linear-gradient(90deg, hsl(200, 95%, 45%), hsl(175, 70%, 50%));
+    --gradient-hero: linear-gradient(60deg, hsl(203, 100%, 29%), hsl(160, 19%, 47%));
+    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%), hsl(0, 0%, 98%));
+    --gradient-wave: linear-gradient(90deg, hsl(203, 100%, 35%), hsl(160, 19%, 50%));
     
-    --shadow-soft: 0 4px 20px -5px hsl(200 95% 35% / 0.15);
-    --shadow-medium: 0 10px 40px -10px hsl(200 95% 35% / 0.25);
-    --shadow-strong: 0 20px 60px -15px hsl(200 95% 35% / 0.35);
+    --shadow-soft: 0 4px 20px -5px hsl(203 100% 29% / 0.15);
+    --shadow-medium: 0 10px 40px -10px hsl(203 100% 29% / 0.25);
+    --shadow-strong: 0 20px 60px -15px hsl(203 100% 29% / 0.35);
 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 220 40% 8%;
-    --foreground: 210 40% 98%;
+    --background: 203 30% 8%;
+    --foreground: 0 0% 98%;
 
-    --card: 220 35% 12%;
-    --card-foreground: 210 40% 98%;
+    --card: 203 25% 12%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 220 35% 12%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 203 25% 12%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 190 85% 55%;
-    --primary-foreground: 220 40% 8%;
+    --primary: 203 100% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 175 60% 45%;
+    --secondary: 160 19% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 30% 15%;
+    --muted: 203 20% 15%;
     --muted-foreground: 210 20% 65%;
 
-    --accent: 200 80% 50%;
+    --accent: 160 19% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 50.6%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 30% 18%;
-    --input: 220 30% 18%;
-    --ring: 190 85% 55%;
+    --border: 203 20% 18%;
+    --input: 203 20% 18%;
+    --ring: 203 100% 45%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(200, 85%, 25%), hsl(190, 75%, 35%), hsl(175, 60%, 30%));
-    --gradient-card: linear-gradient(180deg, hsl(220, 35%, 12%), hsl(220, 40%, 10%));
-    --gradient-wave: linear-gradient(90deg, hsl(200, 85%, 35%), hsl(175, 60%, 40%));
+    --gradient-hero: linear-gradient(60deg, hsl(203, 100%, 20%), hsl(160, 19%, 35%));
+    --gradient-card: linear-gradient(180deg, hsl(203, 25%, 12%), hsl(203, 30%, 10%));
+    --gradient-wave: linear-gradient(90deg, hsl(203, 100%, 30%), hsl(160, 19%, 40%));
     
     --shadow-soft: 0 4px 20px -5px hsl(0 0% 0% / 0.3);
     --shadow-medium: 0 10px 40px -10px hsl(0 0% 0% / 0.4);
@@ -95,5 +95,63 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Lato', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+  }
+}
+
+/* Wave Animation */
+@layer utilities {
+  .waves {
+    position: relative;
+    width: 100%;
+    height: 15vh;
+    margin-bottom: -7px;
+    min-height: 100px;
+    max-height: 150px;
+  }
+
+  .parallax > use {
+    animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+  }
+
+  .parallax > use:nth-child(1) {
+    animation-delay: -2s;
+    animation-duration: 7s;
+  }
+  
+  .parallax > use:nth-child(2) {
+    animation-delay: -3s;
+    animation-duration: 10s;
+  }
+  
+  .parallax > use:nth-child(3) {
+    animation-delay: -4s;
+    animation-duration: 13s;
+  }
+  
+  .parallax > use:nth-child(4) {
+    animation-delay: -5s;
+    animation-duration: 20s;
+  }
+
+  @keyframes move-forever {
+    0% {
+      transform: translate3d(-90px, 0, 0);
+    }
+    100% {
+      transform: translate3d(85px, 0, 0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .waves {
+      height: 40px;
+      min-height: 40px;
+    }
   }
 }
