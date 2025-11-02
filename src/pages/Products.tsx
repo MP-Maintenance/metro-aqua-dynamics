@@ -2,9 +2,9 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import QuoteModal from "@/components/QuoteModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield } from "lucide-react";
 
@@ -14,11 +14,9 @@ const Products = () => {
     description: string;
     icon: any;
     category: string;
-    brand: string;
-    origin: string;
-    size: string;
-    availability: string;
+    availability: "available" | "not-available";
   } | null>(null);
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   const categories = [
     {
@@ -172,24 +170,27 @@ const Products = () => {
                       >
                         <CardContent className="pt-6">
                           <div 
-                            className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
-                            onClick={() => setSelectedProduct({
-                              name: product.name,
-                              description: product.description,
-                              icon: Icon,
-                              category: category.name,
-                              brand: "Premium Brands",
-                              origin: "International",
-                              size: "Standard/Custom",
-                              availability: "In Stock"
-                            })}
+                            className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center"
                           >
                             <Icon className="w-16 h-16 text-primary/30" />
                           </div>
                           <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
                           <p className="text-muted-foreground mb-4">{product.description}</p>
-                          <Button asChild variant="outline" className="w-full">
-                            <Link to="/quote">Request Quote</Link>
+                          <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={() => {
+                              setSelectedProduct({
+                                name: product.name,
+                                description: product.description,
+                                icon: Icon,
+                                category: category.name,
+                                availability: idx % 3 === 0 ? "not-available" : "available",
+                              });
+                              setIsQuoteModalOpen(true);
+                            }}
+                          >
+                            Request Quote
                           </Button>
                         </CardContent>
                       </Card>
@@ -217,62 +218,15 @@ const Products = () => {
         </div>
       </section>
 
-      {/* Product Detail Dialog */}
-      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-3xl font-bold">{selectedProduct?.name}</DialogTitle>
-          </DialogHeader>
-          <div className="grid md:grid-cols-2 gap-8 mt-4">
-            {/* Image Section - Left Side (50%) */}
-            <div className="flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-12 min-h-[500px]">
-              {selectedProduct?.icon && <selectedProduct.icon className="w-64 h-64 text-primary/40" />}
-            </div>
-            
-            {/* Details Section - Right Side (50%) */}
-            <div className="flex flex-col space-y-6">
-              <div>
-                <h3 className="text-sm font-semibold text-primary mb-2 uppercase tracking-wide">{selectedProduct?.category}</h3>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-lg font-semibold mb-3 text-foreground">Product Overview</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Brand</p>
-                      <p className="font-medium">{selectedProduct?.brand}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Origin</p>
-                      <p className="font-medium">{selectedProduct?.origin}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Size</p>
-                      <p className="font-medium">{selectedProduct?.size}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Availability</p>
-                      <p className="font-medium text-accent">{selectedProduct?.availability}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t">
-                  <h4 className="text-lg font-semibold mb-2">Description</h4>
-                  <p className="text-foreground leading-relaxed">{selectedProduct?.description}</p>
-                </div>
-              </div>
-              
-              <div className="flex-grow"></div>
-              
-              <Button asChild size="lg" className="w-full">
-                <Link to="/quote">Request Quote for {selectedProduct?.name}</Link>
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Quote Modal */}
+      <QuoteModal
+        isOpen={isQuoteModalOpen}
+        onClose={() => {
+          setIsQuoteModalOpen(false);
+          setSelectedProduct(null);
+        }}
+        product={selectedProduct}
+      />
 
       <Footer />
     </div>

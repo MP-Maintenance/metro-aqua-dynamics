@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
+import { Menu, X, ChevronDown, Moon, Sun, ShoppingCart } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { useQuote } from "@/contexts/QuoteContext";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +19,9 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+  const { items, setIsCartOpen } = useQuote();
+  
+  const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleAnchorClick = (path: string, hash: string) => {
     if (location.pathname === path) {
@@ -170,6 +175,24 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            {/* Cart Icon */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsCartOpen(true)}
+              className="relative"
+            >
+              <ShoppingCart className="h-[1.2rem] w-[1.2rem]" />
+              {cartItemCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                >
+                  {cartItemCount}
+                </Badge>
+              )}
+            </Button>
+
             <Button asChild variant="default">
               <Link to="/quote">Get a Quote</Link>
             </Button>
@@ -187,8 +210,24 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button & Theme Toggle */}
+          {/* Mobile Menu Button, Cart & Theme Toggle */}
           <div className="lg:hidden flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsCartOpen(true)}
+              className="relative"
+            >
+              <ShoppingCart className="h-[1.2rem] w-[1.2rem]" />
+              {cartItemCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                >
+                  {cartItemCount}
+                </Badge>
+              )}
+            </Button>
             <Button
               variant="outline"
               size="icon"
