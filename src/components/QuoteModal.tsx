@@ -3,7 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
 import { useQuote } from "@/contexts/QuoteContext";
-import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface QuoteModalProps {
   isOpen: boolean;
@@ -19,7 +20,8 @@ interface QuoteModalProps {
 
 const QuoteModal = ({ isOpen, onClose, product }: QuoteModalProps) => {
   const [quantity, setQuantity] = useState(1);
-  const { addItem, isAuthenticated, setIsAuthModalOpen } = useQuote();
+  const { addItem } = useQuote();
+  const { isAuthenticated, setIsAuthModalOpen } = useAuth();
 
   const handleAddToQuote = () => {
     if (!isAuthenticated) {
@@ -38,8 +40,7 @@ const QuoteModal = ({ isOpen, onClose, product }: QuoteModalProps) => {
         availability: product.availability,
       });
       
-      toast({
-        title: "Added to Quote Cart",
+      toast.success("Added to Quote Cart", {
         description: `${product.name} has been added to your quote request.`,
       });
       

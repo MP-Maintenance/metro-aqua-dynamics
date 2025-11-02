@@ -1,17 +1,28 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import PreConsultationModal from "./PreConsultationModal";
 
 interface ServiceCardProps {
   title: string;
   description: string;
   image: string;
   link: string;
+  serviceType?: string;
 }
 
-const ServiceCard = ({ title, description, image, link }: ServiceCardProps) => {
+const ServiceCard = ({ title, description, image, link, serviceType }: ServiceCardProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
+    <>
+      <PreConsultationModal 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen}
+        defaultService={serviceType}
+      />
     <Card className="group overflow-hidden hover:shadow-strong transition-all duration-300 border-border">
       <div className="relative overflow-hidden h-64">
         <img
@@ -24,14 +35,24 @@ const ServiceCard = ({ title, description, image, link }: ServiceCardProps) => {
       <CardContent className="p-6">
         <h3 className="text-xl font-semibold mb-3">{title}</h3>
         <p className="text-muted-foreground mb-4">{description}</p>
-        <Button asChild variant="outline" className="group/btn">
-          <Link to={link} className="flex items-center gap-2">
-            Learn More
-            <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-          </Link>
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button asChild variant="outline" className="group/btn">
+            <Link to={link} className="flex items-center gap-2">
+              Learn More
+              <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+            </Link>
+          </Button>
+          <Button 
+            onClick={() => setIsModalOpen(true)}
+            variant="default"
+            className="w-full"
+          >
+            Pre-Consultation Form
+          </Button>
+        </div>
       </CardContent>
     </Card>
+    </>
   );
 };
 

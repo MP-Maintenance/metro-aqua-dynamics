@@ -2,13 +2,22 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useQuote } from "@/contexts/QuoteContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const QuoteCartSidebar = () => {
   const { items, removeItem, updateQuantity, isCartOpen, setIsCartOpen } = useQuote();
+  const { isAuthenticated, setIsAuthModalOpen } = useAuth();
   const navigate = useNavigate();
 
   const handleCheckout = () => {
+    if (!isAuthenticated) {
+      toast.error("Please sign in to proceed with checkout");
+      setIsCartOpen(false);
+      setIsAuthModalOpen(true);
+      return;
+    }
     setIsCartOpen(false);
     navigate("/quote");
   };

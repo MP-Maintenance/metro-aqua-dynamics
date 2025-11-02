@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, ChevronDown, Moon, Sun, ShoppingCart } from "lucide-react";
+import { Menu, X, ChevronDown, Moon, Sun, ShoppingCart, User, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useQuote } from "@/contexts/QuoteContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import logo from "@/assets/metro-pools-logo.png";
@@ -20,6 +22,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { items, setIsCartOpen } = useQuote();
+  const { user, isAuthenticated, setIsAuthModalOpen, signOut } = useAuth();
   
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -193,9 +196,34 @@ const Navbar = () => {
               )}
             </Button>
 
-            <Button asChild variant="default">
-              <Link to="/quote">Get a Quote</Link>
-            </Button>
+            {/* User Dropdown or Auth Button */}
+            {isAuthenticated && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <User className="h-4 w-4" />
+                    {user.name}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate("/quote")}>
+                    View Account
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/quote")}>
+                    My Quotes
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut} className="text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Log Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={() => setIsAuthModalOpen(true)} variant="default">
+                Sign In
+              </Button>
+            )}
 
             {/* Theme Toggle */}
             <Button
@@ -286,7 +314,39 @@ const Navbar = () => {
               >
                 Projects
               </Link>
-              <Button asChild className="w-full">
+              
+              {isAuthenticated && user ? (
+                <>
+                  <Button variant="outline" asChild className="w-full">
+                    <Link to="/quote" onClick={() => setIsMobileMenuOpen(false)}>
+                      View Account
+                    </Link>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      signOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Log Out
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  onClick={() => {
+                    setIsAuthModalOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full"
+                >
+                  Sign In / Join Us
+                </Button>
+              )}
+              
+              <Button asChild variant="default" className="w-full">
                 <Link to="/quote" onClick={() => setIsMobileMenuOpen(false)}>
                   Get a Quote
                 </Link>

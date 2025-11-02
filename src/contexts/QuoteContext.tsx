@@ -18,10 +18,6 @@ interface QuoteContextType {
   clearCart: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
-  isAuthModalOpen: boolean;
-  setIsAuthModalOpen: (open: boolean) => void;
-  isAuthenticated: boolean;
-  setIsAuthenticated: (auth: boolean) => void;
 }
 
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
@@ -29,8 +25,6 @@ const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
 export const QuoteProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<QuoteItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const addItem = (item: Omit<QuoteItem, "quantity">) => {
     setItems((prev) => {
@@ -72,10 +66,6 @@ export const QuoteProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         isCartOpen,
         setIsCartOpen,
-        isAuthModalOpen,
-        setIsAuthModalOpen,
-        isAuthenticated,
-        setIsAuthenticated,
       }}
     >
       {children}

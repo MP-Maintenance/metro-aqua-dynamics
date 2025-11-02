@@ -1,145 +1,184 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useQuote } from "@/contexts/QuoteContext";
-import { toast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const AuthModal = () => {
-  const { isAuthModalOpen, setIsAuthModalOpen, setIsAuthenticated } = useQuote();
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [formData, setFormData] = useState({
+  const { isAuthModalOpen, setIsAuthModalOpen, signIn, signUp } = useAuth();
+  const [signInData, setSignInData] = useState({
+    email: "",
+    password: "",
+  });
+  const [signUpData, setSignUpData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isSignUp) {
-      if (formData.password !== formData.confirmPassword) {
-        toast({
-          title: "Error",
-          description: "Passwords do not match",
-          variant: "destructive",
-        });
-        return;
-      }
-      // Mock sign up
-      setIsAuthenticated(true);
-      toast({
-        title: "Account Created",
-        description: "Welcome to Metro Pools!",
-      });
-    } else {
-      // Mock sign in
-      setIsAuthenticated(true);
-      toast({
-        title: "Welcome Back",
-        description: "You have successfully signed in.",
-      });
+    if (!signInData.email || !signInData.password) {
+      toast.error("Please fill in all fields");
+      return;
     }
+
+    try {
+      await signIn(signInData.email, signInData.password);
+      toast.success("Welcome back!");
+      setSignInData({ email: "", password: "" });
+    } catch (error) {
+      toast.error("Sign in failed. Please try again.");
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    setIsAuthModalOpen(false);
-    setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+    if (!signUpData.name || !signUpData.email || !signUpData.password || !signUpData.confirmPassword) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    if (signUpData.password !== signUpData.confirmPassword) {
+      toast.error("Passwords don't match!");
+      return;
+    }
+
+    if (signUpData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    try {
+      await signUp(signUpData.name, signUpData.email, signUpData.password);
+      toast.success("Account created successfully!");
+      setSignUpData({ name: "", email: "", password: "", confirmPassword: "" });
+    } catch (error) {
+      toast.error("Sign up failed. Please try again.");
+    }
   };
 
   return (
     <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">
-            {isSignUp ? "Create Account" : "Sign In"}
-          </DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Welcome to Metro Pools</DialogTitle>
+          <DialogDescription>
+            Sign in to your account or create a new one
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-6">
-          <div className="text-center mb-6">
-            <p className="text-muted-foreground">
-              Please {isSignUp ? "create an account" : "sign in"} to request a quote
-            </p>
-          </div>
+        <Tabs defaultValue="signin" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="signin">Sign In</TabsTrigger>
+            <TabsTrigger value="joinus">Join Us</TabsTrigger>
+          </TabsList>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isSignUp && (
+          {/* Sign In Tab */}
+          <TabsContent value="signin">
+            <form onSubmit={handleSignIn} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="signin-email">Email</Label>
                 <Input
-                  id="name"
-                  type="text"
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
+                  id="signin-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={signInData.email}
+                  onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
                   required
                 />
               </div>
-            )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="john@example.com"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            {isSignUp && (
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="signin-password">Password</Label>
                 <Input
-                  id="confirmPassword"
+                  id="signin-password"
                   type="password"
-                  placeholder="••••••••"
-                  value={formData.confirmPassword}
-                  onChange={(e) =>
-                    setFormData({ ...formData, confirmPassword: e.target.value })
-                  }
+                  placeholder="Enter your password"
+                  value={signInData.password}
+                  onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
                   required
                 />
               </div>
-            )}
 
-            <Button type="submit" className="w-full" size="lg">
-              {isSignUp ? "Create Account" : "Sign In"}
-            </Button>
-          </form>
+              <Button type="button" variant="link" className="text-sm p-0 h-auto">
+                Forgot Password?
+              </Button>
 
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-primary hover:underline"
-            >
-              {isSignUp
-                ? "Already have an account? Sign In"
-                : "Don't have an account? Sign Up"}
-            </button>
-          </div>
-        </div>
+              <Button type="submit" className="w-full">
+                Continue
+              </Button>
+            </form>
+          </TabsContent>
+
+          {/* Join Us Tab */}
+          <TabsContent value="joinus">
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="signup-name">Name</Label>
+                <Input
+                  id="signup-name"
+                  placeholder="Your name"
+                  value={signUpData.name}
+                  onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-email">Email</Label>
+                <Input
+                  id="signup-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={signUpData.email}
+                  onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-password">Password</Label>
+                <Input
+                  id="signup-password"
+                  type="password"
+                  placeholder="Create a password"
+                  value={signUpData.password}
+                  onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-confirm">Confirm Password</Label>
+                <Input
+                  id="signup-confirm"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={signUpData.confirmPassword}
+                  onChange={(e) => setSignUpData({ ...signUpData, confirmPassword: e.target.value })}
+                  required
+                />
+              </div>
+
+              <Button type="submit" className="w-full">
+                Continue
+              </Button>
+            </form>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
