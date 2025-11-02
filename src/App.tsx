@@ -23,9 +23,9 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <QuoteCartSidebar />
-          <AuthModal />
           <BrowserRouter>
+            <QuoteCartSidebar />
+            <AuthModal />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<Services />} />
