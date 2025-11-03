@@ -36,10 +36,9 @@ const AuthModal = () => {
 
     try {
       await signIn(signInData.email, signInData.password);
-      toast.success("Welcome back!");
       setSignInData({ email: "", password: "" });
     } catch (error) {
-      toast.error("Sign in failed. Please try again.");
+      // Error handling is done in AuthContext
     }
   };
 
@@ -63,10 +62,9 @@ const AuthModal = () => {
 
     try {
       await signUp(signUpData.name, signUpData.email, signUpData.password);
-      toast.success("Account created successfully!");
       setSignUpData({ name: "", email: "", password: "", confirmPassword: "" });
     } catch (error) {
-      toast.error("Sign up failed. Please try again.");
+      // Error handling is done in AuthContext
     }
   };
 
