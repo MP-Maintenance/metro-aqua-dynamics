@@ -53,6 +53,7 @@ export type Database = {
           full_name: string
           id: string
           phone: string | null
+          role: string | null
           updated_at: string
         }
         Insert: {
@@ -60,6 +61,7 @@ export type Database = {
           full_name: string
           id: string
           phone?: string | null
+          role?: string | null
           updated_at?: string
         }
         Update: {
@@ -67,6 +69,7 @@ export type Database = {
           full_name?: string
           id?: string
           phone?: string | null
+          role?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -75,8 +78,9 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          product_id: string
-          quantity: number
+          items: Json
+          product_id: string | null
+          quantity: number | null
           status: string | null
           updated_at: string
           user_id: string
@@ -84,8 +88,9 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          product_id: string
-          quantity?: number
+          items?: Json
+          product_id?: string | null
+          quantity?: number | null
           status?: string | null
           updated_at?: string
           user_id: string
@@ -93,8 +98,9 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          product_id?: string
-          quantity?: number
+          items?: Json
+          product_id?: string | null
+          quantity?: number | null
           status?: string | null
           updated_at?: string
           user_id?: string

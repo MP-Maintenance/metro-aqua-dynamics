@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface QuoteItem {
   id: string;
@@ -18,6 +19,7 @@ interface QuoteContextType {
   clearCart: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
+  submitQuote: (contactInfo: { fullName: string; phone: string }) => Promise<void>;
 }
 
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
@@ -56,6 +58,51 @@ export const QuoteProvider = ({ children }: { children: ReactNode }) => {
     setItems([]);
   };
 
+  const submitQuote = async (contactInfo: { fullName: string; phone: string }) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("You must be logged in to submit a quote request");
+      }
+
+      // Prepare items for database
+      const quoteItems = items.map(item => ({
+        product_id: item.id,
+        product_name: item.name,
+        quantity: item.quantity,
+      }));
+
+      // Insert quote request
+      const { error } = await supabase
+        .from("quote_requests")
+        .insert({
+          user_id: user.id,
+          items: quoteItems,
+          status: "pending",
+        });
+
+      if (error) throw error;
+
+      // Update user profile with contact info if provided
+      if (contactInfo.fullName || contactInfo.phone) {
+        await supabase
+          .from("profiles")
+          .update({
+            full_name: contactInfo.fullName,
+            phone: contactInfo.phone,
+          })
+          .eq("id", user.id);
+      }
+
+      // Clear cart after successful submission
+      clearCart();
+    } catch (error: any) {
+      console.error("Error submitting quote:", error);
+      throw error;
+    }
+  };
+
   return (
     <QuoteContext.Provider
       value={{
@@ -66,6 +113,7 @@ export const QuoteProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         isCartOpen,
         setIsCartOpen,
+        submitQuote,
       }}
     >
       {children}

@@ -1,15 +1,16 @@
+import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useQuote } from "@/contexts/QuoteContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import CheckoutModal from "./CheckoutModal";
 
 const QuoteCartSidebar = () => {
   const { items, removeItem, updateQuantity, isCartOpen, setIsCartOpen } = useQuote();
   const { isAuthenticated, setIsAuthModalOpen } = useAuth();
-  const navigate = useNavigate();
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
@@ -19,17 +20,18 @@ const QuoteCartSidebar = () => {
       return;
     }
     setIsCartOpen(false);
-    navigate("/quote");
+    setIsCheckoutOpen(true);
   };
 
   return (
-    <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
-      <SheetContent className="w-full sm:max-w-lg">
-        <SheetHeader>
-          <SheetTitle className="text-2xl font-bold">Quote Cart</SheetTitle>
-        </SheetHeader>
+    <>
+      <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+        <SheetContent className="w-full sm:max-w-lg flex flex-col">
+          <SheetHeader>
+            <SheetTitle className="text-2xl font-bold">Quote Cart</SheetTitle>
+          </SheetHeader>
 
-        <div className="flex flex-col h-full mt-6">
+          <div className="flex flex-col flex-1 mt-6 min-h-0">
           {items.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
@@ -130,9 +132,12 @@ const QuoteCartSidebar = () => {
               </div>
             </>
           )}
-        </div>
-      </SheetContent>
-    </Sheet>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <CheckoutModal open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen} />
+    </>
   );
 };
 
