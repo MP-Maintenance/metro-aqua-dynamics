@@ -14,6 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      pre_consultations: {
+        Row: {
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string | null
+          depth: number | null
+          facility_type: string | null
+          filtration_system: string | null
+          finishing: string | null
+          id: string
+          length: number | null
+          preferred_contact_method: string | null
+          reference_file_name: string | null
+          reference_file_url: string | null
+          service_required: string
+          status: string | null
+          surface_type: string | null
+          updated_at: string | null
+          user_id: string
+          width: number | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          depth?: number | null
+          facility_type?: string | null
+          filtration_system?: string | null
+          finishing?: string | null
+          id?: string
+          length?: number | null
+          preferred_contact_method?: string | null
+          reference_file_name?: string | null
+          reference_file_url?: string | null
+          service_required: string
+          status?: string | null
+          surface_type?: string | null
+          updated_at?: string | null
+          user_id: string
+          width?: number | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          depth?: number | null
+          facility_type?: string | null
+          filtration_system?: string | null
+          finishing?: string | null
+          id?: string
+          length?: number | null
+          preferred_contact_method?: string | null
+          reference_file_name?: string | null
+          reference_file_url?: string | null
+          service_required?: string
+          status?: string | null
+          surface_type?: string | null
+          updated_at?: string | null
+          user_id?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_consultations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           availability: string | null
