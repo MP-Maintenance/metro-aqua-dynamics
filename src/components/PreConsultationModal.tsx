@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronLeft, ChevronRight, Upload, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Upload, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Progress } from "@/components/ui/progress";
-import ImageCarousel from "./ImageCarousel";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface PreConsultationModalProps {
   open: boolean;
@@ -20,9 +21,9 @@ interface PreConsultationModalProps {
 const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsultationModalProps) => {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     service: defaultService || "",
     facility: "",
@@ -40,109 +41,67 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
 
   const totalSteps = 8;
 
-  // Auto-fill contact details from profile
+  // Load user profile data on mount
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user || formData.name) return;
-      
+    const loadProfile = async () => {
+      if (!user) return;
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, phone')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("full_name, phone")
+        .eq("id", user.id)
         .single();
-
+      
       if (profile) {
         setFormData(prev => ({
           ...prev,
           name: profile.full_name || "",
           phone: profile.phone || "",
-          email: user.email || "",
         }));
       }
     };
-
-    fetchProfile();
+    if (open) loadProfile();
   }, [user, open]);
 
-  // Step configurations with carousel images
-  const stepConfig: Record<number, {
-    title: string;
-    isOptional?: boolean;
-    options?: { value: string; label: string; images: string[] }[];
-  }> = {
-    1: {
-      title: "Service Required",
-      options: [
-        { value: "maintenance", label: "Maintenance Cleaning", images: ["/placeholder.svg"] },
-        { value: "renovation", label: "Renovation", images: ["/placeholder.svg"] },
-        { value: "design-build", label: "Design & Build", images: ["/placeholder.svg"] },
-      ]
-    },
-    2: {
-      title: "Type of Facility",
-      options: [
-        { value: "swimming-pool", label: "Swimming Pool", images: ["/placeholder.svg"] },
-        { value: "fountain", label: "Fountain", images: ["/placeholder.svg"] },
-        { value: "jacuzzi", label: "Jacuzzi", images: ["/placeholder.svg"] },
-        { value: "ready-made-jacuzzi", label: "Ready-Made Jacuzzi", images: ["/placeholder.svg"] },
-        { value: "steam-room", label: "Steam Room", images: ["/placeholder.svg"] },
-        { value: "sauna-room", label: "Sauna Room", images: ["/placeholder.svg"] },
-      ]
-    },
-    3: {
-      title: "Surface Type",
-      options: [
-        { value: "skimmer", label: "Skimmer", images: ["/placeholder.svg"] },
-        { value: "overflow", label: "Overflow", images: ["/placeholder.svg"] },
-        { value: "infinity", label: "Infinity", images: ["/placeholder.svg"] },
-      ]
-    },
-    4: {
-      title: "Finishing",
-      options: [
-        { value: "tiles", label: "Tiles", images: ["/placeholder.svg"] },
-        { value: "liner", label: "Liner", images: ["/placeholder.svg"] },
-        { value: "others", label: "Others", images: ["/placeholder.svg"] },
-      ]
-    },
-    5: {
-      title: "Desired Size (Optional)",
-      isOptional: true,
-    },
-    6: {
-      title: "Filtration System (Optional)",
-      isOptional: true,
-      options: [
-        { value: "sand-filter", label: "Sand Filter", images: ["/placeholder.svg"] },
-        { value: "compact-filter", label: "Compact Filter", images: ["/placeholder.svg"] },
-        { value: "others", label: "Others", images: ["/placeholder.svg"] },
-      ]
-    },
-  };
+  const services = [
+    { value: "maintenance", label: "Maintenance / Cleaning", image: "/placeholder.svg" },
+    { value: "inspection", label: "Inspection / Repairs", image: "/placeholder.svg" },
+    { value: "renovation", label: "Renovation", image: "/placeholder.svg" },
+  ];
+
+  const facilities = [
+    { value: "swimming-pool", label: "Swimming Pool", image: "/placeholder.svg" },
+    { value: "fountain", label: "Fountain", image: "/placeholder.svg" },
+    { value: "jacuzzi", label: "Jacuzzi", image: "/placeholder.svg" },
+    { value: "ready-made-jacuzzi", label: "Ready-Made Jacuzzi", image: "/placeholder.svg" },
+    { value: "steam-room", label: "Steam Room", image: "/placeholder.svg" },
+    { value: "sauna-room", label: "Sauna Room", image: "/placeholder.svg" },
+  ];
+
+  const surfaces = [
+    { value: "skimmer", label: "Skimmer", image: "/placeholder.svg" },
+    { value: "overflow", label: "Overflow", image: "/placeholder.svg" },
+    { value: "infinity", label: "Infinity", image: "/placeholder.svg" },
+  ];
+
+  const finishings = [
+    { value: "tiles", label: "Tiles", image: "/placeholder.svg" },
+    { value: "liner", label: "Liner", image: "/placeholder.svg" },
+    { value: "mosaic", label: "Mosaic", image: "/placeholder.svg" },
+  ];
+
+  const filtrations = [
+    { value: "sand-filter", label: "Sand Filter", image: "/placeholder.svg" },
+    { value: "compact-filter", label: "Compact Filter", image: "/placeholder.svg" },
+    { value: "cartridge-filter", label: "Cartridge Filter", image: "/placeholder.svg" },
+  ];
+
+  const contactMethods = [
+    { value: "call", label: "Call" },
+    { value: "whatsapp", label: "WhatsApp" },
+    { value: "email", label: "Email" },
+  ];
 
   const handleNext = () => {
-    // Validation for required steps
-    if (step === 1 && !formData.service) {
-      toast.error("Please select a service");
-      return;
-    }
-    if (step === 2 && !formData.facility) {
-      toast.error("Please select a facility type");
-      return;
-    }
-    if (step === 7) {
-      if (!formData.name || !formData.email || !formData.phone || !formData.contactMethod) {
-        toast.error("Please fill in all contact details");
-        return;
-      }
-      // Basic email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        toast.error("Please enter a valid email address");
-        return;
-      }
-    }
-
     if (step < totalSteps) {
       setStep(step + 1);
     }
@@ -158,43 +117,46 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file size (1MB = 1048576 bytes)
     if (file.size > 1048576) {
-      toast.error("File size must be less than 1MB");
+      toast.error("File size must be less than 1 MB");
       return;
     }
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Only JPG, PNG, or PDF files are allowed");
       return;
     }
 
-    setUploadedFile(file);
-    toast.success("File selected successfully");
+    setSelectedFile(file);
   };
 
-  const uploadFile = async (file: File): Promise<string | null> => {
-    if (!user) return null;
+  const uploadFile = async (): Promise<{ url: string; name: string } | null> => {
+    if (!selectedFile || !user) return null;
 
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+    setUploading(true);
+    try {
+      const fileExt = selectedFile.name.split(".").pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from("pre-consultation-files")
+        .upload(fileName, selectedFile);
 
-    const { error: uploadError } = await supabase.storage
-      .from('pre-consultation-files')
-      .upload(fileName, file);
+      if (uploadError) throw uploadError;
 
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
+      const { data: { publicUrl } } = supabase.storage
+        .from("pre-consultation-files")
+        .getPublicUrl(fileName);
+
+      return { url: publicUrl, name: selectedFile.name };
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload file");
       return null;
+    } finally {
+      setUploading(false);
     }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('pre-consultation-files')
-      .getPublicUrl(fileName);
-
-    return publicUrl;
   };
 
   const handleSubmit = async () => {
@@ -203,26 +165,20 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
       return;
     }
 
-    setIsSubmitting(true);
+    if (!formData.service || !formData.facility || !formData.name || !formData.email || !formData.phone) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
 
     try {
-      // Upload file if exists
-      let fileUrl = null;
-      let fileName = null;
-      if (uploadedFile) {
-        fileUrl = await uploadFile(uploadedFile);
-        fileName = uploadedFile.name;
-        
-        if (!fileUrl) {
-          toast.error("Failed to upload file. Please try again.");
-          setIsSubmitting(false);
-          return;
-        }
+      let fileData = null;
+      if (selectedFile) {
+        fileData = await uploadFile();
+        if (!fileData) return;
       }
 
-      // Insert into database
       const { error } = await supabase
-        .from('pre_consultations')
+        .from("pre_consultations")
         .insert({
           user_id: user.id,
           service_required: formData.service,
@@ -237,55 +193,52 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
           contact_email: formData.email,
           contact_phone: formData.phone,
           preferred_contact_method: formData.contactMethod,
-          reference_file_url: fileUrl,
-          reference_file_name: fileName,
-          status: 'pending',
+          reference_file_url: fileData?.url || null,
+          reference_file_name: fileData?.name || null,
         });
 
       if (error) throw error;
 
       setShowSuccess(true);
-      
-      // Reset form after 2 seconds
       setTimeout(() => {
         setShowSuccess(false);
         onOpenChange(false);
-        setStep(1);
-        setUploadedFile(null);
-        setFormData({
-          service: defaultService || "",
-          facility: "",
-          surface: "",
-          finishing: "",
-          length: "",
-          width: "",
-          depth: "",
-          filtration: "",
-          name: "",
-          email: "",
-          phone: "",
-          contactMethod: "",
-        });
+        setTimeout(() => {
+          setStep(1);
+          setSelectedFile(null);
+          setFormData({
+            service: defaultService || "",
+            facility: "",
+            surface: "",
+            finishing: "",
+            length: "",
+            width: "",
+            depth: "",
+            filtration: "",
+            name: "",
+            email: "",
+            phone: "",
+            contactMethod: "",
+          });
+        }, 300);
       }, 2000);
-
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error("Submission error:", error);
       toast.error("Failed to submit form. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   if (showSuccess) {
     return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-md">
-          <div className="text-center py-8">
-            <CheckCircle2 className="w-16 h-16 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Success!</h2>
+      <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
+        <DialogContent className="max-w-md text-center">
+          <div className="flex flex-col items-center gap-4 py-8">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <CheckCircle className="w-10 h-10 text-primary" />
+            </div>
+            <DialogTitle className="text-2xl font-bold">Form Submitted Successfully!</DialogTitle>
             <p className="text-muted-foreground">
-              Your pre-consultation form has been submitted successfully.
-              We'll get back to you soon!
+              Thank you for your submission. Our team will review your request and contact you soon.
             </p>
           </div>
         </DialogContent>
@@ -295,95 +248,201 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Pre-Consultation Form</DialogTitle>
           <div className="space-y-2 mt-4">
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>Step {step} of {totalSteps}</span>
-              <span>{Math.round((step / totalSteps) * 100)}%</span>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Step {step} of {totalSteps}</span>
+              <span className="text-muted-foreground">{Math.round((step / totalSteps) * 100)}%</span>
             </div>
             <Progress value={(step / totalSteps) * 100} />
           </div>
         </DialogHeader>
 
-        <div className="space-y-6 py-6">
-          {/* Steps 1-4 & 6: Option selection with carousels */}
-          {(step >= 1 && step <= 4 || step === 6) && stepConfig[step as keyof typeof stepConfig] && (
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">
-                {stepConfig[step as keyof typeof stepConfig].title}
-                {stepConfig[step as keyof typeof stepConfig].isOptional && " (Optional)"}
-              </Label>
-              <RadioGroup
-                value={
-                  step === 1 ? formData.service :
-                  step === 2 ? formData.facility :
-                  step === 3 ? formData.surface :
-                  step === 4 ? formData.finishing :
-                  step === 6 ? formData.filtration : ""
-                }
-                onValueChange={(value) => {
-                  if (step === 1) setFormData({ ...formData, service: value });
-                  else if (step === 2) setFormData({ ...formData, facility: value });
-                  else if (step === 3) setFormData({ ...formData, surface: value });
-                  else if (step === 4) setFormData({ ...formData, finishing: value });
-                  else if (step === 6) setFormData({ ...formData, filtration: value });
-                }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
-                {stepConfig[step as keyof typeof stepConfig].options?.map((option) => (
-                  <div key={option.value} className="relative">
-                    <RadioGroupItem
-                      value={option.value}
-                      id={option.value}
-                      className="peer sr-only"
-                    />
-                    <Label
-                      htmlFor={option.value}
-                      className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
-                    >
-                      <ImageCarousel images={option.images} alt={option.label} />
-                      <span className="mt-3 font-medium">{option.label}</span>
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
+        <div className="flex-1 overflow-y-auto py-6">
+          {/* Step 1: Service Required */}
+          {step === 1 && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">What service do you need?</h3>
+                <p className="text-sm text-muted-foreground">Select the service that best fits your needs</p>
+              </div>
+              <Carousel className="w-full max-w-xl mx-auto">
+                <CarouselContent>
+                  {services.map((service) => (
+                    <CarouselItem key={service.value} className="md:basis-1/2 lg:basis-1/3">
+                      <Card 
+                        className={`cursor-pointer transition-all ${
+                          formData.service === service.value 
+                            ? "ring-2 ring-primary shadow-md" 
+                            : "hover:shadow-md"
+                        }`}
+                        onClick={() => setFormData({ ...formData, service: service.value })}
+                      >
+                        <CardContent className="p-4 text-center">
+                          <img 
+                            src={service.image} 
+                            alt={service.label}
+                            className="w-full h-32 object-cover rounded-md mb-3"
+                          />
+                          <p className="font-medium text-sm">{service.label}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          )}
+
+          {/* Step 2: Facility Type */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">What type of facility?</h3>
+                <p className="text-sm text-muted-foreground">Choose the facility you want to work on</p>
+              </div>
+              <Carousel className="w-full max-w-xl mx-auto">
+                <CarouselContent>
+                  {facilities.map((facility) => (
+                    <CarouselItem key={facility.value} className="md:basis-1/2 lg:basis-1/3">
+                      <Card 
+                        className={`cursor-pointer transition-all ${
+                          formData.facility === facility.value 
+                            ? "ring-2 ring-primary shadow-md" 
+                            : "hover:shadow-md"
+                        }`}
+                        onClick={() => setFormData({ ...formData, facility: facility.value })}
+                      >
+                        <CardContent className="p-4 text-center">
+                          <img 
+                            src={facility.image} 
+                            alt={facility.label}
+                            className="w-full h-32 object-cover rounded-md mb-3"
+                          />
+                          <p className="font-medium text-sm">{facility.label}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          )}
+
+          {/* Step 3: Surface Type */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">What surface type?</h3>
+                <p className="text-sm text-muted-foreground">Select your preferred pool surface style</p>
+              </div>
+              <Carousel className="w-full max-w-xl mx-auto">
+                <CarouselContent>
+                  {surfaces.map((surface) => (
+                    <CarouselItem key={surface.value} className="md:basis-1/2">
+                      <Card 
+                        className={`cursor-pointer transition-all ${
+                          formData.surface === surface.value 
+                            ? "ring-2 ring-primary shadow-md" 
+                            : "hover:shadow-md"
+                        }`}
+                        onClick={() => setFormData({ ...formData, surface: surface.value })}
+                      >
+                        <CardContent className="p-4 text-center">
+                          <img 
+                            src={surface.image} 
+                            alt={surface.label}
+                            className="w-full h-40 object-cover rounded-md mb-3"
+                          />
+                          <p className="font-medium">{surface.label}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          )}
+
+          {/* Step 4: Finishing */}
+          {step === 4 && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">Choose your finishing</h3>
+                <p className="text-sm text-muted-foreground">Select the material for your pool finish</p>
+              </div>
+              <Carousel className="w-full max-w-xl mx-auto">
+                <CarouselContent>
+                  {finishings.map((finishing) => (
+                    <CarouselItem key={finishing.value} className="md:basis-1/2">
+                      <Card 
+                        className={`cursor-pointer transition-all ${
+                          formData.finishing === finishing.value 
+                            ? "ring-2 ring-primary shadow-md" 
+                            : "hover:shadow-md"
+                        }`}
+                        onClick={() => setFormData({ ...formData, finishing: finishing.value })}
+                      >
+                        <CardContent className="p-4 text-center">
+                          <img 
+                            src={finishing.image} 
+                            alt={finishing.label}
+                            className="w-full h-40 object-cover rounded-md mb-3"
+                          />
+                          <p className="font-medium">{finishing.label}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
             </div>
           )}
 
           {/* Step 5: Desired Size */}
           {step === 5 && (
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">Desired Size (Optional)</Label>
-              <p className="text-sm text-muted-foreground">Enter dimensions in meters</p>
-              <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-semibold mb-2">Desired size (optional)</h3>
+                <p className="text-sm text-muted-foreground">Enter approximate dimensions in meters</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
                 <div>
-                  <Label className="text-sm">Length (m)</Label>
+                  <Label className="text-sm font-medium mb-2 block">Length (m)</Label>
                   <Input
                     type="number"
                     step="0.1"
-                    placeholder="0"
+                    placeholder="0.0"
                     value={formData.length}
                     onChange={(e) => setFormData({ ...formData, length: e.target.value })}
                   />
                 </div>
                 <div>
-                  <Label className="text-sm">Width (m)</Label>
+                  <Label className="text-sm font-medium mb-2 block">Width (m)</Label>
                   <Input
                     type="number"
                     step="0.1"
-                    placeholder="0"
+                    placeholder="0.0"
                     value={formData.width}
                     onChange={(e) => setFormData({ ...formData, width: e.target.value })}
                   />
                 </div>
                 <div>
-                  <Label className="text-sm">Depth (m)</Label>
+                  <Label className="text-sm font-medium mb-2 block">Depth (m)</Label>
                   <Input
                     type="number"
                     step="0.1"
-                    placeholder="0"
+                    placeholder="0.0"
                     value={formData.depth}
                     onChange={(e) => setFormData({ ...formData, depth: e.target.value })}
                   />
@@ -392,103 +451,168 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
             </div>
           )}
 
+          {/* Step 6: Filtration System */}
+          {step === 6 && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">Select filtration system</h3>
+                <p className="text-sm text-muted-foreground">Choose your preferred water filtration type (optional)</p>
+              </div>
+              <Carousel className="w-full max-w-xl mx-auto">
+                <CarouselContent>
+                  {filtrations.map((filtration) => (
+                    <CarouselItem key={filtration.value} className="md:basis-1/2">
+                      <Card 
+                        className={`cursor-pointer transition-all ${
+                          formData.filtration === filtration.value 
+                            ? "ring-2 ring-primary shadow-md" 
+                            : "hover:shadow-md"
+                        }`}
+                        onClick={() => setFormData({ ...formData, filtration: filtration.value })}
+                      >
+                        <CardContent className="p-4 text-center">
+                          <img 
+                            src={filtration.image} 
+                            alt={filtration.label}
+                            className="w-full h-40 object-cover rounded-md mb-3"
+                          />
+                          <p className="font-medium">{filtration.label}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          )}
+
           {/* Step 7: Contact Details */}
           {step === 7 && (
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">Contact Details</Label>
-              <div>
-                <Label>Name *</Label>
-                <Input
-                  placeholder="Your full name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-semibold mb-2">Your contact details</h3>
+                <p className="text-sm text-muted-foreground">How can we reach you?</p>
               </div>
-              <div>
-                <Label>Email *</Label>
-                <Input
-                  type="email"
-                  placeholder="your@email.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label>Phone *</Label>
-                <Input
-                  type="tel"
-                  placeholder="+971 50 123 4567"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label>Preferred Contact Method *</Label>
-                <RadioGroup
-                  value={formData.contactMethod}
-                  onValueChange={(value) => setFormData({ ...formData, contactMethod: value })}
-                  className="flex gap-4"
-                >
-                  {['call', 'whatsapp', 'email'].map((method) => (
-                    <div key={method} className="flex items-center space-x-2">
-                      <RadioGroupItem value={method} id={method} />
-                      <Label htmlFor={method} className="capitalize cursor-pointer">
-                        {method}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+              <div className="space-y-4 max-w-lg mx-auto">
+                <div>
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    placeholder="Your full name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Phone *</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+971 50 123 4567"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="contactMethod">Preferred Contact Method *</Label>
+                  <RadioGroup 
+                    value={formData.contactMethod} 
+                    onValueChange={(value) => setFormData({ ...formData, contactMethod: value })}
+                  >
+                    {contactMethods.map((method) => (
+                      <div key={method.value} className="flex items-center space-x-2">
+                        <RadioGroupItem value={method.value} id={method.value} />
+                        <Label htmlFor={method.value} className="font-normal cursor-pointer">
+                          {method.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
               </div>
             </div>
           )}
 
           {/* Step 8: File Upload */}
           {step === 8 && (
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">Upload Reference Files (Optional)</Label>
-              <p className="text-sm text-muted-foreground">
-                Upload photos or PDFs for reference (max 1MB)
-              </p>
-              <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center hover:border-primary transition-colors">
-                <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                <Label htmlFor="file-upload" className="cursor-pointer">
-                  <span className="text-primary font-medium">Click to upload</span>
-                  <span className="text-muted-foreground"> or drag and drop</span>
-                </Label>
-                <p className="text-xs text-muted-foreground mt-2">
-                  JPG, PNG or PDF (max 1MB)
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-semibold mb-2">Upload reference file (optional)</h3>
+                <p className="text-sm text-muted-foreground">
+                  Share photos or documents that help us understand your needs (max 1 MB)
                 </p>
-                <Input
-                  id="file-upload"
-                  type="file"
-                  accept="image/jpeg,image/png,application/pdf"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
               </div>
-              {uploadedFile && (
-                <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg">
-                  <CheckCircle2 className="w-5 h-5 text-primary" />
-                  <span className="text-sm">{uploadedFile.name}</span>
-                </div>
-              )}
+              <div className="max-w-lg mx-auto">
+                <Label 
+                  htmlFor="file-upload" 
+                  className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <Upload className="w-10 h-10 mb-3 text-muted-foreground" />
+                    {selectedFile ? (
+                      <div className="text-center">
+                        <p className="text-sm font-medium">{selectedFile.name}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {(selectedFile.size / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="mb-2 text-sm text-muted-foreground">
+                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-muted-foreground">JPG, PNG, or PDF (max 1 MB)</p>
+                      </>
+                    )}
+                  </div>
+                  <Input
+                    id="file-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/jpeg,image/png,application/pdf"
+                    onChange={handleFileChange}
+                  />
+                </Label>
+                {selectedFile && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedFile(null)}
+                    className="w-full mt-2"
+                  >
+                    Remove file
+                  </Button>
+                )}
+              </div>
             </div>
           )}
         </div>
 
-        <div className="flex justify-between gap-4 border-t pt-4">
-          <Button variant="outline" onClick={handleBack} disabled={step === 1 || isSubmitting}>
+        <div className="flex justify-between gap-4 pt-4 border-t">
+          <Button variant="outline" onClick={handleBack} disabled={step === 1}>
             <ChevronLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
           {step < totalSteps ? (
-            <Button onClick={handleNext} disabled={isSubmitting}>
+            <Button onClick={handleNext}>
               Next
               <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit"}
+            <Button onClick={handleSubmit} disabled={uploading}>
+              {uploading ? "Uploading..." : "Submit Form"}
             </Button>
           )}
         </div>
