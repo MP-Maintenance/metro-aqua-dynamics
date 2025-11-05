@@ -7,11 +7,13 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
   signIn: (email: string, password: string) => Promise<void>;
@@ -28,17 +30,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Fetch user profile with role
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .single();
+
+      if (error) throw error;
+      return data?.role || "user";
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      return "user";
+    }
+  };
+
   // Initialize auth state
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         if (session?.user) {
+          const role = await fetchUserProfile(session.user.id);
           setUser({
             id: session.user.id,
             name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "",
             email: session.user.email || "",
+            role,
           });
         } else {
           setUser(null);
@@ -48,13 +69,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
+        const role = await fetchUserProfile(session.user.id);
         setUser({
           id: session.user.id,
           name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "",
           email: session.user.email || "",
+          role,
         });
       }
       setLoading(false);
@@ -121,6 +144,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         isAuthenticated: !!user,
+        isAdmin: user?.role === "admin",
         isAuthModalOpen,
         setIsAuthModalOpen,
         signIn,

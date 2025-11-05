@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import QuoteDetailsModal from "@/components/QuoteDetailsModal";
+import ConsultationDetailsModal from "@/components/ConsultationDetailsModal";
 import { User, Mail, Phone, Calendar, Package } from "lucide-react";
 import { format } from "date-fns";
 
@@ -42,6 +44,8 @@ const Profile = () => {
   const [preConsultations, setPreConsultations] = useState<PreConsultation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "profile");
+  const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
+  const [selectedConsultation, setSelectedConsultation] = useState<PreConsultation | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -202,7 +206,7 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle>Quote Requests</CardTitle>
                   <CardDescription>
-                    Your quote request history
+                    Your quote request history. Once submitted, requests cannot be edited or deleted.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -221,7 +225,11 @@ const Profile = () => {
                   ) : (
                     <div className="space-y-4">
                       {quoteRequests.map((quote) => (
-                        <Card key={quote.id} className="border-border">
+                        <Card 
+                          key={quote.id} 
+                          className="border-border cursor-pointer hover:shadow-medium transition-all duration-300"
+                          onClick={() => setSelectedQuote(quote)}
+                        >
                           <CardContent className="pt-6">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                               <div className="space-y-2 flex-1">
@@ -260,7 +268,7 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle>Pre-Consultations</CardTitle>
                   <CardDescription>
-                    Your consultation request history
+                    Your consultation request history. Once submitted, requests cannot be edited or deleted.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -272,7 +280,11 @@ const Profile = () => {
                   ) : (
                     <div className="space-y-4">
                       {preConsultations.map((consultation) => (
-                        <Card key={consultation.id} className="border-border">
+                        <Card 
+                          key={consultation.id} 
+                          className="border-border cursor-pointer hover:shadow-medium transition-all duration-300"
+                          onClick={() => setSelectedConsultation(consultation)}
+                        >
                           <CardContent className="pt-6">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                               <div className="space-y-2 flex-1">
@@ -301,6 +313,19 @@ const Profile = () => {
           </Tabs>
         </div>
       </div>
+      
+      <QuoteDetailsModal 
+        quote={selectedQuote}
+        isOpen={!!selectedQuote}
+        onClose={() => setSelectedQuote(null)}
+      />
+      
+      <ConsultationDetailsModal 
+        consultation={selectedConsultation}
+        isOpen={!!selectedConsultation}
+        onClose={() => setSelectedConsultation(null)}
+      />
+      
       <Footer />
     </>
   );

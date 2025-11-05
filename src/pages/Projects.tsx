@@ -3,14 +3,29 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import ProjectEditModal from "@/components/ProjectEditModal";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Pencil } from "lucide-react";
 import heroImage from "@/assets/hero-pool.jpg";
 
 const Projects = () => {
+  const { isAdmin } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedProject, setSelectedProject] = useState<{
+    id: number;
+    title: string;
+    location: string;
+    image: string;
+    category: string;
+    client: string;
+    duration: string;
+    description: string;
+  } | null>(null);
+  const [editingProject, setEditingProject] = useState<{
+    id: number;
     title: string;
     location: string;
     image: string;
@@ -106,9 +121,22 @@ const Projects = () => {
               {projects.filter(p => p.category === "villas").map((project) => (
                 <Card
                   key={project.id}
-                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer relative"
                   onClick={() => setSelectedProject(project)}
                 >
+                  {isAdmin && (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProject(project);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
                   <div className="relative h-64 overflow-hidden">
                     <img
                       src={project.image}
@@ -117,7 +145,7 @@ const Projects = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                       <div className="p-6 text-white w-full">
-                        <p className="text-sm font-medium mb-1">View Project</p>
+                        <p className="text-sm font-medium mb-1">{isAdmin ? "Edit" : "View"} Project</p>
                       </div>
                     </div>
                   </div>
@@ -141,9 +169,22 @@ const Projects = () => {
               {projects.filter(p => p.category === "hotels").map((project) => (
                 <Card
                   key={project.id}
-                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer relative"
                   onClick={() => setSelectedProject(project)}
                 >
+                  {isAdmin && (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProject(project);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
                   <div className="relative h-64 overflow-hidden">
                     <img
                       src={project.image}
@@ -152,7 +193,7 @@ const Projects = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                       <div className="p-6 text-white w-full">
-                        <p className="text-sm font-medium mb-1">View Project</p>
+                        <p className="text-sm font-medium mb-1">{isAdmin ? "Edit" : "View"} Project</p>
                       </div>
                     </div>
                   </div>
@@ -176,9 +217,22 @@ const Projects = () => {
               {projects.filter(p => p.category === "parks").map((project) => (
                 <Card
                   key={project.id}
-                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer relative"
                   onClick={() => setSelectedProject(project)}
                 >
+                  {isAdmin && (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProject(project);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
                   <div className="relative h-64 overflow-hidden">
                     <img
                       src={project.image}
@@ -187,7 +241,7 @@ const Projects = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                       <div className="p-6 text-white w-full">
-                        <p className="text-sm font-medium mb-1">View Project</p>
+                        <p className="text-sm font-medium mb-1">{isAdmin ? "Edit" : "View"} Project</p>
                       </div>
                     </div>
                   </div>
@@ -211,9 +265,22 @@ const Projects = () => {
               {projects.filter(p => p.category === "compounds").map((project) => (
                 <Card
                   key={project.id}
-                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer relative"
                   onClick={() => setSelectedProject(project)}
                 >
+                  {isAdmin && (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProject(project);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
                   <div className="relative h-64 overflow-hidden">
                     <img
                       src={project.image}
@@ -222,7 +289,7 @@ const Projects = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                       <div className="p-6 text-white w-full">
-                        <p className="text-sm font-medium mb-1">View Project</p>
+                        <p className="text-sm font-medium mb-1">{isAdmin ? "Edit" : "View"} Project</p>
                       </div>
                     </div>
                   </div>
@@ -246,9 +313,22 @@ const Projects = () => {
               {projects.filter(p => p.category === "malls").map((project) => (
                 <Card
                   key={project.id}
-                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer"
+                  className="group overflow-hidden hover:shadow-strong transition-all duration-300 cursor-pointer relative"
                   onClick={() => setSelectedProject(project)}
                 >
+                  {isAdmin && (
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProject(project);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
                   <div className="relative h-64 overflow-hidden">
                     <img
                       src={project.image}
@@ -257,7 +337,7 @@ const Projects = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                       <div className="p-6 text-white w-full">
-                        <p className="text-sm font-medium mb-1">View Project</p>
+                        <p className="text-sm font-medium mb-1">{isAdmin ? "Edit" : "View"} Project</p>
                       </div>
                     </div>
                   </div>
@@ -329,6 +409,12 @@ const Projects = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <ProjectEditModal
+        project={editingProject}
+        isOpen={!!editingProject}
+        onClose={() => setEditingProject(null)}
+      />
 
       <Footer />
     </div>

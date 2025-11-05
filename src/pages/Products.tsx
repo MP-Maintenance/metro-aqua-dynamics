@@ -3,12 +3,15 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import QuoteModal from "@/components/QuoteModal";
+import ProductEditModal from "@/components/ProductEditModal";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield } from "lucide-react";
+import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil } from "lucide-react";
 
 const Products = () => {
+  const { isAdmin } = useAuth();
   const [selectedProduct, setSelectedProduct] = useState<{
     name: string;
     description: string;
@@ -17,6 +20,12 @@ const Products = () => {
     availability: "available" | "not-available";
   } | null>(null);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<{
+    name: string;
+    description: string;
+    category: string;
+    availability: "available" | "not-available";
+  } | null>(null);
 
   const categories = [
     {
@@ -166,8 +175,26 @@ const Products = () => {
                     {category.products.map((product, idx) => (
                       <Card
                         key={idx}
-                        className="group hover:shadow-medium transition-all duration-300"
+                        className="group hover:shadow-medium transition-all duration-300 relative"
                       >
+                        {isAdmin && (
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingProduct({
+                                name: product.name,
+                                description: product.description,
+                                category: category.name,
+                                availability: idx % 3 === 0 ? "not-available" : "available",
+                              });
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        )}
                         <CardContent className="pt-6">
                           <div 
                             className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center"
@@ -226,6 +253,12 @@ const Products = () => {
           setSelectedProduct(null);
         }}
         product={selectedProduct}
+      />
+
+      <ProductEditModal
+        product={editingProduct}
+        isOpen={!!editingProduct}
+        onClose={() => setEditingProduct(null)}
       />
 
       <Footer />
