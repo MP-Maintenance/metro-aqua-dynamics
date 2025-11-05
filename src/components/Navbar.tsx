@@ -206,10 +206,10 @@ const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => navigate("/quote")}>
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
                     View Account
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/quote")}>
+                  <DropdownMenuItem onClick={() => navigate("/profile?tab=quotes")}>
                     My Quotes
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -318,7 +318,7 @@ const Navbar = () => {
               {isAuthenticated && user ? (
                 <>
                   <Button variant="outline" asChild className="w-full">
-                    <Link to="/quote" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                       View Account
                     </Link>
                   </Button>
