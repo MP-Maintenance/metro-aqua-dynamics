@@ -7,6 +7,8 @@ import WaveBackground from "@/components/WaveBackground";
 import ServiceCard from "@/components/ServiceCard";
 import ScrollArrows from "@/components/ScrollArrows";
 import StatsCounter from "@/components/StatsCounter";
+import ReviewsList from "@/components/ReviewsList";
+import ReviewSubmissionForm from "@/components/ReviewSubmissionForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
@@ -16,10 +18,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
 import maintenanceImg from "@/assets/service-maintenance.jpg";
@@ -52,8 +50,6 @@ const Index = () => {
     tagline: string;
     logo: string;
   } | null>(null);
-
-  const [selectedCountryCode, setSelectedCountryCode] = useState("+974");
 
   const teamMembers = [
     { 
@@ -260,136 +256,82 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* Reviews Section */}
       <section id="contact" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Client Reviews</h2>
             <p className="text-lg text-muted-foreground">
-              Get in touch with our team
+              See what our clients have to say
             </p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Contact Info */}
-            <div className="space-y-6">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-lg bg-primary/10">
-                      <Mail className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">Email</h3>
-                      <a href="mailto:info@metropools.com" className="text-muted-foreground hover:text-primary transition-colors">
-                        info@metropools.com
-                      </a>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-lg bg-primary/10">
-                      <Phone className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">Phone</h3>
-                      <a href="tel:+97444771588" className="text-muted-foreground hover:text-primary transition-colors">
-                        +974 4477 1588
-                      </a>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-lg bg-primary/10">
-                      <MapPin className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">Address</h3>
-                      <a 
-                        href="https://maps.app.goo.gl/hsDcLnTRTu6NYreyk9" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        Building No. 225, Zone 44, Street No. 250<br />
-                        Nuaija Area, P.O. Box: 32163<br />
-                        Doha, Qatar
-                      </a>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Reviews List */}
+            <div>
+              <h3 className="text-2xl font-semibold mb-6">What Our Clients Say</h3>
+              <ReviewsList />
             </div>
 
-            {/* Contact Form */}
-            <Card>
-              <CardContent className="pt-6">
-                <form
-                  action="https://formspree.io/f/YOUR_FORM_ID"
-                  method="POST"
-                  className="space-y-4"
-                >
-                  <div>
-                    <Input
-                      type="text"
-                      name="name"
-                      placeholder="Your Name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      type="email"
-                      name="email"
-                      placeholder="Your Email"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Mobile Number <span className="text-destructive">*</span>
-                    </label>
-                    <div className="flex gap-2">
-                      <Select value={selectedCountryCode} onValueChange={setSelectedCountryCode}>
-                        <SelectTrigger className="w-[140px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {countries.map((country) => (
-                            <SelectItem key={country.code} value={country.code}>
-                              {country.name} {country.code}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="tel"
-                        name="mobile"
-                        placeholder="XXXX XXXX"
-                        required
-                        className="flex-1"
-                      />
+            {/* Review Submission Form */}
+            <div>
+              <ReviewSubmissionForm />
+              
+              {/* Contact Info */}
+              <div className="space-y-4 mt-8">
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-lg bg-primary/10">
+                        <Mail className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold mb-1">Email</h3>
+                        <a href="mailto:info@metropools.com" className="text-muted-foreground hover:text-primary transition-colors">
+                          info@metropools.com
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <Textarea
-                      name="message"
-                      placeholder="Your Message"
-                      rows={5}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Send Message
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-lg bg-primary/10">
+                        <Phone className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold mb-1">Phone</h3>
+                        <a href="tel:+97444771588" className="text-muted-foreground hover:text-primary transition-colors">
+                          +974 4477 1588
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-lg bg-primary/10">
+                        <MapPin className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold mb-1">Address</h3>
+                        <a 
+                          href="https://maps.app.goo.gl/hsDcLnTRTu6NYreyk9" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Building No. 225, Zone 44, Street No. 250<br />
+                          Nuaija Area, P.O. Box: 32163<br />
+                          Doha, Qatar
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
         </div>
       </section>

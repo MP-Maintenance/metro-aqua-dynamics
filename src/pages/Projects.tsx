@@ -25,14 +25,13 @@ const Projects = () => {
     description: string;
   } | null>(null);
   const [editingProject, setEditingProject] = useState<{
-    id: number;
+    id: string;
     title: string;
-    location: string;
-    image: string;
+    cover_image: string;
     category: string;
-    client: string;
-    duration: string;
     description: string;
+    demo_url?: string;
+    repo_url?: string;
   } | null>(null);
 
   const categories = [
@@ -131,7 +130,13 @@ const Projects = () => {
                       className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditingProject(project);
+                        setEditingProject({
+                          id: project.id.toString(),
+                          title: project.title,
+                          cover_image: project.image,
+                          category: project.category,
+                          description: project.description,
+                        });
                       }}
                     >
                       <Pencil className="h-4 w-4" />
@@ -179,7 +184,13 @@ const Projects = () => {
                       className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditingProject(project);
+                        setEditingProject({
+                          id: project.id.toString(),
+                          title: project.title,
+                          cover_image: project.image,
+                          category: project.category,
+                          description: project.description,
+                        });
                       }}
                     >
                       <Pencil className="h-4 w-4" />
@@ -227,7 +238,13 @@ const Projects = () => {
                       className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditingProject(project);
+                        setEditingProject({
+                          id: project.id.toString(),
+                          title: project.title,
+                          cover_image: project.image,
+                          category: project.category,
+                          description: project.description,
+                        });
                       }}
                     >
                       <Pencil className="h-4 w-4" />
@@ -275,7 +292,13 @@ const Projects = () => {
                       className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditingProject(project);
+                        setEditingProject({
+                          id: project.id.toString(),
+                          title: project.title,
+                          cover_image: project.image,
+                          category: project.category,
+                          description: project.description,
+                        });
                       }}
                     >
                       <Pencil className="h-4 w-4" />
@@ -323,7 +346,13 @@ const Projects = () => {
                       className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditingProject(project);
+                        setEditingProject({
+                          id: project.id.toString(),
+                          title: project.title,
+                          cover_image: project.image,
+                          category: project.category,
+                          description: project.description,
+                        });
                       }}
                     >
                       <Pencil className="h-4 w-4" />
@@ -414,6 +443,9 @@ const Projects = () => {
         project={editingProject}
         isOpen={!!editingProject}
         onClose={() => setEditingProject(null)}
+        onSave={() => {
+          // Future: Refresh projects list from DB
+        }}
       />
 
       <Footer />

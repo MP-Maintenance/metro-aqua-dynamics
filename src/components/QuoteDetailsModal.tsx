@@ -1,13 +1,22 @@
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 
 interface QuoteRequest {
   id: string;
   created_at: string;
   items: any;
   status: string;
+}
+
+interface QuoteRequestLine {
+  id: number;
+  product_id: string;
+  product_name: string;
+  quantity: number;
 }
 
 interface QuoteDetailsModalProps {
@@ -17,6 +26,35 @@ interface QuoteDetailsModalProps {
 }
 
 const QuoteDetailsModal = ({ quote, isOpen, onClose }: QuoteDetailsModalProps) => {
+  const [quoteLines, setQuoteLines] = useState<QuoteRequestLine[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchQuoteLines = async () => {
+      if (!quote?.id) return;
+      
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("quote_request_lines")
+          .select("id, product_id, product_name, quantity")
+          .eq("quote_request_id", quote.id)
+          .order("created_at", { ascending: true }) as any;
+
+        if (error) throw error;
+        setQuoteLines(data || []);
+      } catch (error) {
+        console.error("Error fetching quote lines:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchQuoteLines();
+    }
+  }, [quote?.id, isOpen]);
+
   if (!quote) return null;
 
   const getStatusBadge = (status: string) => {
@@ -56,17 +94,21 @@ const QuoteDetailsModal = ({ quote, isOpen, onClose }: QuoteDetailsModalProps) =
 
           <div>
             <h3 className="font-semibold mb-3">Requested Items</h3>
-            {Array.isArray(quote.items) && quote.items.length > 0 ? (
+            {loading ? (
+              <p className="text-muted-foreground">Loading items...</p>
+            ) : quoteLines.length > 0 ? (
               <div className="space-y-3">
-                {quote.items.map((item: any, index: number) => (
-                  <div key={index} className="p-4 border rounded-lg">
-                    <p className="font-medium">{item.name}</p>
-                    {item.category && (
-                      <p className="text-sm text-muted-foreground">Category: {item.category}</p>
-                    )}
-                    {item.description && (
-                      <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                    )}
+                {quoteLines.map((line) => (
+                  <div key={line.id} className="p-4 border rounded-lg">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="font-medium">{line.product_name}</p>
+                        <p className="text-sm text-muted-foreground">Product ID: {line.product_id}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">Qty: {line.quantity}</p>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

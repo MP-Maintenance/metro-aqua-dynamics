@@ -14,6 +14,7 @@ import Products from "./pages/Products";
 import Projects from "./pages/Projects";
 import Quote from "./pages/Quote";
 import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

@@ -21,10 +21,13 @@ const Products = () => {
   } | null>(null);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<{
+    id: string;
     name: string;
     description: string;
     category: string;
-    availability: "available" | "not-available";
+    availability: string;
+    image_url?: string;
+    price?: number;
   } | null>(null);
 
   const categories = [
@@ -185,6 +188,7 @@ const Products = () => {
                             onClick={(e) => {
                               e.stopPropagation();
                               setEditingProduct({
+                                id: `${category.id}-${idx}`, // Temporary ID until connected to DB
                                 name: product.name,
                                 description: product.description,
                                 category: category.name,
@@ -259,6 +263,9 @@ const Products = () => {
         product={editingProduct}
         isOpen={!!editingProduct}
         onClose={() => setEditingProduct(null)}
+        onSave={() => {
+          // Future: Refresh products list from DB
+        }}
       />
 
       <Footer />

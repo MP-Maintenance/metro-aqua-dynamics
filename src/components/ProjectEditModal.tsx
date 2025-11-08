@@ -1,43 +1,82 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Project {
-  id: number;
+  id: string;
   title: string;
-  location: string;
-  image: string;
+  cover_image: string;
   category: string;
-  client: string;
-  duration: string;
   description: string;
+  demo_url?: string;
+  repo_url?: string;
 }
 
 interface ProjectEditModalProps {
   project: Project | null;
   isOpen: boolean;
   onClose: () => void;
+  onSave?: () => void;
 }
 
-const ProjectEditModal = ({ project, isOpen, onClose }: ProjectEditModalProps) => {
+const ProjectEditModal = ({ project, isOpen, onClose, onSave }: ProjectEditModalProps) => {
   const [formData, setFormData] = useState({
-    title: project?.title || "",
-    location: project?.location || "",
-    image: project?.image || "",
-    category: project?.category || "",
-    client: project?.client || "",
-    duration: project?.duration || "",
-    description: project?.description || "",
+    title: "",
+    cover_image: "",
+    category: "",
+    description: "",
+    demo_url: "",
+    repo_url: "",
   });
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
-    // TODO: Connect to Supabase to save changes
-    toast.success("Changes saved successfully! (Demo mode - not yet connected to database)");
-    onClose();
+  useEffect(() => {
+    if (project) {
+      setFormData({
+        title: project.title || "",
+        cover_image: project.cover_image || "",
+        category: project.category || "",
+        description: project.description || "",
+        demo_url: project.demo_url || "",
+        repo_url: project.repo_url || "",
+      });
+    }
+  }, [project]);
+
+  const handleSave = async () => {
+    if (!project?.id) return;
+    
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("projects")
+        .update({
+          title: formData.title,
+          cover_image: formData.cover_image,
+          category: formData.category,
+          description: formData.description,
+          demo_url: formData.demo_url || null,
+          repo_url: formData.repo_url || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", project.id) as any;
+
+      if (error) throw error;
+
+      toast.success("Project updated successfully!");
+      onSave?.();
+      onClose();
+    } catch (error: any) {
+      console.error("Error updating project:", error);
+      toast.error(error.message || "Failed to update project");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!project) return null;
@@ -63,58 +102,46 @@ const ProjectEditModal = ({ project, isOpen, onClose }: ProjectEditModalProps) =
             />
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder="Enter location"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="client">Client</Label>
-              <Input
-                id="client"
-                value={formData.client}
-                onChange={(e) => setFormData({ ...formData, client: e.target.value })}
-                placeholder="Enter client name"
-              />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="category">Category</Label>
-              <Input
-                id="category"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                placeholder="villas, hotels, parks, etc."
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="duration">Duration</Label>
-              <Input
-                id="duration"
-                value={formData.duration}
-                onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                placeholder="e.g., 3 months"
-              />
-            </div>
+          <div>
+            <Label htmlFor="category">Category</Label>
+            <Input
+              id="category"
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              placeholder="e.g., villas, hotels, parks"
+            />
           </div>
 
           <div>
-            <Label htmlFor="image">Image URL</Label>
+            <Label htmlFor="cover_image">Cover Image URL</Label>
             <Input
-              id="image"
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+              id="cover_image"
+              value={formData.cover_image}
+              onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
               placeholder="Enter image URL"
             />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="demo_url">Demo URL (Optional)</Label>
+              <Input
+                id="demo_url"
+                value={formData.demo_url}
+                onChange={(e) => setFormData({ ...formData, demo_url: e.target.value })}
+                placeholder="https://..."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="repo_url">Repository URL (Optional)</Label>
+              <Input
+                id="repo_url"
+                value={formData.repo_url}
+                onChange={(e) => setFormData({ ...formData, repo_url: e.target.value })}
+                placeholder="https://..."
+              />
+            </div>
           </div>
 
           <div>
@@ -129,11 +156,11 @@ const ProjectEditModal = ({ project, isOpen, onClose }: ProjectEditModalProps) =
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={onClose} disabled={saving}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              Save Changes
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>

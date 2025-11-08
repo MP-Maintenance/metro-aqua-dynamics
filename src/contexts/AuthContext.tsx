@@ -51,16 +51,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         if (session?.user) {
-          const role = await fetchUserProfile(session.user.id);
-          setUser({
-            id: session.user.id,
-            name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "",
-            email: session.user.email || "",
-            role,
-          });
+          // Defer async Supabase calls to prevent deadlock
+          setTimeout(() => {
+            fetchUserProfile(session.user.id).then((role) => {
+              setUser({
+                id: session.user.id,
+                name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "",
+                email: session.user.email || "",
+                role,
+              });
+            });
+          }, 0);
         } else {
           setUser(null);
         }
