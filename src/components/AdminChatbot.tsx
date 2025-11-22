@@ -23,8 +23,11 @@ const AdminChatbot = () => {
   const [isListening, setIsListening] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [wakeWordActive, setWakeWordActive] = useState(false);
+  const [detectedLanguage, setDetectedLanguage] = useState<string>('en-US');
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const wakeWordRecognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const { toast } = useToast();
 
@@ -35,35 +38,184 @@ const AdminChatbot = () => {
     }
   }, []);
 
+  // Detect language from speech recognition results
+  const detectLanguageFromResults = (result: any) => {
+    const transcript = result[0].transcript.toLowerCase();
+    
+    // Simple language detection based on common words/patterns
+    const arabicPattern = /[\u0600-\u06FF]/;
+    const filipinoKeywords = ['kumusta', 'salamat', 'magandang', 'paki', 'ano', 'saan'];
+    
+    if (arabicPattern.test(transcript)) {
+      setDetectedLanguage('ar-SA');
+      if (recognitionRef.current) recognitionRef.current.lang = 'ar-SA';
+    } else if (filipinoKeywords.some(word => transcript.includes(word))) {
+      setDetectedLanguage('fil-PH');
+      if (recognitionRef.current) recognitionRef.current.lang = 'fil-PH';
+    } else {
+      setDetectedLanguage('en-US');
+      if (recognitionRef.current) recognitionRef.current.lang = 'en-US';
+    }
+  };
+
+  // Handle voice commands
+  const handleVoiceCommand = (transcript: string): boolean => {
+    const lower = transcript.toLowerCase();
+    let command = '';
+    
+    // Product commands
+    if (lower.includes('show') && (lower.includes('product') || lower.includes('products'))) {
+      command = "Show me all products in the system";
+    }
+    // Review commands
+    else if ((lower.includes('list') || lower.includes('show')) && lower.includes('review')) {
+      const status = lower.includes('pending') ? 'pending' : 'all';
+      command = `Show me ${status} reviews`;
+    }
+    // Stats commands
+    else if (lower.includes('stat') || lower.includes('statistic') || lower.includes('analytics')) {
+      command = "Give me system statistics and analytics";
+    }
+    // User commands
+    else if (lower.includes('user') && (lower.includes('list') || lower.includes('show'))) {
+      command = "Show me all users";
+    }
+    // Quote commands
+    else if (lower.includes('quote') && (lower.includes('list') || lower.includes('show'))) {
+      command = "Show me all quote requests";
+    }
+    
+    if (command) {
+      setInput(command);
+      // Use setTimeout to ensure state updates before sending
+      setTimeout(() => {
+        const sendButton = document.querySelector('[data-send-button]') as HTMLButtonElement;
+        if (sendButton) sendButton.click();
+      }, 100);
+      return true;
+    }
+    
+    return false;
+  };
+
+  // Toggle wake word listening
+  const toggleWakeWord = () => {
+    if (!wakeWordRecognitionRef.current) {
+      toast({
+        title: "Wake word not supported",
+        description: "Your browser doesn't support wake word detection.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (wakeWordActive) {
+      wakeWordRecognitionRef.current.stop();
+      setWakeWordActive(false);
+      toast({
+        title: "Wake word disabled",
+        description: "Say 'Hey Tinik' activation is now off.",
+      });
+    } else {
+      try {
+        wakeWordRecognitionRef.current.start();
+        setWakeWordActive(true);
+        toast({
+          title: "Wake word enabled",
+          description: "Say 'Hey Tinik' to activate the assistant.",
+        });
+      } catch (error) {
+        console.error('Error starting wake word recognition:', error);
+        toast({
+          title: "Wake word error",
+          description: "Could not start wake word detection.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       
       if (SpeechRecognition) {
+        // Main recognition for conversation
         recognitionRef.current = new SpeechRecognition();
-        recognitionRef.current.continuous = false;
-        recognitionRef.current.interimResults = false;
-        recognitionRef.current.lang = 'en-US';
+        recognitionRef.current.continuous = true; // Enable continuous listening
+        recognitionRef.current.interimResults = true; // Get interim results for better VAD
+        recognitionRef.current.lang = detectedLanguage;
+        recognitionRef.current.maxAlternatives = 3; // Get multiple alternatives for language detection
 
         recognitionRef.current.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
-          setInput(transcript);
-          setIsListening(false);
+          const lastResult = event.results[event.results.length - 1];
+          
+          // Voice Activity Detection - only process if confidence is high enough
+          if (lastResult.isFinal && lastResult[0].confidence > 0.6) {
+            const transcript = lastResult[0].transcript.trim();
+            
+            // Detect language from alternatives if available
+            detectLanguageFromResults(event.results[event.results.length - 1]);
+            
+            // Check for voice commands
+            if (handleVoiceCommand(transcript)) {
+              return; // Command handled, don't add to input
+            }
+            
+            setInput(transcript);
+            setIsListening(false);
+          }
         };
 
         recognitionRef.current.onerror = (event: any) => {
           console.error('Speech recognition error:', event.error);
-          setIsListening(false);
-          toast({
-            title: "Voice input error",
-            description: "Could not capture your voice. Please try again.",
-            variant: "destructive",
-          });
+          if (event.error !== 'no-speech' && event.error !== 'aborted') {
+            setIsListening(false);
+            toast({
+              title: "Voice input error",
+              description: "Could not capture your voice. Please try again.",
+              variant: "destructive",
+            });
+          }
         };
 
         recognitionRef.current.onend = () => {
           setIsListening(false);
+        };
+
+        // Wake word recognition
+        wakeWordRecognitionRef.current = new SpeechRecognition();
+        wakeWordRecognitionRef.current.continuous = true;
+        wakeWordRecognitionRef.current.interimResults = false;
+        wakeWordRecognitionRef.current.lang = 'en-US';
+
+        wakeWordRecognitionRef.current.onresult = (event: any) => {
+          const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+          
+          if (transcript.includes('hey tinik') || transcript.includes('hey tinek')) {
+            console.log('Wake word detected!');
+            setIsOpen(true);
+            toast({
+              title: "Tinik activated",
+              description: "How can I help you?",
+            });
+            // Start listening for command
+            if (recognitionRef.current && !isListening) {
+              try {
+                recognitionRef.current.start();
+                setIsListening(true);
+              } catch (e) {
+                console.error('Error starting recognition after wake word:', e);
+              }
+            }
+          }
+        };
+
+        wakeWordRecognitionRef.current.onerror = (event: any) => {
+          if (event.error !== 'no-speech' && event.error !== 'aborted') {
+            console.error('Wake word recognition error:', event.error);
+          }
         };
       }
     }
@@ -72,8 +224,11 @@ const AdminChatbot = () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+      if (wakeWordRecognitionRef.current) {
+        wakeWordRecognitionRef.current.stop();
+      }
     };
-  }, [toast]);
+  }, [toast, detectedLanguage]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -330,10 +485,34 @@ const AdminChatbot = () => {
               }}
             />
           </div>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="wake-word-toggle" className="text-xs text-muted-foreground cursor-pointer">
+              Wake Word
+            </Label>
+            <Switch
+              id="wake-word-toggle"
+              checked={wakeWordActive}
+              onCheckedChange={toggleWakeWord}
+            />
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between px-1">
           {isSpeaking && (
             <div className="flex items-center gap-1 text-xs text-primary">
               <Volume2 className="h-3 w-3 animate-pulse" />
               <span>Speaking...</span>
+            </div>
+          )}
+          {wakeWordActive && (
+            <div className="flex items-center gap-1 text-xs text-green-600">
+              <Mic className="h-3 w-3" />
+              <span>Listening for "Hey Tinik"</span>
+            </div>
+          )}
+          {detectedLanguage !== 'en-US' && (
+            <div className="text-xs text-muted-foreground">
+              Language: {detectedLanguage === 'ar-SA' ? 'Arabic' : detectedLanguage === 'fil-PH' ? 'Filipino' : 'English'}
             </div>
           )}
         </div>
@@ -391,12 +570,13 @@ const AdminChatbot = () => {
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
               size="icon"
+              data-send-button
             >
               <Send className="h-4 w-4" />
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            {isListening ? "Speak now..." : "Voice & text input • Supports English, Arabic, and Filipino"}
+            {isListening ? "Speak now..." : wakeWordActive ? "Say 'Hey Tinik' or type • Voice commands: 'show products', 'list reviews', 'give stats'" : "Voice & text input • Supports English, Arabic, and Filipino"}
           </p>
         </div>
       </CardContent>
