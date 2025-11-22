@@ -8,6 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Save } from "lucide-react";
+import { companyDetailsSchema } from "@/features/admin/validation/schemas";
+import { ZodError } from "zod";
 
 interface CompanyDetails {
   id: string;
@@ -75,14 +77,17 @@ const AdminCompany = () => {
 
     setSaving(true);
     try {
+      // Validate input using Zod schema
+      const validatedData = companyDetailsSchema.parse(companyDetails);
+
       const { error } = companyDetails.id
         ? await (supabase as any)
             .from("company_details")
-            .update(companyDetails)
+            .update(validatedData)
             .eq("id", companyDetails.id)
         : await (supabase as any)
             .from("company_details")
-            .insert([companyDetails]);
+            .insert([validatedData]);
 
       if (error) throw error;
 
@@ -92,11 +97,20 @@ const AdminCompany = () => {
       });
       fetchCompanyDetails();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to save company details",
-        variant: "destructive",
-      });
+      if (error instanceof ZodError) {
+        const firstError = error.errors[0];
+        toast({
+          title: "Validation Error",
+          description: firstError.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to save company details",
+          variant: "destructive",
+        });
+      }
     } finally {
       setSaving(false);
     }
