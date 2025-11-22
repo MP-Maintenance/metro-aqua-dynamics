@@ -30,6 +30,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navItems = [
     { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/admin/products", icon: Package, label: "Products" },
+    { path: "/admin/categories", icon: Package, label: "Categories" },
     { path: "/admin/quotes", icon: FileText, label: "Quote Requests" },
     { path: "/admin/consultations", icon: MessageSquare, label: "Pre-Consultations" },
     { path: "/admin/reviews", icon: MessageSquare, label: "Reviews" },

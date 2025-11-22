@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminProducts from "./pages/AdminProducts";
+import AdminCategories from "./pages/AdminCategories";
 import AdminQuotes from "./pages/AdminQuotes";
 import AdminConsultations from "./pages/AdminConsultations";
 import AdminReviews from "./pages/AdminReviews";
@@ -46,14 +47,15 @@ const App = () => (
       <Route path="/quote" element={<Quote />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/admin-login" element={<AdminLogin />} />
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/admin/products" element={<AdminProducts />} />
-      <Route path="/admin/quotes" element={<AdminQuotes />} />
-      <Route path="/admin/consultations" element={<AdminConsultations />} />
-      <Route path="/admin/reviews" element={<AdminReviews />} />
-      <Route path="/admin/company" element={<AdminCompany />} />
-      <Route path="/admin/users" element={<AdminUsers />} />
-      <Route path="/admin/faqs" element={<AdminFAQs />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/admin/quotes" element={<AdminQuotes />} />
+            <Route path="/admin/consultations" element={<AdminConsultations />} />
+            <Route path="/admin/reviews" element={<AdminReviews />} />
+            <Route path="/admin/company" element={<AdminCompany />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/faqs" element={<AdminFAQs />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
               </Routes>
