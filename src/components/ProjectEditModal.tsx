@@ -53,7 +53,7 @@ const ProjectEditModal = ({ project, isOpen, onClose, onSave }: ProjectEditModal
     
     setSaving(true);
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("projects")
         .update({
           title: formData.title,
@@ -64,7 +64,7 @@ const ProjectEditModal = ({ project, isOpen, onClose, onSave }: ProjectEditModal
           repo_url: formData.repo_url || null,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", project.id) as any;
+        .eq("id", project.id);
 
       if (error) throw error;
 
