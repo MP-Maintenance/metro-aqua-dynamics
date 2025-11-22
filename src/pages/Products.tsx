@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil, Package, Search, SlidersHorizontal, Eye, GitCompare, X, Check } from "lucide-react";
+import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil, Package, Search, SlidersHorizontal, Eye, GitCompare, X, Check, Grid3x3, List } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -54,6 +54,13 @@ const Products = () => {
   const [comparisonProducts, setComparisonProducts] = useState<Product[]>([]);
   const [showComparison, setShowComparison] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  
+  // View toggle state
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  
+  // Recommendations state
+  const [recommendations, setRecommendations] = useState<Product[]>([]);
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
 
   // Icon mapping for categories
   const iconMap: { [key: string]: any } = {
@@ -184,6 +191,55 @@ const Products = () => {
     setComparisonProducts([]);
     setShowComparison(false);
   };
+  
+  // Fetch AI recommendations
+  const fetchRecommendations = async (categorySlug: string) => {
+    if (loadingRecommendations) return;
+    
+    setLoadingRecommendations(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('product-recommendations', {
+        body: { 
+          categorySlug,
+          currentProducts: products.filter(p => p.category === categorySlug).map(p => p.name)
+        }
+      });
+
+      if (error) throw error;
+      
+      // Match recommended product names to actual products
+      if (data?.recommendations) {
+        const recommendedProducts = data.recommendations
+          .map((rec: any) => {
+            return products.find(p => 
+              p.name.toLowerCase().includes(rec.productName.toLowerCase()) ||
+              rec.productName.toLowerCase().includes(p.name.toLowerCase())
+            );
+          })
+          .filter((p: Product | undefined): p is Product => p !== undefined)
+          .slice(0, 4);
+        
+        setRecommendations(recommendedProducts);
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch recommendations:', error);
+      // Fallback to random products from different categories
+      const otherProducts = products.filter(p => p.category !== categorySlug);
+      const random = otherProducts.sort(() => Math.random() - 0.5).slice(0, 4);
+      setRecommendations(random);
+    } finally {
+      setLoadingRecommendations(false);
+    }
+  };
+
+  // Fetch recommendations when category changes
+  useEffect(() => {
+    if (selectedCategory !== "all" && products.length > 0) {
+      fetchRecommendations(selectedCategory);
+    } else {
+      setRecommendations([]);
+    }
+  }, [selectedCategory, products]);
 
   // Availability badge helper
   const getAvailabilityBadge = (availability: string | null) => {
@@ -232,6 +288,28 @@ const Products = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              {/* View Toggle */}
+              <div className="flex gap-1 border rounded-lg p-1 bg-background">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  className="gap-2"
+                >
+                  <Grid3x3 className="h-4 w-4" />
+                  Grid
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="gap-2"
+                >
+                  <List className="h-4 w-4" />
+                  List
+                </Button>
+              </div>
+
               {/* Category Filter */}
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="w-full sm:w-48 bg-background z-50">
@@ -311,11 +389,16 @@ const Products = () => {
                       <h2 className="text-3xl font-bold">{category.name}</h2>
                       <span className="text-muted-foreground">({category.products.length})</span>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className={viewMode === "grid" 
+                      ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                      : "space-y-4"
+                    }>
                       {category.products.map((product) => (
                         <Card
                           key={product.id}
-                          className="group hover:shadow-medium transition-all duration-300 relative"
+                          className={`group hover:shadow-medium transition-all duration-300 relative ${
+                            viewMode === "list" ? "flex flex-row" : ""
+                          }`}
                         >
                           {/* Admin Edit Button */}
                           {isAdmin && (
@@ -343,53 +426,101 @@ const Products = () => {
                             </div>
                           </div>
 
-                          <CardContent className="pt-6">
-                            {product.image_url ? (
-                              <img
-                                src={product.image_url}
-                                alt={product.name}
-                                className="h-48 w-full object-cover rounded-lg mb-4"
-                              />
-                            ) : (
-                              <div className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center">
-                                <Icon className="w-16 h-16 text-primary/30" />
+                          {viewMode === "grid" ? (
+                            <CardContent className="pt-6">
+                              {product.image_url ? (
+                                <img
+                                  src={product.image_url}
+                                  alt={product.name}
+                                  className="h-48 w-full object-cover rounded-lg mb-4"
+                                />
+                              ) : (
+                                <div className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center">
+                                  <Icon className="w-16 h-16 text-primary/30" />
+                                </div>
+                              )}
+                              
+                              {/* Availability Badge */}
+                              <div className="mb-2">
+                                {getAvailabilityBadge(product.availability)}
                               </div>
-                            )}
-                            
-                            {/* Availability Badge */}
-                            <div className="mb-2">
-                              {getAvailabilityBadge(product.availability)}
-                            </div>
 
-                            <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                            <p className="text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
-                            {product.price && (
-                              <p className="text-primary font-semibold mb-4">
-                                ${product.price.toFixed(2)}
-                              </p>
-                            )}
-                            
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                className="flex-1"
-                                onClick={() => setQuickViewProduct(product)}
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                Quick View
-                              </Button>
-                              <Button
-                                variant="default"
-                                className="flex-1"
-                                onClick={() => {
-                                  setSelectedProduct(product);
-                                  setIsQuoteModalOpen(true);
-                                }}
-                              >
-                                Get Quote
-                              </Button>
-                            </div>
-                          </CardContent>
+                              <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
+                              <p className="text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
+                              {product.price && (
+                                <p className="text-primary font-semibold mb-4">
+                                  ${product.price.toFixed(2)}
+                                </p>
+                              )}
+                              
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  className="flex-1"
+                                  onClick={() => setQuickViewProduct(product)}
+                                >
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  Quick View
+                                </Button>
+                                <Button
+                                  variant="default"
+                                  className="flex-1"
+                                  onClick={() => {
+                                    setSelectedProduct(product);
+                                    setIsQuoteModalOpen(true);
+                                  }}
+                                >
+                                  Get Quote
+                                </Button>
+                              </div>
+                            </CardContent>
+                          ) : (
+                            // List View
+                            <>
+                              {product.image_url ? (
+                                <img
+                                  src={product.image_url}
+                                  alt={product.name}
+                                  className="w-48 h-48 object-cover rounded-l-lg"
+                                />
+                              ) : (
+                                <div className="w-48 h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-l-lg flex items-center justify-center flex-shrink-0">
+                                  <Icon className="w-16 h-16 text-primary/30" />
+                                </div>
+                              )}
+                              <CardContent className="flex-1 p-6 flex flex-col justify-between">
+                                <div>
+                                  <div className="mb-2">
+                                    {getAvailabilityBadge(product.availability)}
+                                  </div>
+                                  <h3 className="font-semibold text-xl mb-2">{product.name}</h3>
+                                  <p className="text-muted-foreground mb-4">{product.description}</p>
+                                  {product.price && (
+                                    <p className="text-primary font-bold text-xl mb-4">
+                                      ${product.price.toFixed(2)}
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => setQuickViewProduct(product)}
+                                  >
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    Quick View
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      setSelectedProduct(product);
+                                      setIsQuoteModalOpen(true);
+                                    }}
+                                  >
+                                    Get Quote
+                                  </Button>
+                                </div>
+                              </CardContent>
+                            </>
+                          )}
                         </Card>
                       ))}
                     </div>
@@ -400,6 +531,72 @@ const Products = () => {
           )}
         </div>
       </section>
+
+      {/* AI Recommendations Section */}
+      {recommendations.length > 0 && selectedCategory !== "all" && (
+        <section className="py-12 bg-muted/50">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold">Recommended for You</h2>
+                <p className="text-muted-foreground">Based on your browsing in {categories.find(c => c.slug === selectedCategory)?.name}</p>
+              </div>
+              <Badge variant="secondary" className="gap-2">
+                <Sparkles className="h-4 w-4" />
+                AI Powered
+              </Badge>
+            </div>
+            
+            {loadingRecommendations ? (
+              <div className="flex items-center justify-center h-48">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {recommendations.map((product) => {
+                  const categoryData = categories.find(c => c.slug === product.category);
+                  const Icon = iconMap[categoryData?.icon || ""] || Package;
+                  
+                  return (
+                    <Card key={product.id} className="group hover:shadow-medium transition-all duration-300">
+                      <CardContent className="pt-6">
+                        {product.image_url ? (
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="h-40 w-full object-cover rounded-lg mb-4"
+                          />
+                        ) : (
+                          <div className="h-40 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center">
+                            <Icon className="w-12 h-12 text-primary/30" />
+                          </div>
+                        )}
+                        <div className="mb-2">
+                          {getAvailabilityBadge(product.availability)}
+                        </div>
+                        <h3 className="font-semibold mb-2">{product.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{product.description}</p>
+                        {product.price && (
+                          <p className="text-primary font-semibold mb-3">${product.price.toFixed(2)}</p>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => setQuickViewProduct(product)}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-primary via-accent to-secondary text-white">
