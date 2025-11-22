@@ -89,10 +89,10 @@ const Products = () => {
     fetchData();
   }, []);
 
-  // Group products by category
+  // Group products by category slug (products.category matches categories.slug)
   const groupedProducts = categories.map((category) => ({
     ...category,
-    products: products.filter((p) => p.category === category.name),
+    products: products.filter((p) => p.category === category.slug),
   }));
 
   return (
