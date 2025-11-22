@@ -12,6 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { faqSchema } from "@/features/admin/validation/schemas";
+import { ZodError } from "zod";
 
 interface FAQ {
   id: string;
@@ -73,9 +75,12 @@ const AdminFAQs = () => {
 
   const handleCreate = async () => {
     try {
+      // Validate input with Zod
+      const validatedFaq = faqSchema.parse(formData);
+
       const { error } = await (supabase as any)
         .from("faqs")
-        .insert([formData]);
+        .insert([validatedFaq]);
 
       if (error) throw error;
 
@@ -87,11 +92,19 @@ const AdminFAQs = () => {
       setFormData({ question: "", answer: "", category: "", is_published: true });
       fetchFaqs();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create FAQ",
-        variant: "destructive",
-      });
+      if (error instanceof ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to create FAQ",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -99,9 +112,12 @@ const AdminFAQs = () => {
     if (!editingFaq) return;
 
     try {
+      // Validate input with Zod
+      const validatedFaq = faqSchema.parse(formData);
+
       const { error } = await (supabase as any)
         .from("faqs")
-        .update(formData)
+        .update(validatedFaq)
         .eq("id", editingFaq.id);
 
       if (error) throw error;
@@ -113,11 +129,19 @@ const AdminFAQs = () => {
       setEditingFaq(null);
       fetchFaqs();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update FAQ",
-        variant: "destructive",
-      });
+      if (error instanceof ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to update FAQ",
+          variant: "destructive",
+        });
+      }
     }
   };
 
