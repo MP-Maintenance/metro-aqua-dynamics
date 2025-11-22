@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      auth_event_logs: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: number
+          ip_address: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: never
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: never
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string | null

@@ -7,6 +7,46 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 10;
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const userLimit = rateLimitMap.get(userId);
+
+  if (!userLimit || now > userLimit.resetTime) {
+    rateLimitMap.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+
+  if (userLimit.count >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+
+  userLimit.count++;
+  return true;
+}
+
+async function logSecurityEvent(
+  supabase: any,
+  eventType: string,
+  userId?: string,
+  ipAddress?: string,
+  details?: string
+) {
+  try {
+    await supabase.from('auth_event_logs').insert({
+      user_id: userId || null,
+      event_type: eventType,
+      ip_address: ipAddress || 'unknown',
+    });
+  } catch (error) {
+    console.error('Failed to log security event:', error);
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -37,8 +77,18 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
+      await logSecurityEvent(supabase, 'unauthorized_access', undefined, req.headers.get('x-forwarded-for') || 'unknown');
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Check rate limiting
+    if (!checkRateLimit(user.id)) {
+      await logSecurityEvent(supabase, 'rate_limit_exceeded', user.id, req.headers.get('x-forwarded-for') || 'unknown');
+      return new Response(JSON.stringify({ error: 'Too many requests. Please try again later.' }), {
+        status: 429,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -48,6 +98,7 @@ serve(async (req) => {
       .rpc('has_role', { _user_id: user.id, _role: 'admin' });
 
     if (roleError || !isAdmin) {
+      await logSecurityEvent(supabase, 'admin_access_denied', user.id, req.headers.get('x-forwarded-for') || 'unknown');
       return new Response(JSON.stringify({ error: 'Admin access required' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

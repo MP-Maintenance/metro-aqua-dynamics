@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn, Shield } from "lucide-react";
 import { z } from "zod";
+import { RateLimiter, logSecurityEvent } from "@/lib/security";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -20,8 +21,26 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [rateLimiter] = useState(() => new RateLimiter("admin_login"));
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [blockTimeRemaining, setBlockTimeRemaining] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Check rate limit status on mount and update timer
+  useEffect(() => {
+    const checkRateLimit = () => {
+      const blocked = rateLimiter.isBlocked();
+      setIsBlocked(blocked);
+      if (blocked) {
+        setBlockTimeRemaining(rateLimiter.getRemainingBlockTime());
+      }
+    };
+
+    checkRateLimit();
+    const interval = setInterval(checkRateLimit, 1000);
+    return () => clearInterval(interval);
+  }, [rateLimiter]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -46,6 +65,24 @@ const AdminLogin = () => {
     e.preventDefault();
     setErrors({});
 
+    // Check rate limiting
+    if (rateLimiter.isBlocked()) {
+      const remaining = rateLimiter.getRemainingBlockTime();
+      toast({
+        title: "Too Many Attempts",
+        description: `Please wait ${Math.ceil(remaining / 60)} minutes before trying again.`,
+        variant: "destructive",
+      });
+      
+      await logSecurityEvent({
+        eventType: 'login_blocked',
+        email,
+        details: `Blocked for ${remaining} seconds`,
+      });
+      
+      return;
+    }
+
     const result = loginSchema.safeParse({ email, password });
     if (!result.success) {
       const fieldErrors: { email?: string; password?: string } = {};
@@ -66,20 +103,44 @@ const AdminLogin = () => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        rateLimiter.recordAttempt();
+        
+        await logSecurityEvent({
+          eventType: 'login_failed',
+          email,
+          details: error.message,
+        });
+        
+        throw error;
+      }
 
       if (data.session) {
-        // Check if user is admin
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", data.session.user.id)
-          .single();
+        // Check if user is admin using secure has_role function
+        const { data: isAdmin } = await supabase
+          .rpc('has_role', { _user_id: data.session.user.id, _role: 'admin' });
 
-        if (profile?.role !== "admin") {
+        if (!isAdmin) {
           await supabase.auth.signOut();
+          
+          await logSecurityEvent({
+            eventType: 'admin_access_denied',
+            userId: data.session.user.id,
+            email,
+            details: 'Non-admin user attempted to access admin panel',
+          });
+          
           throw new Error("Access denied. Admin privileges required.");
         }
+
+        // Success - reset rate limiter and log event
+        rateLimiter.reset();
+        
+        await logSecurityEvent({
+          eventType: 'login_success',
+          userId: data.session.user.id,
+          email,
+        });
 
         toast({
           title: "Login Successful",
@@ -157,10 +218,22 @@ const AdminLogin = () => {
               )}
             </div>
 
+            {isBlocked && (
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-2">
+                <Shield className="h-5 w-5 text-destructive mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-destructive">Account Temporarily Locked</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Too many failed attempts. Please wait {Math.ceil(blockTimeRemaining / 60)} minute(s) before trying again.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <Button
               type="submit"
               className="w-full"
-              disabled={isLoading}
+              disabled={isLoading || isBlocked}
             >
               {isLoading ? (
                 <>

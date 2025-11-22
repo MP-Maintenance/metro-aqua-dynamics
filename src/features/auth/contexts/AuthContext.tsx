@@ -2,6 +2,7 @@ import { createContext, useContext, useState, ReactNode, useEffect } from "react
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import { logSecurityEvent } from "@/lib/security";
 
 interface User {
   id: string;
@@ -93,12 +94,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        await logSecurityEvent({
+          eventType: 'login_failed',
+          email,
+          details: error.message,
+        });
+        throw error;
+      }
+
+      if (data.session) {
+        await logSecurityEvent({
+          eventType: 'login_success',
+          userId: data.session.user.id,
+          email,
+        });
+      }
 
       toast.success("Signed in successfully!");
       setIsAuthModalOpen(false);
@@ -110,7 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (name: string, email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -121,7 +137,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        await logSecurityEvent({
+          eventType: 'signup_failed',
+          email,
+          details: error.message,
+        });
+        throw error;
+      }
+
+      if (data.user) {
+        await logSecurityEvent({
+          eventType: 'signup_success',
+          userId: data.user.id,
+          email,
+        });
+      }
 
       toast.success("Account created! Please check your email to verify your account.");
       setIsAuthModalOpen(false);
@@ -133,9 +164,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     try {
+      const currentUserId = user?.id;
+      const currentEmail = user?.email;
+
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
+      if (currentUserId) {
+        await logSecurityEvent({
+          eventType: 'logout',
+          userId: currentUserId,
+          email: currentEmail,
+        });
+      }
+
       setUser(null);
       setSession(null);
       toast.success("Signed out successfully!");
