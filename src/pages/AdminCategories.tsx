@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Search, Plus, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { categorySchema } from "@/features/admin/validation/schemas";
+import { ZodError } from "zod";
 
 interface Category {
   id: string;
@@ -89,23 +91,17 @@ const AdminCategories = () => {
   };
 
   const handleCreate = async () => {
-    if (!formData.name || !formData.slug) {
-      toast({
-        title: "Validation Error",
-        description: "Name and slug are required",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
+      // Validate input using Zod schema
+      const validatedData = categorySchema.parse({
+        name: formData.name,
+        slug: formData.slug,
+        icon: formData.icon || undefined,
+      });
+
       const { error } = await (supabase as any)
         .from("categories")
-        .insert([{
-          name: formData.name,
-          slug: formData.slug,
-          icon: formData.icon || null,
-        }]);
+        .insert([validatedData]);
 
       if (error) throw error;
 
@@ -117,32 +113,37 @@ const AdminCategories = () => {
       setFormData({ name: "", slug: "", icon: "" });
       fetchCategories();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create category",
-        variant: "destructive",
-      });
+      if (error instanceof ZodError) {
+        const firstError = error.errors[0];
+        toast({
+          title: "Validation Error",
+          description: firstError.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to create category",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const handleUpdate = async () => {
-    if (!editingCategory || !formData.name || !formData.slug) {
-      toast({
-        title: "Validation Error",
-        description: "Name and slug are required",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!editingCategory) return;
 
     try {
+      // Validate input using Zod schema
+      const validatedData = categorySchema.parse({
+        name: formData.name,
+        slug: formData.slug,
+        icon: formData.icon || undefined,
+      });
+
       const { error } = await (supabase as any)
         .from("categories")
-        .update({
-          name: formData.name,
-          slug: formData.slug,
-          icon: formData.icon || null,
-        })
+        .update(validatedData)
         .eq("id", editingCategory.id);
 
       if (error) throw error;
@@ -154,11 +155,20 @@ const AdminCategories = () => {
       setEditingCategory(null);
       fetchCategories();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update category",
-        variant: "destructive",
-      });
+      if (error instanceof ZodError) {
+        const firstError = error.errors[0];
+        toast({
+          title: "Validation Error",
+          description: firstError.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to update category",
+          variant: "destructive",
+        });
+      }
     }
   };
 
