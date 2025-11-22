@@ -7,10 +7,13 @@ import ProductEditModal from "@/components/ProductEditModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
-import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil, Package } from "lucide-react";
+import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil, Package, Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Product {
   id: string;
@@ -20,6 +23,7 @@ interface Product {
   availability: string | null;
   image_url: string | null;
   price: number | null;
+  created_at: string;
 }
 
 interface Category {
@@ -38,6 +42,11 @@ const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Filter and sort states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("newest");
 
   // Icon mapping for categories
   const iconMap: { [key: string]: any } = {
@@ -89,10 +98,55 @@ const Products = () => {
     fetchData();
   }, []);
 
+  // Filter and sort products
+  const getFilteredAndSortedProducts = () => {
+    let filtered = [...products];
+
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply category filter
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((product) => product.category === selectedCategory);
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case "name-asc":
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "name-desc":
+        filtered.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "price-asc":
+        filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+        break;
+      case "price-desc":
+        filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+        break;
+      case "newest":
+        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+      case "oldest":
+        filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        break;
+    }
+
+    return filtered;
+  };
+
+  const filteredProducts = getFilteredAndSortedProducts();
+
   // Group products by category slug (products.category matches categories.slug)
   const groupedProducts = categories.map((category) => ({
     ...category,
-    products: products.filter((p) => p.category === category.slug),
+    products: filteredProducts.filter((p) => p.category === category.slug),
   }));
 
   return (
@@ -112,6 +166,63 @@ const Products = () => {
         </div>
       </section>
 
+      {/* Filters Section */}
+      <section className="py-8 border-b bg-background/95 backdrop-blur sticky top-20 z-40">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            {/* Search Bar */}
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              {/* Category Filter */}
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-full sm:w-48 bg-background z-50">
+                  <Filter className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent className="bg-background z-50">
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.slug}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Sort Dropdown */}
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full sm:w-48 bg-background z-50">
+                  <SlidersHorizontal className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent className="bg-background z-50">
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                  <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+                  <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+                  <SelectItem value="price-asc">Price (Low to High)</SelectItem>
+                  <SelectItem value="price-desc">Price (High to Low)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Results count */}
+          <div className="mt-4 text-sm text-muted-foreground">
+            {filteredProducts.length} {filteredProducts.length === 1 ? "product" : "products"} found
+          </div>
+        </div>
+      </section>
+
       {/* Products Grid */}
       <section className="py-20">
         <div className="container mx-auto px-4">
@@ -119,9 +230,20 @@ const Products = () => {
             <div className="flex items-center justify-center h-64">
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
             </div>
-          ) : groupedProducts.length === 0 ? (
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center text-muted-foreground py-16">
-              <p className="text-xl">No products available at the moment.</p>
+              <p className="text-xl">No products found matching your criteria.</p>
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                  setSortBy("newest");
+                }}
+              >
+                Clear Filters
+              </Button>
             </div>
           ) : (
             <div className="space-y-16">
@@ -137,6 +259,7 @@ const Products = () => {
                         <Icon className="w-6 h-6 text-primary" />
                       </div>
                       <h2 className="text-3xl font-bold">{category.name}</h2>
+                      <span className="text-muted-foreground">({category.products.length})</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {category.products.map((product) => (
