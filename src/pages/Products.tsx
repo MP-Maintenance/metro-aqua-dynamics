@@ -417,12 +417,13 @@ const Products = () => {
                           
                           {/* Comparison Checkbox */}
                           <div className="absolute top-2 left-2 z-10">
-                            <div className="flex items-center gap-2 bg-background/80 backdrop-blur p-2 rounded-lg">
+                            <div className="flex items-center gap-2 bg-background/95 backdrop-blur-sm p-2 rounded-md shadow-sm border border-border">
                               <Checkbox
+                                id={`compare-${product.id}`}
                                 checked={isInComparison(product.id)}
                                 onCheckedChange={() => toggleComparison(product)}
                               />
-                              <span className="text-xs">Compare</span>
+                              <label htmlFor={`compare-${product.id}`} className="text-xs font-medium cursor-pointer">Compare</label>
                             </div>
                           </div>
 
