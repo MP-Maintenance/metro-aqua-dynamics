@@ -8,12 +8,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil, Package, Search, SlidersHorizontal } from "lucide-react";
+import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil, Package, Search, SlidersHorizontal, Eye, GitCompare, X, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Product {
   id: string;
@@ -47,6 +49,11 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("newest");
+  
+  // Comparison and Quick View states
+  const [comparisonProducts, setComparisonProducts] = useState<Product[]>([]);
+  const [showComparison, setShowComparison] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
   // Icon mapping for categories
   const iconMap: { [key: string]: any } = {
@@ -148,6 +155,49 @@ const Products = () => {
     ...category,
     products: filteredProducts.filter((p) => p.category === category.slug),
   }));
+
+  // Comparison handlers
+  const toggleComparison = (product: Product) => {
+    setComparisonProducts((prev) => {
+      const exists = prev.find((p) => p.id === product.id);
+      if (exists) {
+        return prev.filter((p) => p.id !== product.id);
+      } else {
+        if (prev.length >= 4) {
+          toast({
+            title: "Maximum reached",
+            description: "You can compare up to 4 products at a time",
+            variant: "destructive",
+          });
+          return prev;
+        }
+        return [...prev, product];
+      }
+    });
+  };
+
+  const isInComparison = (productId: string) => {
+    return comparisonProducts.some((p) => p.id === productId);
+  };
+
+  const clearComparison = () => {
+    setComparisonProducts([]);
+    setShowComparison(false);
+  };
+
+  // Availability badge helper
+  const getAvailabilityBadge = (availability: string | null) => {
+    switch (availability) {
+      case "available":
+        return <Badge className="bg-green-500 hover:bg-green-600">In Stock</Badge>;
+      case "out_of_stock":
+        return <Badge variant="destructive">Out of Stock</Badge>;
+      case "limited":
+        return <Badge variant="secondary">Limited Stock</Badge>;
+      default:
+        return <Badge>In Stock</Badge>;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background font-['Inter',sans-serif]">
@@ -267,6 +317,7 @@ const Products = () => {
                           key={product.id}
                           className="group hover:shadow-medium transition-all duration-300 relative"
                         >
+                          {/* Admin Edit Button */}
                           {isAdmin && (
                             <Button
                               size="icon"
@@ -280,6 +331,18 @@ const Products = () => {
                               <Pencil className="h-4 w-4" />
                             </Button>
                           )}
+                          
+                          {/* Comparison Checkbox */}
+                          <div className="absolute top-2 left-2 z-10">
+                            <div className="flex items-center gap-2 bg-background/80 backdrop-blur p-2 rounded-lg">
+                              <Checkbox
+                                checked={isInComparison(product.id)}
+                                onCheckedChange={() => toggleComparison(product)}
+                              />
+                              <span className="text-xs">Compare</span>
+                            </div>
+                          </div>
+
                           <CardContent className="pt-6">
                             {product.image_url ? (
                               <img
@@ -292,23 +355,40 @@ const Products = () => {
                                 <Icon className="w-16 h-16 text-primary/30" />
                               </div>
                             )}
+                            
+                            {/* Availability Badge */}
+                            <div className="mb-2">
+                              {getAvailabilityBadge(product.availability)}
+                            </div>
+
                             <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                            <p className="text-muted-foreground mb-4">{product.description}</p>
+                            <p className="text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
                             {product.price && (
                               <p className="text-primary font-semibold mb-4">
                                 ${product.price.toFixed(2)}
                               </p>
                             )}
-                            <Button
-                              variant="outline"
-                              className="w-full"
-                              onClick={() => {
-                                setSelectedProduct(product);
-                                setIsQuoteModalOpen(true);
-                              }}
-                            >
-                              Request Quote
-                            </Button>
+                            
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => setQuickViewProduct(product)}
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                Quick View
+                              </Button>
+                              <Button
+                                variant="default"
+                                className="flex-1"
+                                onClick={() => {
+                                  setSelectedProduct(product);
+                                  setIsQuoteModalOpen(true);
+                                }}
+                              >
+                                Get Quote
+                              </Button>
+                            </div>
                           </CardContent>
                         </Card>
                       ))}
@@ -335,6 +415,218 @@ const Products = () => {
           </Button>
         </div>
       </section>
+
+      {/* Comparison Bar */}
+      {comparisonProducts.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-primary text-primary-foreground p-4 shadow-lg z-50">
+          <div className="container mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <GitCompare className="h-5 w-5" />
+              <span className="font-semibold">
+                {comparisonProducts.length} product{comparisonProducts.length > 1 ? "s" : ""} selected
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => setShowComparison(true)}
+                disabled={comparisonProducts.length < 2}
+              >
+                Compare Now
+              </Button>
+              <Button variant="outline" size="icon" onClick={clearComparison}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Comparison Modal */}
+      <Dialog open={showComparison} onOpenChange={setShowComparison}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Product Comparison</DialogTitle>
+            <DialogDescription>
+              Compare features, prices, and specifications
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="border p-4 bg-muted text-left font-semibold">Feature</th>
+                  {comparisonProducts.map((product) => (
+                    <th key={product.id} className="border p-4 bg-muted">
+                      <div className="flex flex-col items-center gap-2">
+                        {product.image_url ? (
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="w-20 h-20 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-accent/10 rounded flex items-center justify-center">
+                            <Package className="w-8 h-8 text-primary/30" />
+                          </div>
+                        )}
+                        <span className="font-semibold text-sm">{product.name}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleComparison(product)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border p-4 font-medium">Description</td>
+                  {comparisonProducts.map((product) => (
+                    <td key={product.id} className="border p-4 text-center text-sm">
+                      {product.description || "—"}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="border p-4 font-medium">Price</td>
+                  {comparisonProducts.map((product) => (
+                    <td key={product.id} className="border p-4 text-center font-semibold text-primary">
+                      {product.price ? `$${product.price.toFixed(2)}` : "Contact for price"}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="border p-4 font-medium">Availability</td>
+                  {comparisonProducts.map((product) => (
+                    <td key={product.id} className="border p-4 text-center">
+                      {getAvailabilityBadge(product.availability)}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="border p-4 font-medium">Category</td>
+                  {comparisonProducts.map((product) => (
+                    <td key={product.id} className="border p-4 text-center text-sm">
+                      {categories.find((c) => c.slug === product.category)?.name || product.category}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="border p-4 font-medium">Action</td>
+                  {comparisonProducts.map((product) => (
+                    <td key={product.id} className="border p-4 text-center">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setIsQuoteModalOpen(true);
+                          setShowComparison(false);
+                        }}
+                      >
+                        Request Quote
+                      </Button>
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick View Modal */}
+      <Dialog open={!!quickViewProduct} onOpenChange={() => setQuickViewProduct(null)}>
+        <DialogContent className="max-w-3xl">
+          {quickViewProduct && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{quickViewProduct.name}</DialogTitle>
+              </DialogHeader>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  {quickViewProduct.image_url ? (
+                    <img
+                      src={quickViewProduct.image_url}
+                      alt={quickViewProduct.name}
+                      className="w-full h-80 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="w-full h-80 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg flex items-center justify-center">
+                      <Package className="w-24 h-24 text-primary/30" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2">Availability</h4>
+                    {getAvailabilityBadge(quickViewProduct.availability)}
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">Category</h4>
+                    <p className="text-muted-foreground">
+                      {categories.find((c) => c.slug === quickViewProduct.category)?.name || quickViewProduct.category}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">Description</h4>
+                    <p className="text-muted-foreground">
+                      {quickViewProduct.description || "No description available"}
+                    </p>
+                  </div>
+
+                  {quickViewProduct.price && (
+                    <div>
+                      <h4 className="font-semibold mb-2">Price</h4>
+                      <p className="text-2xl font-bold text-primary">
+                        ${quickViewProduct.price.toFixed(2)}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 pt-4">
+                    <Button
+                      className="flex-1"
+                      onClick={() => {
+                        setSelectedProduct(quickViewProduct);
+                        setIsQuoteModalOpen(true);
+                        setQuickViewProduct(null);
+                      }}
+                    >
+                      Request Quote
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => toggleComparison(quickViewProduct)}
+                    >
+                      {isInComparison(quickViewProduct.id) ? (
+                        <>
+                          <Check className="h-4 w-4 mr-2" />
+                          Added
+                        </>
+                      ) : (
+                        <>
+                          <GitCompare className="h-4 w-4 mr-2" />
+                          Compare
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Quote Modal */}
       <QuoteModal
