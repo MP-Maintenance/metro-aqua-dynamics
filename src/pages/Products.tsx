@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Product {
   id: string;
@@ -256,9 +257,10 @@ const Products = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background font-['Inter',sans-serif]">
-      <Navbar />
-      <WhatsAppButton />
+    <TooltipProvider>
+      <div className="min-h-screen bg-background font-['Inter',sans-serif]">
+        <Navbar />
+        <WhatsAppButton />
 
       {/* Hero Section */}
       <section className="pt-32 pb-16 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10">
@@ -443,38 +445,49 @@ const Products = () => {
                                 </p>
                               )}
                               
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <Button
-                                  variant="outline"
-                                  className="flex-1 min-w-[120px]"
-                                  onClick={() => setQuickViewProduct(product)}
-                                >
-                                  <Eye className="h-4 w-4 mr-2" />
-                                  Quick View
-                                </Button>
-                                <Button
-                                  variant="default"
-                                  className="flex-1 min-w-[120px]"
-                                  onClick={() => {
-                                    setSelectedProduct(product);
-                                    setIsQuoteModalOpen(true);
-                                  }}
-                                >
-                                  Get Quote
-                                </Button>
-                                <div className="flex items-center gap-1 ml-1">
-                                  <Checkbox
-                                    id={`compare-${product.id}`}
-                                    checked={isInComparison(product.id)}
-                                    onCheckedChange={() => toggleComparison(product)}
-                                  />
-                                  <label
-                                    htmlFor={`compare-${product.id}`}
-                                    className="text-xs font-medium cursor-pointer"
+                              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+                                <div className="flex gap-2 flex-1">
+                                  <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    size="sm"
+                                    onClick={() => setQuickViewProduct(product)}
                                   >
-                                    Compare
-                                  </label>
+                                    <Eye className="h-4 w-4 sm:mr-2" />
+                                    <span className="hidden sm:inline">Quick View</span>
+                                  </Button>
+                                  <Button
+                                    variant="default"
+                                    className="flex-1"
+                                    size="sm"
+                                    onClick={() => {
+                                      setSelectedProduct(product);
+                                      setIsQuoteModalOpen(true);
+                                    }}
+                                  >
+                                    Get Quote
+                                  </Button>
                                 </div>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="flex items-center gap-1.5 justify-center sm:justify-start px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
+                                      <Checkbox
+                                        id={`compare-${product.id}`}
+                                        checked={isInComparison(product.id)}
+                                        onCheckedChange={() => toggleComparison(product)}
+                                      />
+                                      <label
+                                        htmlFor={`compare-${product.id}`}
+                                        className="text-xs font-medium cursor-pointer whitespace-nowrap"
+                                      >
+                                        Compare
+                                      </label>
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="max-w-xs">
+                                    <p className="text-xs">Select up to 4 products to compare features and prices side-by-side</p>
+                                  </TooltipContent>
+                                </Tooltip>
                               </div>
                             </CardContent>
                           ) : (
@@ -504,15 +517,17 @@ const Products = () => {
                                     </p>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-3 flex-wrap">
+                                <div className="flex flex-wrap items-center gap-2">
                                   <Button
                                     variant="outline"
+                                    size="sm"
                                     onClick={() => setQuickViewProduct(product)}
                                   >
                                     <Eye className="h-4 w-4 mr-2" />
                                     Quick View
                                   </Button>
                                   <Button
+                                    size="sm"
                                     onClick={() => {
                                       setSelectedProduct(product);
                                       setIsQuoteModalOpen(true);
@@ -520,19 +535,26 @@ const Products = () => {
                                   >
                                     Get Quote
                                   </Button>
-                                  <div className="flex items-center gap-1 ml-1">
-                                    <Checkbox
-                                      id={`compare-${product.id}`}
-                                      checked={isInComparison(product.id)}
-                                      onCheckedChange={() => toggleComparison(product)}
-                                    />
-                                    <label
-                                      htmlFor={`compare-${product.id}`}
-                                      className="text-xs font-medium cursor-pointer"
-                                    >
-                                      Compare
-                                    </label>
-                                  </div>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
+                                        <Checkbox
+                                          id={`compare-list-${product.id}`}
+                                          checked={isInComparison(product.id)}
+                                          onCheckedChange={() => toggleComparison(product)}
+                                        />
+                                        <label
+                                          htmlFor={`compare-list-${product.id}`}
+                                          className="text-xs font-medium cursor-pointer whitespace-nowrap"
+                                        >
+                                          Compare
+                                        </label>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="max-w-xs">
+                                      <p className="text-xs">Select up to 4 products to compare features and prices side-by-side</p>
+                                    </TooltipContent>
+                                  </Tooltip>
                                 </div>
                               </CardContent>
                             </>
@@ -860,6 +882,7 @@ const Products = () => {
 
       <Footer />
     </div>
+    </TooltipProvider>
   );
 };
 
