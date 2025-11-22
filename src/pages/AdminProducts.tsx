@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { productSchema } from "@/features/admin/validation/schemas";
+import { ZodError } from "zod";
 
 interface Product {
   id: string;
@@ -67,9 +69,12 @@ const AdminProducts = () => {
 
   const handleCreate = async () => {
     try {
+      // Validate input with Zod
+      const validatedProduct = productSchema.parse(newProduct);
+
       const { error } = await (supabase as any)
         .from("products")
-        .insert([newProduct]);
+        .insert([validatedProduct]);
 
       if (error) throw error;
 
@@ -88,11 +93,19 @@ const AdminProducts = () => {
       });
       fetchProducts();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create product",
-        variant: "destructive",
-      });
+      if (error instanceof ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to create product",
+          variant: "destructive",
+        });
+      }
     }
   };
 

@@ -30,19 +30,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile with role
-  const fetchUserProfile = async (userId: string) => {
+  // Fetch user roles from secure user_roles table
+  const fetchUserRole = async (userId: string): Promise<string> => {
     try {
       const { data, error } = await supabase
-        .from("profiles")
+        .from("user_roles")
         .select("role")
-        .eq("id", userId)
-        .single();
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
 
       if (error) throw error;
-      return data?.role || "user";
+      return data ? "admin" : "user";
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      console.error("Error fetching user role:", error);
       return "user";
     }
   };
@@ -56,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           // Defer async Supabase calls to prevent deadlock
           setTimeout(() => {
-            fetchUserProfile(session.user.id).then((role) => {
+            fetchUserRole(session.user.id).then((role) => {
               setUser({
                 id: session.user.id,
                 name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "",
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
-        const role = await fetchUserProfile(session.user.id);
+        const role = await fetchUserRole(session.user.id);
         setUser({
           id: session.user.id,
           name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "",
