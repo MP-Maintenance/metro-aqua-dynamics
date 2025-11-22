@@ -46,8 +46,8 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              //<QuoteCartSidebar />
-              //<AuthModal />
+              <QuoteCartSidebar />
+              <AuthModal />
               <Suspense fallback={<LoadingFallback />}>
                 <Routes>
                   <Route path="/" element={<Index />} />
