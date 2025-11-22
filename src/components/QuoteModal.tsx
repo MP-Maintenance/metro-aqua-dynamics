@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
-import { useQuote } from "@/contexts/QuoteContext";
-import { useAuth } from "@/contexts/AuthContext";
+import { useQuote } from "@/features/quotes/contexts/QuoteContext";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { toast } from "sonner";
 
 interface QuoteModalProps {

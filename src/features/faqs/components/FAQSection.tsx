@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import {
   Accordion,
   AccordionContent,
@@ -7,38 +5,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
-
-interface FAQ {
-  id: string;
-  question: string;
-  answer: string;
-  category: string | null;
-}
+import { useFAQs } from "../hooks/useFAQs";
 
 const FAQSection = () => {
-  const [faqs, setFaqs] = useState<FAQ[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchFAQs = async () => {
-      try {
-        const { data, error } = await (supabase as any)
-          .from("faqs")
-          .select("id, question, answer, category")
-          .eq("is_published", true)
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-        setFaqs(data || []);
-      } catch (error) {
-        console.error("Error fetching FAQs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFAQs();
-  }, []);
+  const { faqs, loading } = useFAQs(true);
 
   if (loading) {
     return (

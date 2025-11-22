@@ -7,9 +7,9 @@ import WaveBackground from "@/components/WaveBackground";
 import ServiceCard from "@/components/ServiceCard";
 import ScrollArrows from "@/components/ScrollArrows";
 import StatsCounter from "@/components/StatsCounter";
-import ReviewsList from "@/components/ReviewsList";
-import ReviewSubmissionForm from "@/components/ReviewSubmissionForm";
-import FAQSection from "@/components/FAQSection";
+import ReviewsList from "@/features/reviews/components/ReviewsList";
+import ReviewSubmissionForm from "@/features/reviews/components/ReviewSubmissionForm";
+import FAQSection from "@/features/faqs/components/FAQSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
