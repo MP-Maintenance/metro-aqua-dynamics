@@ -3,8 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown, Moon, Sun, ShoppingCart, User, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { useQuote } from "@/contexts/QuoteContext";
-import { useAuth } from "@/contexts/AuthContext";
+import { useQuote } from "@/features/quotes/contexts/QuoteContext";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
