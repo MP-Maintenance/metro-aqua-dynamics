@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { LogOut, LayoutDashboard, Package, FileText, MessageSquare, Building, Users, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
