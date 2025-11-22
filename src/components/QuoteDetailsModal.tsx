@@ -35,11 +35,11 @@ const QuoteDetailsModal = ({ quote, isOpen, onClose }: QuoteDetailsModalProps) =
       
       setLoading(true);
       try {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from("quote_request_lines")
           .select("id, product_id, product_name, quantity")
           .eq("quote_request_id", quote.id)
-          .order("created_at", { ascending: true }) as any;
+          .order("created_at", { ascending: true });
 
         if (error) throw error;
         setQuoteLines(data || []);

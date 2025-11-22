@@ -19,11 +19,11 @@ const ReviewsList = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from("reviews")
           .select("id, name, role, rating, comment, created_at")
           .eq("is_approved", true)
-          .order("created_at", { ascending: false }) as any;
+          .order("created_at", { ascending: false });
 
         if (error) throw error;
         setReviews(data || []);

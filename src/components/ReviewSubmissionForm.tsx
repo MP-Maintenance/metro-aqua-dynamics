@@ -29,7 +29,7 @@ const ReviewSubmissionForm = () => {
 
     setSubmitting(true);
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("reviews")
         .insert({
           name: formData.name,
@@ -38,7 +38,7 @@ const ReviewSubmissionForm = () => {
           rating: formData.rating,
           user_id: user?.id,
           is_approved: false,
-        }) as any;
+        });
 
       if (error) throw error;
 

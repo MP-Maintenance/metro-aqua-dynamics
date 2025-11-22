@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      company_details: {
+        Row: {
+          address: string | null
+          company_name: string
+          description: string | null
+          email: string | null
+          facebook_url: string | null
+          google_map_url: string | null
+          id: string
+          instagram_url: string | null
+          logo_url: string | null
+          phone: string | null
+          tagline: string | null
+          updated_at: string | null
+          website_url: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_name: string
+          description?: string | null
+          email?: string | null
+          facebook_url?: string | null
+          google_map_url?: string | null
+          id?: string
+          instagram_url?: string | null
+          logo_url?: string | null
+          phone?: string | null
+          tagline?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_name?: string
+          description?: string | null
+          email?: string | null
+          facebook_url?: string | null
+          google_map_url?: string | null
+          id?: string
+          instagram_url?: string | null
+          logo_url?: string | null
+          phone?: string | null
+          tagline?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      faqs: {
+        Row: {
+          answer: string
+          category: string | null
+          created_at: string | null
+          id: string
+          is_published: boolean | null
+          question: string
+          updated_at: string | null
+        }
+        Insert: {
+          answer: string
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          is_published?: boolean | null
+          question: string
+          updated_at?: string | null
+        }
+        Update: {
+          answer?: string
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          is_published?: boolean | null
+          question?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       pre_consultations: {
         Row: {
           contact_email: string | null
@@ -148,6 +229,83 @@ export type Database = {
         }
         Relationships: []
       }
+      projects: {
+        Row: {
+          category: string | null
+          cover_image: string | null
+          created_at: string | null
+          demo_url: string | null
+          description: string | null
+          id: string
+          repo_url: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          demo_url?: string | null
+          description?: string | null
+          id?: string
+          repo_url?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          demo_url?: string | null
+          description?: string | null
+          id?: string
+          repo_url?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      quote_request_lines: {
+        Row: {
+          created_at: string | null
+          id: number
+          product_id: string
+          product_name: string
+          quantity: number | null
+          quote_request_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          product_id: string
+          product_name: string
+          quantity?: number | null
+          quote_request_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          product_id?: string
+          product_name?: string
+          quantity?: number | null
+          quote_request_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_request_lines_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_requests: {
         Row: {
           created_at: string
@@ -195,6 +353,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          id: number
+          is_approved: boolean | null
+          name: string
+          rating: number | null
+          role: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          id?: never
+          is_approved?: boolean | null
+          name: string
+          rating?: number | null
+          role?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          id?: never
+          is_approved?: boolean | null
+          name?: string
+          rating?: number | null
+          role?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

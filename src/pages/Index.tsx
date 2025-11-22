@@ -9,6 +9,7 @@ import ScrollArrows from "@/components/ScrollArrows";
 import StatsCounter from "@/components/StatsCounter";
 import ReviewsList from "@/components/ReviewsList";
 import ReviewSubmissionForm from "@/components/ReviewSubmissionForm";
+import FAQSection from "@/components/FAQSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
@@ -255,6 +256,9 @@ const Index = () => {
           </Carousel>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQSection />
 
       {/* Reviews Section */}
       <section id="contact" className="py-20 bg-muted/30">
