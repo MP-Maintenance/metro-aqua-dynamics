@@ -11,67 +11,17 @@ import {
 } from "@/components/ui/carousel";
 import { Star, Quote } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
-
-interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  company: string;
-  content: string;
-  rating: number;
-  image?: string;
-}
+import { useReviews } from "@/features/reviews/hooks/useReviews";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const TestimonialsCarousel = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const { reviews, loading } = useReviews(true);
   const plugin = useRef(
     Autoplay({ delay: 4500, stopOnInteraction: true })
   );
-
-  const testimonials: Testimonial[] = [
-    {
-      id: 1,
-      name: "Ahmed Al-Mansouri",
-      role: "Property Manager",
-      company: "Lusail Villas",
-      content: "Metro Pools transformed our community pool maintenance. Their attention to detail and professional service is unmatched. We've seen a 40% reduction in maintenance issues.",
-      rating: 5,
-    },
-    {
-      id: 2,
-      name: "Sarah Williams",
-      role: "Hotel Operations Director",
-      company: "Pearl Resort & Spa",
-      content: "Outstanding service! Their team is reliable, knowledgeable, and always goes above and beyond. Our pool systems have never been in better condition.",
-      rating: 5,
-    },
-    {
-      id: 3,
-      name: "Mohammed Al-Thani",
-      role: "Facility Director",
-      company: "West Bay Towers",
-      content: "We've been working with Metro Pools for over 5 years. Their expertise in commercial pool maintenance and quick response time make them our trusted partner.",
-      rating: 5,
-    },
-    {
-      id: 4,
-      name: "Jennifer Martinez",
-      role: "Homeowner",
-      company: "The Pearl Qatar",
-      content: "Professional, efficient, and thorough. Metro Pools takes care of everything, allowing us to simply enjoy our pool without any worries. Highly recommended!",
-      rating: 5,
-    },
-    {
-      id: 5,
-      name: "Khalid Ibrahim",
-      role: "Community Manager",
-      company: "Al Khor Residences",
-      content: "Their preventive maintenance program has saved us thousands in repair costs. The team is always punctual and their work quality is exceptional.",
-      rating: 5,
-    },
-  ];
 
   useEffect(() => {
     if (!api) {
@@ -85,6 +35,25 @@ const TestimonialsCarousel = () => {
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="h-[320px]" />
+          <Skeleton className="h-[320px]" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!reviews || reviews.length === 0) {
+    return (
+      <div className="w-full max-w-6xl mx-auto text-center py-12">
+        <p className="text-muted-foreground">No testimonials available yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -100,8 +69,8 @@ const TestimonialsCarousel = () => {
         onMouseLeave={plugin.current.reset}
       >
         <CarouselContent className="-ml-4">
-          {testimonials.map((testimonial, idx) => (
-            <CarouselItem key={testimonial.id} className="pl-4 md:basis-1/2">
+          {reviews.map((review, idx) => (
+            <CarouselItem key={review.id} className="pl-4 md:basis-1/2">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -118,34 +87,33 @@ const TestimonialsCarousel = () => {
 
                     {/* Rating Stars */}
                     <div className="flex gap-1 mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
+                      {[...Array(review.rating || 5)].map((_, i) => (
                         <Star key={i} className="w-4 h-4 fill-primary text-primary" />
                       ))}
                     </div>
 
                     {/* Content */}
                     <p className="text-sm text-text-secondary leading-relaxed italic mb-6 flex-grow">
-                      "{testimonial.content}"
+                      "{review.comment}"
                     </p>
 
                     {/* Author */}
                     <div className="flex items-center gap-3 mt-auto">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-sm font-bold shadow-glow-primary flex-shrink-0">
-                        {testimonial.name
+                        {review.name
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
                       </div>
                       <div>
                         <h4 className="font-semibold text-text-primary text-sm">
-                          {testimonial.name}
+                          {review.name}
                         </h4>
-                        <p className="text-xs text-text-muted">
-                          {testimonial.role}
-                        </p>
-                        <p className="text-xs text-secondary font-medium">
-                          {testimonial.company}
-                        </p>
+                        {review.role && (
+                          <p className="text-xs text-text-muted">
+                            {review.role}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </CardContent>

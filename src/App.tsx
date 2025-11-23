@@ -27,6 +27,8 @@ const AdminCategories = lazy(() => import("./pages/AdminCategories"));
 const AdminQuotes = lazy(() => import("./pages/AdminQuotes"));
 const AdminConsultations = lazy(() => import("./pages/AdminConsultations"));
 const AdminReviews = lazy(() => import("./pages/AdminReviews"));
+const AdminTeam = lazy(() => import("./pages/AdminTeam"));
+const AdminPartners = lazy(() => import("./pages/AdminPartners"));
 const AdminFAQs = lazy(() => import("./pages/AdminFAQs"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminCompany = lazy(() => import("./pages/AdminCompany"));
@@ -60,6 +62,8 @@ const AnimatedRoutes = () => {
         <Route path="/admin/consultations" element={<PageTransition><AdminConsultations /></PageTransition>} />
         <Route path="/admin/inquiries" element={<PageTransition><AdminInquiries /></PageTransition>} />
         <Route path="/admin/reviews" element={<PageTransition><AdminReviews /></PageTransition>} />
+        <Route path="/admin/team" element={<PageTransition><AdminTeam /></PageTransition>} />
+        <Route path="/admin/partners" element={<PageTransition><AdminPartners /></PageTransition>} />
         <Route path="/admin/company" element={<PageTransition><AdminCompany /></PageTransition>} />
         <Route path="/admin/users" element={<PageTransition><AdminUsers /></PageTransition>} />
         <Route path="/admin/faqs" element={<PageTransition><AdminFAQs /></PageTransition>} />
