@@ -95,6 +95,25 @@ export const QuoteProvider = ({ children }: { children: ReactNode }) => {
           .eq("id", user.id);
       }
 
+      // Send email notification to admins
+      try {
+        await supabase.functions.invoke('send-notification-email', {
+          body: {
+            type: 'quote',
+            customerName: contactInfo.fullName || user.email || 'Unknown',
+            customerEmail: user.email || '',
+            items: items.map(item => ({
+              name: item.name,
+              quantity: item.quantity,
+              category: item.category,
+            })),
+          },
+        });
+      } catch (emailError) {
+        console.error('Error sending notification email:', emailError);
+        // Don't fail the quote submission if email fails
+      }
+
       // Clear cart after successful submission
       clearCart();
     } catch (error: any) {
