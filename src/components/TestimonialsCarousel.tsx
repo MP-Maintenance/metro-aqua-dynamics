@@ -1,7 +1,16 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import { Star, Quote } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 
 interface Testimonial {
   id: number;
@@ -14,8 +23,12 @@ interface Testimonial {
 }
 
 const TestimonialsCarousel = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+  const plugin = useRef(
+    Autoplay({ delay: 4500, stopOnInteraction: true })
+  );
 
   const testimonials: Testimonial[] = [
     {
@@ -61,128 +74,106 @@ const TestimonialsCarousel = () => {
   ];
 
   useEffect(() => {
-    if (isPaused) return;
+    if (!api) {
+      return;
+    }
 
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
 
-    return () => clearInterval(interval);
-  }, [isPaused, testimonials.length]);
-
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
-    setIsPaused(true);
-    setTimeout(() => setIsPaused(false), 10000);
-  };
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   return (
-    <section className="py-20">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">What Our Clients Say</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Don't just take our word for it – hear from the clients who trust us with their pool maintenance
-          </p>
-        </motion.div>
-
-        <div className="max-w-4xl mx-auto">
-          <div className="relative min-h-[400px] flex items-center justify-center">
-            <AnimatePresence mode="wait">
+    <div className="w-full">
+      <Carousel
+        setApi={setApi}
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+        plugins={[plugin.current]}
+        className="w-full max-w-6xl mx-auto"
+        onMouseEnter={plugin.current.stop}
+        onMouseLeave={plugin.current.reset}
+      >
+        <CarouselContent className="-ml-4">
+          {testimonials.map((testimonial, idx) => (
+            <CarouselItem key={testimonial.id} className="pl-4 md:basis-1/2">
               <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="w-full"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="h-full"
               >
-                <Card className="bg-gradient-to-br from-card via-card to-muted border-primary/20 shadow-lg">
-                  <CardContent className="pt-12 pb-8 px-8 md:px-12 relative">
+                <Card className="bg-card border-primary/20 hover:border-primary/40 transition-all duration-300 h-full">
+                  <CardContent className="pt-8 pb-6 px-6 relative flex flex-col h-full min-h-[320px]">
                     {/* Decorative Quote Icon */}
-                    <div className="absolute top-6 left-6 opacity-10">
-                      <Quote className="w-16 h-16 text-primary" />
+                    <div className="absolute top-4 right-4 opacity-10">
+                      <Quote className="w-12 h-12 text-primary" />
                     </div>
 
                     {/* Rating Stars */}
-                    <div className="flex justify-center gap-1 mb-6">
-                      {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ delay: i * 0.1, type: "spring" }}
-                        >
-                          <Star className="w-5 h-5 fill-primary text-primary" />
-                        </motion.div>
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-primary text-primary" />
                       ))}
                     </div>
 
                     {/* Content */}
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="text-lg text-center mb-8 leading-relaxed text-foreground italic"
-                    >
-                      "{testimonials[currentIndex].content}"
-                    </motion.p>
+                    <p className="text-sm text-text-secondary leading-relaxed italic mb-6 flex-grow">
+                      "{testimonial.content}"
+                    </p>
 
                     {/* Author */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="flex flex-col items-center"
-                    >
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xl font-bold mb-3 shadow-glow-primary">
-                        {testimonials[currentIndex].name
+                    <div className="flex items-center gap-3 mt-auto">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-sm font-bold shadow-glow-primary flex-shrink-0">
+                        {testimonial.name
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
                       </div>
-                      <h4 className="font-semibold text-lg">
-                        {testimonials[currentIndex].name}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {testimonials[currentIndex].role}
-                      </p>
-                      <p className="text-sm text-primary font-medium">
-                        {testimonials[currentIndex].company}
-                      </p>
-                    </motion.div>
+                      <div>
+                        <h4 className="font-semibold text-text-primary text-sm">
+                          {testimonial.name}
+                        </h4>
+                        <p className="text-xs text-text-muted">
+                          {testimonial.role}
+                        </p>
+                        <p className="text-xs text-secondary font-medium">
+                          {testimonial.company}
+                        </p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
-            </AnimatePresence>
-          </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="hidden md:flex -left-12" />
+        <CarouselNext className="hidden md:flex -right-12" />
+      </Carousel>
 
-          {/* Pagination Dots */}
-          <div className="flex justify-center gap-2 mt-8">
-            {testimonials.map((_, index) => (
-              <motion.button
-                key={index}
-                onClick={() => goToSlide(index)}
-                whileHover={{ scale: 1.3 }}
-                whileTap={{ scale: 0.9 }}
-                className="w-3 h-3 rounded-full transition-all duration-300"
-                style={{
-                  backgroundColor: currentIndex === index ? "hsl(var(--primary))" : "hsl(var(--muted))",
-                  boxShadow: currentIndex === index ? "0 0 8px hsl(var(--primary))" : "none",
-                }}
-                aria-label={`Go to testimonial ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
+      {/* Pagination Dots */}
+      <div className="flex justify-center gap-2 mt-6">
+        {Array.from({ length: count }).map((_, index) => (
+          <button
+            key={index}
+            onClick={() => api?.scrollTo(index)}
+            className="w-3 h-3 rounded-full transition-all duration-300"
+            style={{
+              backgroundColor: current === index ? "#8CC63F" : "#587C88",
+              boxShadow: current === index ? "0 0 8px #8CC63F" : "none",
+            }}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
       </div>
-    </section>
+    </div>
   );
 };
 
