@@ -21,6 +21,7 @@ import FAQSection from "@/features/faqs/components/FAQSection";
 import { useTeam } from "@/features/team/hooks/useTeam";
 import { usePartners } from "@/features/partners/hooks/usePartners";
 import { Card, CardContent } from "@/components/ui/card";
+import { LazyImage } from "@/components/ui/LazyImage";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import {
@@ -175,9 +176,19 @@ const Index = () => {
                   type="team"
                   frontContent={
                     <CardContent className="pt-6 text-center">
-                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold shadow-glow-primary">
-                        {member.name.split(' ').map(n => n[0]).join('')}
-                      </div>
+                      {member.imageurl ? (
+                        <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 shadow-glow-primary">
+                          <LazyImage
+                            src={member.imageurl}
+                            alt={member.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold shadow-glow-primary">
+                          {member.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                      )}
                       <h3 className="font-semibold text-lg mb-1">{member.name}</h3>
                       <p className="text-sm text-primary mb-2">{member.role}</p>
                       <p className="text-sm text-muted-foreground">{member.description}</p>
