@@ -1,32 +1,66 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-metro.jpg";
+import heroImage1 from "@/assets/hero-metro.jpg";
+import heroImage2 from "@/assets/hero-pool.jpg";
+import heroImage3 from "@/assets/service-maintenance.jpg";
+import heroImage4 from "@/assets/service-renovation.jpg";
 
 const Hero = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  
+  const slides = [heroImage1, heroImage2, heroImage3, heroImage4];
+
   const scrollToAbout = () => {
     const aboutSection = document.getElementById("about");
     aboutSection?.scrollIntoView({ behavior: "smooth" });
   };
 
+  useEffect(() => {
+    if (isPaused) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 4500);
+
+    return () => clearInterval(interval);
+  }, [isPaused, slides.length]);
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+    setIsPaused(true);
+    setTimeout(() => setIsPaused(false), 8000);
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src={heroImage}
-          alt="Luxury Pool"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-accent/60 to-secondary/70" />
+      {/* Background Image Slider */}
+      <div className="absolute inset-0 bg-[#051B2C]">
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              currentSlide === index ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <img
+              src={slide}
+              alt={`Pool ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[rgba(5,27,44,0.7)] to-[rgba(13,45,68,0.4)]" />
+          </div>
+        ))}
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight" style={{ color: "#E0F7FA" }}>
             Your Trusted Partner in Pool Maintenance & Wellness Solutions
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto" style={{ color: "#587C88" }}>
             Delivering excellence in pool care, inspection, and renovation services.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -41,12 +75,28 @@ const Hero = () => {
             <Button
               asChild
               size="lg"
-              className="min-w-[160px] bg-white text-primary hover:bg-white/90"
+              className="min-w-[160px] bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow-primary"
             >
               <Link to="/quote">Get a Quote</Link>
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Dots Navigation */}
+      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-20 flex gap-3">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className="w-3 h-3 rounded-full transition-all duration-300"
+            style={{
+              backgroundColor: currentSlide === index ? "#8CC63F" : "#587C88",
+              boxShadow: currentSlide === index ? "0 0 6px #8CC63F" : "none",
+            }}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
       </div>
 
       {/* Scroll Indicator */}
