@@ -2,8 +2,9 @@ import { ReactNode, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Package, FileText, MessageSquare, Building, Users, HelpCircle, Inbox, UsersRound, Handshake } from "lucide-react";
+import { LogOut, LayoutDashboard, Package, FileText, MessageSquare, Building, Users, HelpCircle, Inbox, UsersRound, Handshake, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import AdminChatbot from "@/features/admin/components/AdminChatbot";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -29,6 +30,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const navItems = [
     { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/admin/analytics", icon: TrendingUp, label: "Analytics" },
     { path: "/admin/products", icon: Package, label: "Products" },
     { path: "/admin/categories", icon: Package, label: "Categories" },
     { path: "/admin/quotes", icon: FileText, label: "Quote Requests" },
@@ -89,10 +91,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto relative">
         <div className="p-8">
           {children}
         </div>
+        
+        {/* Tinik Chatbot - Global for all admin pages */}
+        <AdminChatbot />
       </main>
     </div>
   );

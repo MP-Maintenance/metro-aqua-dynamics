@@ -154,6 +154,23 @@ serve(async (req) => {
         const { data } = await supabase.from('company_details').select('*').single();
         if (data) tableQueries.push(`Company Details: ${JSON.stringify(data)}`);
       }
+
+      if (requestContext.includes('analytics')) {
+        const { data } = await supabase
+          .from('user_activity_logs')
+          .select('event_category, event_type')
+          .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+          .limit(100);
+        
+        if (data) {
+          const eventSummary = data.reduce((acc: any, log: any) => {
+            const key = `${log.event_category}-${log.event_type}`;
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+          }, {});
+          tableQueries.push(`Recent Analytics (Last 7 Days): ${JSON.stringify(eventSummary)}`);
+        }
+      }
       
       contextData = tableQueries.join('\n\n');
     }
