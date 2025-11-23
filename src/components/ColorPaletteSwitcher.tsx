@@ -24,7 +24,7 @@ export function ColorPaletteSwitcher() {
           <span className="sr-only">Select color theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 p-2">
+      <DropdownMenuContent align="end" className="w-72 p-2">
         <div className="text-xs font-medium text-muted-foreground mb-2 px-2">
           Choose Color Theme
         </div>
@@ -43,11 +43,11 @@ export function ColorPaletteSwitcher() {
                 isActive ? "bg-muted/50" : ""
               }`}
             >
-              <div className="flex flex-col gap-1 flex-shrink-0">
+              <div className="flex gap-1.5 flex-shrink-0">
                 {palette.previewColors.map((color, index) => (
                   <motion.div
                     key={index}
-                    className="w-4 h-4 rounded border border-border/50"
+                    className="w-5 h-5 rounded-full border-2 border-border shadow-sm"
                     style={{ backgroundColor: color }}
                     whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.2 }}
@@ -55,15 +55,11 @@ export function ColorPaletteSwitcher() {
                 ))}
               </div>
               <div className="flex flex-col flex-1 min-w-0">
-                <span className="font-semibold text-sm">{palette.name}</span>
-                <span className="text-xs text-muted-foreground">
+                <span className="font-medium text-sm truncate">{palette.name}</span>
+                <span className="text-xs text-muted-foreground truncate">
                   {palette.description}
                 </span>
               </div>
-              <div 
-                className="w-12 h-12 rounded border border-border flex-shrink-0"
-                style={{ background: colors.gradientHero }}
-              />
               {isActive && (
                 <motion.span 
                   className="text-primary font-bold"
