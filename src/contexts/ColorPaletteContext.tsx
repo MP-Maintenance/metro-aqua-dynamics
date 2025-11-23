@@ -26,7 +26,10 @@ export function ColorPaletteProvider({ children }: { children: ReactNode }) {
     const isDark = theme === "dark";
     const colors = isDark ? currentPalette.dark : currentPalette.light;
 
-    // Apply the color palette as CSS variables
+    // Add color-transition class to body for smooth transitions
+    document.body.classList.add("color-transition");
+    
+    // Apply the color palette as CSS variables with smooth transitions
     document.documentElement.style.setProperty("--primary", colors.primary);
     document.documentElement.style.setProperty("--secondary", colors.secondary);
     document.documentElement.style.setProperty("--accent", colors.accent);
@@ -43,6 +46,7 @@ export function ColorPaletteProvider({ children }: { children: ReactNode }) {
       document.documentElement.style.setProperty("--accent", defaultColors.accent);
       document.documentElement.style.setProperty("--gradient-hero", defaultColors.gradientHero);
       document.documentElement.style.setProperty("--ring", defaultColors.primary);
+      document.body.classList.remove("color-transition");
     };
   }, [currentPalette, theme]);
 
