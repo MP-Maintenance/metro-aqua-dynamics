@@ -3,10 +3,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/features/auth/contexts/AuthContext";
 import { QuoteProvider } from "@/features/quotes/contexts/QuoteContext";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "@/components/PageTransition";
 import QuoteCartSidebar from "@/components/QuoteCartSidebar";
 import AuthModal from "@/features/auth/components/AuthModal";
 import Index from "./pages/Index";
@@ -37,6 +39,34 @@ const LoadingFallback = () => (
 
 const queryClient = new QueryClient();
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
+        <Route path="/products" element={<PageTransition><Products /></PageTransition>} />
+        <Route path="/projects" element={<PageTransition><Projects /></PageTransition>} />
+        <Route path="/quote" element={<PageTransition><Quote /></PageTransition>} />
+        <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
+        <Route path="/admin-login" element={<PageTransition><AdminLogin /></PageTransition>} />
+        <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
+        <Route path="/admin/products" element={<PageTransition><AdminProducts /></PageTransition>} />
+        <Route path="/admin/categories" element={<PageTransition><AdminCategories /></PageTransition>} />
+        <Route path="/admin/quotes" element={<PageTransition><AdminQuotes /></PageTransition>} />
+        <Route path="/admin/consultations" element={<PageTransition><AdminConsultations /></PageTransition>} />
+        <Route path="/admin/reviews" element={<PageTransition><AdminReviews /></PageTransition>} />
+        <Route path="/admin/company" element={<PageTransition><AdminCompany /></PageTransition>} />
+        <Route path="/admin/users" element={<PageTransition><AdminUsers /></PageTransition>} />
+        <Route path="/admin/faqs" element={<PageTransition><AdminFAQs /></PageTransition>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -49,25 +79,7 @@ const App = () => (
               <QuoteCartSidebar />
               <AuthModal />
               <Suspense fallback={<LoadingFallback />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/services" element={<Services />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/projects" element={<Projects />} />
-                  <Route path="/quote" element={<Quote />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/admin-login" element={<AdminLogin />} />
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="/admin/products" element={<AdminProducts />} />
-                  <Route path="/admin/categories" element={<AdminCategories />} />
-                  <Route path="/admin/quotes" element={<AdminQuotes />} />
-                  <Route path="/admin/consultations" element={<AdminConsultations />} />
-                  <Route path="/admin/reviews" element={<AdminReviews />} />
-                  <Route path="/admin/company" element={<AdminCompany />} />
-                  <Route path="/admin/users" element={<AdminUsers />} />
-                  <Route path="/admin/faqs" element={<AdminFAQs />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                <AnimatedRoutes />
               </Suspense>
             </BrowserRouter>
           </TooltipProvider>

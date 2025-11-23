@@ -2,16 +2,19 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import FloatingActionButton from "@/components/FloatingActionButton";
 import Hero from "@/components/Hero";
 import WaveBackground from "@/components/WaveBackground";
 import ServiceCard from "@/components/ServiceCard";
 import ScrollArrows from "@/components/ScrollArrows";
 import StatsCounter from "@/components/StatsCounter";
+import ParallaxSection from "@/components/ParallaxSection";
 import ReviewsList from "@/features/reviews/components/ReviewsList";
 import ReviewSubmissionForm from "@/features/reviews/components/ReviewSubmissionForm";
 import FAQSection from "@/features/faqs/components/FAQSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { motion } from "framer-motion";
 import {
   Carousel,
   CarouselContent,
@@ -125,54 +128,59 @@ const Index = () => {
     <div className="min-h-screen bg-background font-['Inter',sans-serif] relative">
       <WaveBackground />
       <Navbar />
+      <FloatingActionButton />
       <div id="hero">
         <Hero />
       </div>
       <WhatsAppButton />
       <ScrollArrows />
 
-      {/* Dark Mode Showcase Section */}
-      <section className="py-20 bg-gradient-to-b from-background via-card to-background overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center animate-fade-in mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              Experience the Deep Water Theme
-            </h2>
-            <p className="text-lg text-text-secondary leading-relaxed">
-              Immerse yourself in our premium, underwater-inspired interface designed for modern pool management
-            </p>
+      {/* Dark Mode Showcase Section with Parallax */}
+      <ParallaxSection speed={0.3}>
+        <section className="py-20 bg-gradient-to-b from-background via-card to-background overflow-hidden">
+          <div className="container mx-auto px-4">
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="max-w-4xl mx-auto text-center mb-12"
+            >
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                Experience the Deep Water Theme
+              </h2>
+              <p className="text-lg text-text-secondary leading-relaxed">
+                Immerse yourself in our premium, underwater-inspired interface designed for modern pool management
+              </p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {[
+                { color: "primary", label: "Electric Lime Accents", desc: "Vibrant primary actions that pop against deep navy", shadow: "shadow-glow-primary" },
+                { color: "secondary", label: "Pool Teal Highlights", desc: "Cool water tones for secondary elements", shadow: "shadow-glow-secondary" },
+                { color: "accent", label: "Metro Indigo Depth", desc: "Deep ocean surfaces for premium feel", shadow: "" }
+              ].map((item, index) => (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className={`bg-card border-${item.color}/20 hover:border-${item.color}/50 transition-all duration-300 ${item.shadow && `hover:${item.shadow}`}`}>
+                    <CardContent className="pt-6 text-center">
+                      <div className={`w-16 h-16 rounded-full bg-${item.color}/20 mx-auto mb-4 flex items-center justify-center ${item.shadow}`}>
+                        <div className={`w-8 h-8 rounded-full bg-${item.color} animate-pulse`} />
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2 text-text-primary">{item.label}</h3>
+                      <p className="text-sm text-text-secondary">{item.desc}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-300 hover:shadow-glow-primary">
-              <CardContent className="pt-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/20 mx-auto mb-4 flex items-center justify-center shadow-glow-primary">
-                  <div className="w-8 h-8 rounded-full bg-primary animate-pulse" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2 text-text-primary">Electric Lime Accents</h3>
-                <p className="text-sm text-text-secondary">Vibrant primary actions that pop against deep navy</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-card border-secondary/20 hover:border-secondary/50 transition-all duration-300 hover:shadow-glow-secondary">
-              <CardContent className="pt-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-secondary/20 mx-auto mb-4 flex items-center justify-center shadow-glow-secondary">
-                  <div className="w-8 h-8 rounded-full bg-secondary animate-pulse" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2 text-text-primary">Pool Teal Highlights</h3>
-                <p className="text-sm text-text-secondary">Cool water tones for secondary elements</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-card border-accent/20 hover:border-accent/50 transition-all duration-300">
-              <CardContent className="pt-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-accent/20 mx-auto mb-4 flex items-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-accent animate-pulse" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2 text-text-primary">Metro Indigo Depth</h3>
-                <p className="text-sm text-text-secondary">Deep ocean surfaces for premium feel</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+        </section>
+      </ParallaxSection>
 
       {/* About Us Section */}
       <section id="about" className="py-20 bg-muted/30">
@@ -192,37 +200,47 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Services</h2>
-            <p className="text-lg text-muted-foreground">
-              Professional solutions for all your pool maintenance needs
-            </p>
+      {/* Services Section with Parallax */}
+      <ParallaxSection speed={0.2}>
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Services</h2>
+              <p className="text-lg text-muted-foreground">
+                Professional solutions for all your pool maintenance needs
+              </p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                { title: "Maintenance / Cleaning", description: "Routine and preventive cleaning to keep your pool safe, hygienic, and sparkling.", image: maintenanceImg, link: "/services#maintenance" },
+                { title: "Inspection / Repairs", description: "Professional assessment and corrective actions for leaks, pumps, and structural issues.", image: inspectionImg, link: "/services#inspection" },
+                { title: "Renovation", description: "Transform and upgrade old facilities with modern fittings, finishes, and energy-efficient systems.", image: renovationImg, link: "/services#renovation" }
+              ].map((service, index) => (
+                <motion.div
+                  key={service.title}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                  viewport={{ once: true }}
+                >
+                  <ServiceCard
+                    title={service.title}
+                    description={service.description}
+                    image={service.image}
+                    link={service.link}
+                  />
+                </motion.div>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <ServiceCard
-              title="Maintenance / Cleaning"
-              description="Routine and preventive cleaning to keep your pool safe, hygienic, and sparkling."
-              image={maintenanceImg}
-              link="/services#maintenance"
-            />
-            <ServiceCard
-              title="Inspection / Repairs"
-              description="Professional assessment and corrective actions for leaks, pumps, and structural issues."
-              image={inspectionImg}
-              link="/services#inspection"
-            />
-            <ServiceCard
-              title="Renovation"
-              description="Transform and upgrade old facilities with modern fittings, finishes, and energy-efficient systems."
-              image={renovationImg}
-              link="/services#renovation"
-            />
-          </div>
-        </div>
-      </section>
+        </section>
+      </ParallaxSection>
 
       {/* Team Section */}
       <section id="team" className="py-20 bg-muted/30">
