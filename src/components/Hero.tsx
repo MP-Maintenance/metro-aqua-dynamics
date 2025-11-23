@@ -80,7 +80,7 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto" 
-            style={{ color: "#587C88" }}
+            style={{ color: "#C7EEF3" }}
           >
             Delivering excellence in pool care, inspection, and renovation services.
           </motion.p>
