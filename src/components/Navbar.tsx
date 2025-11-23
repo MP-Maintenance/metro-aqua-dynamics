@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ColorPaletteSwitcher } from "@/components/ColorPaletteSwitcher";
 import logo from "@/assets/metro-pools-logo.png";
 
 const Navbar = () => {
@@ -225,6 +226,9 @@ const Navbar = () => {
               </Button>
             )}
 
+            {/* Color Palette Switcher */}
+            <ColorPaletteSwitcher />
+
             {/* Theme Toggle */}
             <Button
               variant="outline"
@@ -256,6 +260,7 @@ const Navbar = () => {
                 </Badge>
               )}
             </Button>
+            <ColorPaletteSwitcher />
             <Button
               variant="outline"
               size="icon"

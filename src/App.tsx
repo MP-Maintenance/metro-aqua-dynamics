@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/features/auth/contexts/AuthContext";
 import { QuoteProvider } from "@/features/quotes/contexts/QuoteContext";
+import { ColorPaletteProvider } from "@/contexts/ColorPaletteContext";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import QuoteCartSidebar from "@/components/QuoteCartSidebar";
@@ -44,6 +45,7 @@ const queryClient = new QueryClient();
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
   
   return (
     <AnimatePresence mode="wait">
@@ -73,20 +75,33 @@ const AnimatedRoutes = () => {
   );
 };
 
+const ConditionalColorPaletteProvider = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  
+  if (isAdminRoute) {
+    return <>{children}</>;
+  }
+  
+  return <ColorPaletteProvider>{children}</ColorPaletteProvider>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <AuthProvider>
         <QuoteProvider>
           <TooltipProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <QuoteCartSidebar />
-              <AuthModal />
-              <Suspense fallback={<LoadingFallback />}>
-                <AnimatedRoutes />
-              </Suspense>
+              <ConditionalColorPaletteProvider>
+                <QuoteCartSidebar />
+                <AuthModal />
+                <Suspense fallback={<LoadingFallback />}>
+                  <AnimatedRoutes />
+                </Suspense>
+              </ConditionalColorPaletteProvider>
             </BrowserRouter>
           </TooltipProvider>
         </QuoteProvider>
