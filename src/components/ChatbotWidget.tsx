@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,71 @@ const ChatbotWidget = () => {
     { id: 0, text: "Hello! How can I help you today? Choose a question below or type your own.", isBot: true }
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  const playNotificationSound = () => {
+    try {
+      const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const audioCtx = new AudioCtx();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = 880;
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+      oscillator.stop(audioCtx.currentTime + 0.3);
+    } catch (error) {
+      console.error("Notification sound error", error);
+    }
+  };
+
+  const showDesktopNotification = (text: string) => {
+    if (typeof window === "undefined" || typeof Notification === "undefined") return;
+    if (Notification.permission !== "granted") return;
+
+    try {
+      new Notification("Metro Pools Assistant", {
+        body: text,
+      });
+    } catch (error) {
+      console.error("Desktop notification error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    if (typeof window === "undefined" || typeof Notification === "undefined") return;
+
+    if (Notification.permission === "granted") {
+      setNotificationsEnabled(true);
+    } else if (Notification.permission === "default") {
+      Notification.requestPermission()
+        .then((permission) => {
+          setNotificationsEnabled(permission === "granted");
+        })
+        .catch(() => {
+          setNotificationsEnabled(false);
+        });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (messages.length <= 1) return;
+
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage.isBot) return;
+
+    playNotificationSound();
+
+    if (notificationsEnabled) {
+      showDesktopNotification(lastMessage.text);
+    }
+  }, [messages, notificationsEnabled]);
 
   const handleQuestionClick = (question: string) => {
     const userMessage: Message = {

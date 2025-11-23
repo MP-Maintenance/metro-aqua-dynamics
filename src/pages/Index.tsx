@@ -137,6 +137,7 @@ const Index = () => {
       <Navbar />
       <FloatingActionButton />
       <ScrollToTop />
+      <ChatbotWidget />
       <div id="hero">
         <Hero />
       </div>
