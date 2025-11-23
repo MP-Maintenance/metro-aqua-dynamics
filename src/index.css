@@ -112,6 +112,16 @@ All colors MUST be HSL.
     font-family: 'Lato', sans-serif;
     font-weight: 400;
   }
+  
+  /* 3D Transform Support */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
 }
 
 /* Wave Animation */

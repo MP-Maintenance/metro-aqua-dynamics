@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 interface ImageCarouselProps {
   images: string[];
@@ -9,6 +10,7 @@ interface ImageCarouselProps {
 
 const ImageCarousel = ({ images, alt }: ImageCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   if (images.length === 0) return null;
 
@@ -24,12 +26,33 @@ const ImageCarousel = ({ images, alt }: ImageCarouselProps) => {
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 15;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 15;
+    setMousePosition({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 0, y: 0 });
+  };
+
   return (
-    <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
-      <img
+    <motion.div 
+      className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden group"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <motion.img
         src={images[currentIndex]}
         alt={`${alt} - Image ${currentIndex + 1}`}
         className="w-full h-full object-cover"
+        animate={{
+          scale: mousePosition.x !== 0 || mousePosition.y !== 0 ? 1.1 : 1,
+          x: mousePosition.x,
+          y: mousePosition.y,
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
       />
       
       {images.length > 1 && (
@@ -65,7 +88,7 @@ const ImageCarousel = ({ images, alt }: ImageCarouselProps) => {
           </div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 };
 
