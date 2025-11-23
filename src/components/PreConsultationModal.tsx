@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronLeft, ChevronRight, Upload, CheckCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Upload, CheckCircle, Sparkles, Wrench, Hammer, Waves, Droplet, Bath, Cloud, Flame, Layers, Grid, Brush, Filter, LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
@@ -62,37 +62,37 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
     if (open) loadProfile();
   }, [user, open]);
 
-  const services = [
-    { value: "maintenance", label: "Maintenance / Cleaning", image: "/placeholder.svg" },
-    { value: "inspection", label: "Inspection / Repairs", image: "/placeholder.svg" },
-    { value: "renovation", label: "Renovation", image: "/placeholder.svg" },
+  const services: { value: string; label: string; icon: LucideIcon; description: string }[] = [
+    { value: "maintenance", label: "Maintenance / Cleaning", icon: Sparkles, description: "Regular pool maintenance and cleaning services" },
+    { value: "inspection", label: "Inspection / Repairs", icon: Wrench, description: "Professional inspection and repair work" },
+    { value: "renovation", label: "Renovation", icon: Hammer, description: "Complete pool renovation and upgrades" },
   ];
 
-  const facilities = [
-    { value: "swimming-pool", label: "Swimming Pool", image: "/placeholder.svg" },
-    { value: "fountain", label: "Fountain", image: "/placeholder.svg" },
-    { value: "jacuzzi", label: "Jacuzzi", image: "/placeholder.svg" },
-    { value: "ready-made-jacuzzi", label: "Ready-Made Jacuzzi", image: "/placeholder.svg" },
-    { value: "steam-room", label: "Steam Room", image: "/placeholder.svg" },
-    { value: "sauna-room", label: "Sauna Room", image: "/placeholder.svg" },
+  const facilities: { value: string; label: string; icon: LucideIcon; description: string }[] = [
+    { value: "swimming-pool", label: "Swimming Pool", icon: Waves, description: "Standard swimming pools" },
+    { value: "fountain", label: "Fountain", icon: Droplet, description: "Decorative water fountains" },
+    { value: "jacuzzi", label: "Jacuzzi", icon: Bath, description: "Custom built jacuzzis" },
+    { value: "ready-made-jacuzzi", label: "Ready-Made Jacuzzi", icon: Bath, description: "Pre-fabricated jacuzzi units" },
+    { value: "steam-room", label: "Steam Room", icon: Cloud, description: "Steam room installations" },
+    { value: "sauna-room", label: "Sauna Room", icon: Flame, description: "Sauna room setups" },
   ];
 
-  const surfaces = [
-    { value: "skimmer", label: "Skimmer", image: "/placeholder.svg" },
-    { value: "overflow", label: "Overflow", image: "/placeholder.svg" },
-    { value: "infinity", label: "Infinity", image: "/placeholder.svg" },
+  const surfaces: { value: string; label: string; icon: LucideIcon; description: string }[] = [
+    { value: "skimmer", label: "Skimmer", icon: Layers, description: "Traditional skimmer design" },
+    { value: "overflow", label: "Overflow", icon: Layers, description: "Overflow edge system" },
+    { value: "infinity", label: "Infinity", icon: Layers, description: "Infinity edge design" },
   ];
 
-  const finishings = [
-    { value: "tiles", label: "Tiles", image: "/placeholder.svg" },
-    { value: "liner", label: "Liner", image: "/placeholder.svg" },
-    { value: "mosaic", label: "Mosaic", image: "/placeholder.svg" },
+  const finishings: { value: string; label: string; icon: LucideIcon; description: string }[] = [
+    { value: "tiles", label: "Tiles", icon: Grid, description: "Ceramic or porcelain tiles" },
+    { value: "liner", label: "Liner", icon: Grid, description: "Vinyl liner finish" },
+    { value: "mosaic", label: "Mosaic", icon: Brush, description: "Glass mosaic tiles" },
   ];
 
-  const filtrations = [
-    { value: "sand-filter", label: "Sand Filter", image: "/placeholder.svg" },
-    { value: "compact-filter", label: "Compact Filter", image: "/placeholder.svg" },
-    { value: "cartridge-filter", label: "Cartridge Filter", image: "/placeholder.svg" },
+  const filtrations: { value: string; label: string; icon: LucideIcon; description: string }[] = [
+    { value: "sand-filter", label: "Sand Filter", icon: Filter, description: "Traditional sand filtration" },
+    { value: "compact-filter", label: "Compact Filter", icon: Filter, description: "Space-saving compact filters" },
+    { value: "cartridge-filter", label: "Cartridge Filter", icon: Filter, description: "Easy-maintenance cartridge system" },
   ];
 
   const contactMethods = [
@@ -251,6 +251,9 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
       <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Pre-Consultation Form</DialogTitle>
+          <DialogDescription className="text-base mt-2">
+            We offer <span className="font-semibold text-primary">Renovation</span> services including <span className="font-semibold">Design & Build</span>. Let us know your project details.
+          </DialogDescription>
           <div className="space-y-2 mt-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Step {step} of {totalSteps}</span>
@@ -268,29 +271,30 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
                 <h3 className="text-lg font-semibold mb-2">What service do you need?</h3>
                 <p className="text-sm text-muted-foreground">Select the service that best fits your needs</p>
               </div>
-              <Carousel className="w-full max-w-xl mx-auto">
+              <Carousel className="w-full max-w-2xl mx-auto">
                 <CarouselContent>
-                  {services.map((service) => (
-                    <CarouselItem key={service.value} className="md:basis-1/2 lg:basis-1/3">
-                      <Card 
-                        className={`cursor-pointer transition-all ${
-                          formData.service === service.value 
-                            ? "ring-2 ring-primary shadow-md" 
-                            : "hover:shadow-md"
-                        }`}
-                        onClick={() => setFormData({ ...formData, service: service.value })}
-                      >
-                        <CardContent className="p-4 text-center">
-                          <img 
-                            src={service.image} 
-                            alt={service.label}
-                            className="w-full h-32 object-cover rounded-md mb-3"
-                          />
-                          <p className="font-medium text-sm">{service.label}</p>
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
+                  {services.map((service) => {
+                    const Icon = service.icon;
+                    const isSelected = formData.service === service.value;
+                    return (
+                      <CarouselItem key={service.value} className="basis-full md:basis-1/2 lg:basis-1/3">
+                        <Card 
+                          className={`cursor-pointer transition-all bg-[#0D2D44] h-full ${
+                            isSelected
+                              ? "ring-2 ring-primary shadow-[0_0_10px_rgba(140,198,63,0.2)]" 
+                              : "hover:shadow-md"
+                          }`}
+                          onClick={() => setFormData({ ...formData, service: service.value })}
+                        >
+                          <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
+                            <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                            <p className="font-bold text-[#E0F7FA] mb-2">{service.label}</p>
+                            <p className="text-xs text-[#587C88]">{service.description}</p>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    );
+                  })}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
@@ -305,29 +309,30 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
                 <h3 className="text-lg font-semibold mb-2">What type of facility?</h3>
                 <p className="text-sm text-muted-foreground">Choose the facility you want to work on</p>
               </div>
-              <Carousel className="w-full max-w-xl mx-auto">
+              <Carousel className="w-full max-w-2xl mx-auto">
                 <CarouselContent>
-                  {facilities.map((facility) => (
-                    <CarouselItem key={facility.value} className="md:basis-1/2 lg:basis-1/3">
-                      <Card 
-                        className={`cursor-pointer transition-all ${
-                          formData.facility === facility.value 
-                            ? "ring-2 ring-primary shadow-md" 
-                            : "hover:shadow-md"
-                        }`}
-                        onClick={() => setFormData({ ...formData, facility: facility.value })}
-                      >
-                        <CardContent className="p-4 text-center">
-                          <img 
-                            src={facility.image} 
-                            alt={facility.label}
-                            className="w-full h-32 object-cover rounded-md mb-3"
-                          />
-                          <p className="font-medium text-sm">{facility.label}</p>
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
+                  {facilities.map((facility) => {
+                    const Icon = facility.icon;
+                    const isSelected = formData.facility === facility.value;
+                    return (
+                      <CarouselItem key={facility.value} className="basis-full md:basis-1/2 lg:basis-1/3">
+                        <Card 
+                          className={`cursor-pointer transition-all bg-[#0D2D44] h-full ${
+                            isSelected
+                              ? "ring-2 ring-primary shadow-[0_0_10px_rgba(140,198,63,0.2)]" 
+                              : "hover:shadow-md"
+                          }`}
+                          onClick={() => setFormData({ ...formData, facility: facility.value })}
+                        >
+                          <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
+                            <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                            <p className="font-bold text-[#E0F7FA] mb-2">{facility.label}</p>
+                            <p className="text-xs text-[#587C88]">{facility.description}</p>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    );
+                  })}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
@@ -342,29 +347,30 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
                 <h3 className="text-lg font-semibold mb-2">What surface type?</h3>
                 <p className="text-sm text-muted-foreground">Select your preferred pool surface style</p>
               </div>
-              <Carousel className="w-full max-w-xl mx-auto">
+              <Carousel className="w-full max-w-2xl mx-auto">
                 <CarouselContent>
-                  {surfaces.map((surface) => (
-                    <CarouselItem key={surface.value} className="md:basis-1/2">
-                      <Card 
-                        className={`cursor-pointer transition-all ${
-                          formData.surface === surface.value 
-                            ? "ring-2 ring-primary shadow-md" 
-                            : "hover:shadow-md"
-                        }`}
-                        onClick={() => setFormData({ ...formData, surface: surface.value })}
-                      >
-                        <CardContent className="p-4 text-center">
-                          <img 
-                            src={surface.image} 
-                            alt={surface.label}
-                            className="w-full h-40 object-cover rounded-md mb-3"
-                          />
-                          <p className="font-medium">{surface.label}</p>
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
+                  {surfaces.map((surface) => {
+                    const Icon = surface.icon;
+                    const isSelected = formData.surface === surface.value;
+                    return (
+                      <CarouselItem key={surface.value} className="basis-full md:basis-1/2">
+                        <Card 
+                          className={`cursor-pointer transition-all bg-[#0D2D44] h-full ${
+                            isSelected
+                              ? "ring-2 ring-primary shadow-[0_0_10px_rgba(140,198,63,0.2)]" 
+                              : "hover:shadow-md"
+                          }`}
+                          onClick={() => setFormData({ ...formData, surface: surface.value })}
+                        >
+                          <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
+                            <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                            <p className="font-bold text-[#E0F7FA] mb-2">{surface.label}</p>
+                            <p className="text-xs text-[#587C88]">{surface.description}</p>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    );
+                  })}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
@@ -379,29 +385,30 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
                 <h3 className="text-lg font-semibold mb-2">Choose your finishing</h3>
                 <p className="text-sm text-muted-foreground">Select the material for your pool finish</p>
               </div>
-              <Carousel className="w-full max-w-xl mx-auto">
+              <Carousel className="w-full max-w-2xl mx-auto">
                 <CarouselContent>
-                  {finishings.map((finishing) => (
-                    <CarouselItem key={finishing.value} className="md:basis-1/2">
-                      <Card 
-                        className={`cursor-pointer transition-all ${
-                          formData.finishing === finishing.value 
-                            ? "ring-2 ring-primary shadow-md" 
-                            : "hover:shadow-md"
-                        }`}
-                        onClick={() => setFormData({ ...formData, finishing: finishing.value })}
-                      >
-                        <CardContent className="p-4 text-center">
-                          <img 
-                            src={finishing.image} 
-                            alt={finishing.label}
-                            className="w-full h-40 object-cover rounded-md mb-3"
-                          />
-                          <p className="font-medium">{finishing.label}</p>
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
+                  {finishings.map((finishing) => {
+                    const Icon = finishing.icon;
+                    const isSelected = formData.finishing === finishing.value;
+                    return (
+                      <CarouselItem key={finishing.value} className="basis-full md:basis-1/2">
+                        <Card 
+                          className={`cursor-pointer transition-all bg-[#0D2D44] h-full ${
+                            isSelected
+                              ? "ring-2 ring-primary shadow-[0_0_10px_rgba(140,198,63,0.2)]" 
+                              : "hover:shadow-md"
+                          }`}
+                          onClick={() => setFormData({ ...formData, finishing: finishing.value })}
+                        >
+                          <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
+                            <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                            <p className="font-bold text-[#E0F7FA] mb-2">{finishing.label}</p>
+                            <p className="text-xs text-[#587C88]">{finishing.description}</p>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    );
+                  })}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
@@ -458,29 +465,30 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
                 <h3 className="text-lg font-semibold mb-2">Select filtration system</h3>
                 <p className="text-sm text-muted-foreground">Choose your preferred water filtration type (optional)</p>
               </div>
-              <Carousel className="w-full max-w-xl mx-auto">
+              <Carousel className="w-full max-w-2xl mx-auto">
                 <CarouselContent>
-                  {filtrations.map((filtration) => (
-                    <CarouselItem key={filtration.value} className="md:basis-1/2">
-                      <Card 
-                        className={`cursor-pointer transition-all ${
-                          formData.filtration === filtration.value 
-                            ? "ring-2 ring-primary shadow-md" 
-                            : "hover:shadow-md"
-                        }`}
-                        onClick={() => setFormData({ ...formData, filtration: filtration.value })}
-                      >
-                        <CardContent className="p-4 text-center">
-                          <img 
-                            src={filtration.image} 
-                            alt={filtration.label}
-                            className="w-full h-40 object-cover rounded-md mb-3"
-                          />
-                          <p className="font-medium">{filtration.label}</p>
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
+                  {filtrations.map((filtration) => {
+                    const Icon = filtration.icon;
+                    const isSelected = formData.filtration === filtration.value;
+                    return (
+                      <CarouselItem key={filtration.value} className="basis-full md:basis-1/2">
+                        <Card 
+                          className={`cursor-pointer transition-all bg-[#0D2D44] h-full ${
+                            isSelected
+                              ? "ring-2 ring-primary shadow-[0_0_10px_rgba(140,198,63,0.2)]" 
+                              : "hover:shadow-md"
+                          }`}
+                          onClick={() => setFormData({ ...formData, filtration: filtration.value })}
+                        >
+                          <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
+                            <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                            <p className="font-bold text-[#E0F7FA] mb-2">{filtration.label}</p>
+                            <p className="text-xs text-[#587C88]">{filtration.description}</p>
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    );
+                  })}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
