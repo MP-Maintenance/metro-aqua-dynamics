@@ -52,7 +52,7 @@ export const LazyImage = ({
   };
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden">
       {/* Placeholder */}
       {isLoading && (
         <div
