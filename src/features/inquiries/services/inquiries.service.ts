@@ -26,7 +26,7 @@ export interface CreateInquiryData {
 export const inquiriesService = {
   async create(data: CreateInquiryData) {
     const { data: inquiry, error } = await supabase
-      .from("tblinquiries")
+      .from("inquiries")
       .insert(data)
       .select()
       .single();
@@ -37,7 +37,7 @@ export const inquiriesService = {
 
   async getAll() {
     const { data, error } = await supabase
-      .from("tblinquiries")
+      .from("inquiries")
       .select("*")
       .order("submittedat", { ascending: false });
 
@@ -47,7 +47,7 @@ export const inquiriesService = {
 
   async getById(inquiryid: number) {
     const { data, error } = await supabase
-      .from("tblinquiries")
+      .from("inquiries")
       .select("*")
       .eq("inquiryid", inquiryid)
       .single();
@@ -56,9 +56,20 @@ export const inquiriesService = {
     return data as Inquiry;
   },
 
+  async getByUserId(userId: string) {
+    const { data, error } = await supabase
+      .from("inquiries")
+      .select("*")
+      .eq("user_id", userId)
+      .order("submittedat", { ascending: false });
+
+    if (error) throw error;
+    return data as Inquiry[];
+  },
+
   async updateStatus(inquiryid: number, status: string) {
     const { data, error } = await supabase
-      .from("tblinquiries")
+      .from("inquiries")
       .update({ status })
       .eq("inquiryid", inquiryid)
       .select()
@@ -70,7 +81,7 @@ export const inquiriesService = {
 
   async delete(inquiryid: number) {
     const { error } = await supabase
-      .from("tblinquiries")
+      .from("inquiries")
       .delete()
       .eq("inquiryid", inquiryid);
 

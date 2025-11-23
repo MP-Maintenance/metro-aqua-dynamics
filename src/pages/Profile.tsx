@@ -12,8 +12,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuoteDetailsModal from "@/components/QuoteDetailsModal";
 import ConsultationDetailsModal from "@/components/ConsultationDetailsModal";
-import { User, Mail, Phone, Calendar, Package } from "lucide-react";
+import { User, Mail, Phone, Calendar, Package, FileText } from "lucide-react";
 import { format } from "date-fns";
+import type { Inquiry } from "@/features/inquiries/services/inquiries.service";
 
 interface Profile {
   id: string;
@@ -35,12 +36,17 @@ interface PreConsultation {
   status: string;
 }
 
+interface InquiryDisplay extends Inquiry {
+  // All fields from Inquiry interface
+}
+
 const Profile = () => {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
+  const [inquiries, setInquiries] = useState<InquiryDisplay[]>([]);
   const [preConsultations, setPreConsultations] = useState<PreConsultation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "profile");
@@ -79,6 +85,16 @@ const Profile = () => {
 
         if (quotesError) throw quotesError;
         setQuoteRequests(quotesData || []);
+
+        // Fetch inquiries
+        const { data: inquiriesData, error: inquiriesError } = await supabase
+          .from("inquiries")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("submittedat", { ascending: false });
+
+        if (inquiriesError) throw inquiriesError;
+        setInquiries(inquiriesData || []);
 
         // Fetch pre-consultations
         const { data: consultationsData, error: consultationsError } = await supabase
@@ -140,9 +156,10 @@ const Profile = () => {
           <h1 className="text-4xl font-bold mb-8">My Profile</h1>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="profile">Profile Info</TabsTrigger>
               <TabsTrigger value="quotes">My Quote Requests</TabsTrigger>
+              <TabsTrigger value="inquiries">My Inquiries</TabsTrigger>
               <TabsTrigger value="consultations">Pre-Consultations</TabsTrigger>
             </TabsList>
 
@@ -252,6 +269,55 @@ const Profile = () => {
                               </div>
                               <div className="flex items-center gap-3">
                                 {getStatusBadge(quote.status)}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="inquiries" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>My Inquiries</CardTitle>
+                  <CardDescription>
+                    Your general inquiry history
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {inquiries.length === 0 ? (
+                    <div className="text-center py-12">
+                      <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground">No inquiries yet</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {inquiries.map((inquiry) => (
+                        <Card 
+                          key={inquiry.inquiryid} 
+                          className="border-border"
+                        >
+                          <CardContent className="pt-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                              <div className="space-y-2 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm text-muted-foreground">
+                                    {format(new Date(inquiry.submittedat), "PPP")}
+                                  </span>
+                                </div>
+                                <div>
+                                  <p className="font-medium">{inquiry.inquirytype}</p>
+                                  <p className="text-sm text-muted-foreground">Service: {inquiry.servicetype}</p>
+                                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{inquiry.message}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                {getStatusBadge(inquiry.status)}
                               </div>
                             </div>
                           </CardContent>

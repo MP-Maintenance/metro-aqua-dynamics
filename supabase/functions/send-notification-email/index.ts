@@ -10,7 +10,7 @@ const corsHeaders = {
 };
 
 const ADMIN_EMAILS = ['isa@metro-pools.com', 'mohisathinks@gmail.com'];
-const FROM_EMAIL = 'Metro Pools <mohisathinks@gmail.com>';
+const FROM_EMAIL = 'Metro Pools <onboarding@resend.dev>';
 
 interface QuoteNotification {
   type: 'quote';
