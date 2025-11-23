@@ -2,7 +2,7 @@ import { ReactNode, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Package, FileText, MessageSquare, Building, Users, HelpCircle } from "lucide-react";
+import { LogOut, LayoutDashboard, Package, FileText, MessageSquare, Building, Users, HelpCircle, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AdminLayoutProps {
@@ -33,6 +33,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: "/admin/categories", icon: Package, label: "Categories" },
     { path: "/admin/quotes", icon: FileText, label: "Quote Requests" },
     { path: "/admin/consultations", icon: MessageSquare, label: "Pre-Consultations" },
+    { path: "/admin/inquiries", icon: Inbox, label: "Inquiries" },
     { path: "/admin/reviews", icon: MessageSquare, label: "Reviews" },
     { path: "/admin/company", icon: Building, label: "Company Details" },
     { path: "/admin/users", icon: Users, label: "Users" },
