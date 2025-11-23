@@ -3,7 +3,8 @@ import AdminLayout from "@/components/AdminLayout";
 import { useTeam } from "@/features/team/hooks/useTeam";
 import { teamService, type TeamMember } from "@/features/team/services/team.service";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Table,
   TableBody,
@@ -37,6 +38,8 @@ const AdminTeam = () => {
     description: "",
     imageurl: "",
   });
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   const handleEdit = (member: TeamMember) => {
     setEditingMember(member);
@@ -48,6 +51,7 @@ const AdminTeam = () => {
       description: member.description || "",
       imageurl: member.imageurl || "",
     });
+    setImagePreview(member.imageurl || "");
   };
 
   const handleAdd = () => {
@@ -60,6 +64,71 @@ const AdminTeam = () => {
       description: "",
       imageurl: "",
     });
+    setImagePreview("");
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Error",
+        description: "Please upload an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "Image size must be less than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("team-images")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("team-images")
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, imageurl: publicUrl });
+      setImagePreview(publicUrl);
+
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const clearImage = () => {
+    setFormData({ ...formData, imageurl: "" });
+    setImagePreview("");
   };
 
   const handleSave = async () => {
@@ -233,11 +302,56 @@ const AdminTeam = () => {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="imageurl">Image URL</Label>
+                <Label>Team Member Image</Label>
+                
+                {imagePreview && (
+                  <div className="relative w-32 h-32 mb-2">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover rounded-lg border"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
+                      onClick={clearImage}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Label htmlFor="image-upload" className="cursor-pointer">
+                      <div className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted/50 transition-colors">
+                        <Upload className="h-4 w-4" />
+                        <span>{uploading ? "Uploading..." : "Upload Image"}</span>
+                      </div>
+                    </Label>
+                    <Input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-sm text-muted-foreground">
+                  Or paste an image URL:
+                </div>
                 <Input
                   id="imageurl"
                   value={formData.imageurl}
-                  onChange={(e) => setFormData({ ...formData, imageurl: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, imageurl: e.target.value });
+                    setImagePreview(e.target.value);
+                  }}
                   placeholder="https://example.com/image.jpg"
                 />
               </div>

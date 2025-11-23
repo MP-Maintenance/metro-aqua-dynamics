@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -34,6 +35,8 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
     price: "",
   });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   useEffect(() => {
     if (product) {
@@ -45,8 +48,58 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
         image_url: product.image_url || "",
         price: product.price?.toString() || "",
       });
+      setImagePreview(product.image_url || "");
     }
   }, [product]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("product-images")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("product-images")
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, image_url: publicUrl });
+      setImagePreview(publicUrl);
+
+      toast.success("Image uploaded successfully");
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast.error(error.message || "Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const clearImage = () => {
+    setFormData({ ...formData, image_url: "" });
+    setImagePreview("");
+  };
 
   const handleSave = async () => {
     if (!product?.id) return;
@@ -128,12 +181,57 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
           </div>
 
           <div>
-            <Label htmlFor="image_url">Image URL (Optional)</Label>
+            <Label>Product Image (Optional)</Label>
+            
+            {imagePreview && (
+              <div className="relative w-32 h-32 mb-2">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover rounded-lg border"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
+                  onClick={clearImage}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            <div className="flex gap-2 mb-2">
+              <div className="flex-1">
+                <Label htmlFor="product-image-upload" className="cursor-pointer">
+                  <div className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted/50 transition-colors">
+                    <Upload className="h-4 w-4" />
+                    <span>{uploading ? "Uploading..." : "Upload Image"}</span>
+                  </div>
+                </Label>
+                <Input
+                  id="product-image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="hidden"
+                />
+              </div>
+            </div>
+
+            <div className="text-sm text-muted-foreground mb-2">
+              Or paste an image URL:
+            </div>
             <Input
               id="image_url"
               value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              placeholder="Enter image URL"
+              onChange={(e) => {
+                setFormData({ ...formData, image_url: e.target.value });
+                setImagePreview(e.target.value);
+              }}
+              placeholder="https://example.com/image.jpg"
             />
           </div>
 
