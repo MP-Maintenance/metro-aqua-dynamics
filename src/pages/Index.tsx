@@ -378,7 +378,7 @@ const Index = () => {
                         <Mail className="w-6 h-6 text-secondary" />
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-1 text-[#E0F7FA]">Email</h4>
+                        <h4 className="font-semibold mb-1 text-primary">Email</h4>
                         <a href="mailto:info@metropools.com" className="text-[#587C88] hover:text-secondary transition-colors">
                           info@metropools.com
                         </a>
