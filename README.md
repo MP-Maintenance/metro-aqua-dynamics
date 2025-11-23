@@ -1,6 +1,3 @@
-Here’s a clean, professional README focused purely on your project — no Lovable references, no platform-specific instructions.
-Also keeps your highlight as Designed by Mohisa Thinks — Modern Web Developer (AI-Supported).
-
 Modern Web Project
 Designed by Mohisa Thinks — Modern Web Developer (AI-Supported)
 Overview
