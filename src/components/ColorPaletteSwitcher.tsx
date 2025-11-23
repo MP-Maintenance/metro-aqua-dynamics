@@ -1,5 +1,4 @@
 import { Palette } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,13 +7,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useColorPalette } from "@/contexts/ColorPaletteContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 
 export function ColorPaletteSwitcher() {
   const { currentPalette, setPalette, palettes } = useColorPalette();
   const { theme } = useTheme();
-  const [hoveredPalette, setHoveredPalette] = useState<string | null>(null);
 
   return (
     <DropdownMenu>
@@ -29,16 +27,12 @@ export function ColorPaletteSwitcher() {
           Choose Color Theme
         </div>
         {palettes.map((palette) => {
-          const isHovered = hoveredPalette === palette.id;
           const isActive = currentPalette.id === palette.id;
-          const colors = theme === "dark" ? palette.dark : palette.light;
           
           return (
             <DropdownMenuItem
               key={palette.id}
               onClick={() => setPalette(palette.id)}
-              onMouseEnter={() => setHoveredPalette(palette.id)}
-              onMouseLeave={() => setHoveredPalette(null)}
               className={`relative flex items-center gap-3 cursor-pointer p-3 rounded-lg transition-all duration-300 ${
                 isActive ? "bg-muted/50" : ""
               }`}
@@ -70,50 +64,6 @@ export function ColorPaletteSwitcher() {
                   ✓
                 </motion.span>
               )}
-              
-              {/* Hover Preview Tooltip */}
-              <AnimatePresence>
-                {isHovered && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute -bottom-2 left-0 right-0 translate-y-full z-50 bg-card border border-border rounded-lg p-3 shadow-lg"
-                  >
-                    <div className="text-xs font-medium mb-2">Preview</div>
-                    <div className="flex gap-2 items-center">
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded border border-border"
-                            style={{ backgroundColor: `hsl(${colors.primary})` }}
-                          />
-                          <span className="text-xs">Primary</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded border border-border"
-                            style={{ backgroundColor: `hsl(${colors.secondary})` }}
-                          />
-                          <span className="text-xs">Secondary</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded border border-border"
-                            style={{ backgroundColor: `hsl(${colors.accent})` }}
-                          />
-                          <span className="text-xs">Accent</span>
-                        </div>
-                      </div>
-                      <div 
-                        className="w-16 h-16 rounded-lg border border-border"
-                        style={{ background: colors.gradientHero }}
-                      />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </DropdownMenuItem>
           );
         })}
