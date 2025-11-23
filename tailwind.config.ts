@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -13,40 +18,82 @@ export default {
       },
     },
     extend: {
+      /**
+       * ---------------------------------------------------------
+       * COLORS
+       * All colors now map 1:1 to your CSS variables.
+       * This prevents shadcn from falling back to black surfaces.
+       * ---------------------------------------------------------
+       */
       colors: {
+        // Base surfaces
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+
+        // Primary palette
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
+
+        // Secondary palette
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+
+        // Destructive
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+
+        // Muted
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
+
+        // Accent
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+
+        // Popover
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
+
+        // Card
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        /**
+         * ---------------------------------------------------------
+         * CUSTOM SYSTEM COLORS
+         * These are your new dark palette enhancements.
+         * ---------------------------------------------------------
+         */
+        "surface-hover": "hsl(var(--surface-hover))",
+        "navbar-bg": "hsl(var(--navbar-bg))",
+
+        "text-primary": "hsl(var(--text-primary))",
+        "text-secondary": "hsl(var(--text-secondary))",
+        "text-muted": "hsl(var(--text-muted))",
+
+        "soft-accent": "hsl(var(--soft-accent))",
+        success: "hsl(var(--success))",
+
+        /**
+         * Sidebar system
+         */
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -57,22 +104,33 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        "surface-hover": "hsl(var(--surface-hover))",
-        "navbar-bg": "hsl(var(--navbar-bg))",
-        "text-primary": "hsl(var(--text-primary))",
-        "text-secondary": "hsl(var(--text-secondary))",
-        "text-muted": "hsl(var(--text-muted))",
-        "soft-accent": "hsl(var(--soft-accent))",
-        success: "hsl(var(--success))",
       },
+
+      /**
+       * ---------------------------------------------------------
+       * TYPOGRAPHY
+       * ---------------------------------------------------------
+       */
       fontFamily: {
-        sans: ['Lato', 'sans-serif'],
+        sans: ["Lato", "sans-serif"],
       },
+
+      /**
+       * ---------------------------------------------------------
+       * RADIUS
+       * ---------------------------------------------------------
+       */
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+
+      /**
+       * ---------------------------------------------------------
+       * ANIMATIONS
+       * ---------------------------------------------------------
+       */
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -94,29 +152,36 @@ export default {
           "0%": { opacity: "0", transform: "scale(0.95)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
-        "wave": {
+        wave: {
           "0%, 100%": { transform: "translateX(-50%) translateY(0)" },
           "50%": { transform: "translateX(-50%) translateY(-10px)" },
         },
-        "float": {
+        float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-20px)" },
         },
-        "shimmer": {
+        shimmer: {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
       },
+
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.6s ease-out",
         "fade-in-up": "fade-in-up 0.8s ease-out",
         "scale-in": "scale-in 0.4s ease-out",
-        "wave": "wave 3s ease-in-out infinite",
-        "float": "float 6s ease-in-out infinite",
-        "shimmer": "shimmer 3s linear infinite",
+        wave: "wave 3s ease-in-out infinite",
+        float: "float 6s ease-in-out infinite",
+        shimmer: "shimmer 3s linear infinite",
       },
+
+      /**
+       * ---------------------------------------------------------
+       * SHADOWS
+       * ---------------------------------------------------------
+       */
       boxShadow: {
         "glow-primary": "var(--glow-primary)",
         "glow-secondary": "var(--glow-secondary)",
