@@ -1,6 +1,6 @@
-Modern Web Project
-Designed by Mohisa Thinks — Modern Web Developer (AI-Supported)
-Overview
+# Modern Web Project
+# Designed by Mohisa Thinks — Modern Web Developer (AI-Supported)
+# Overview
 
 This project is a modern, fast, and scalable web application built with today’s leading front-end technologies. It follows clean code principles, reusable components, and a streamlined developer workflow.
 
