@@ -51,91 +51,258 @@ type NotificationData = QuoteNotification | InquiryNotification | PreConsultatio
 
 function generateQuoteEmailHTML(data: QuoteNotification): string {
   const itemsList = data.items.map(item => 
-    `<li><strong>${item.name}</strong> - Quantity: ${item.quantity} (${item.category})</li>`
+    `<div style="background: #f8fafc; border-radius: 8px; padding: 16px; margin-bottom: 12px; border: 1px solid #e2e8f0;">
+      <p style="color: #0D2D44; font-size: 16px; font-weight: 600; margin: 0 0 8px;">${item.name}</p>
+      <p style="color: #587C88; font-size: 14px; margin: 0;">Quantity: ${item.quantity} | Category: ${item.category}</p>
+    </div>`
   ).join('');
 
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #8CC63F;">New Quote Request</h2>
-      <p>A new quote request has been submitted:</p>
-      
-      <h3>Customer Information</h3>
-      <ul style="list-style: none; padding: 0;">
-        <li><strong>Name:</strong> ${data.customerName}</li>
-        <li><strong>Email:</strong> ${data.customerEmail}</li>
-      </ul>
-      
-      <h3>Requested Items</h3>
-      <ul>
-        ${itemsList}
-      </ul>
-      
-      <p style="margin-top: 20px; color: #666;">
-        Please log in to the admin dashboard to review and respond to this quote request.
-      </p>
-    </div>
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #f6f9fc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f6f9fc;">
+          <tr>
+            <td align="center" style="padding: 20px 0;">
+              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; margin: 0 auto;">
+                <tr>
+                  <td style="padding: 32px 20px; text-align: center; background-color: #051B2C;">
+                    <img src="https://ieuzdcrjvvimtmknycmh.supabase.co/storage/v1/object/public/pre-consultation-files/metro-pools-logo.png" alt="Metro Pools" style="max-width: 200px; height: auto;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 40px 20px 20px; text-align: center;">
+                    <h1 style="color: #0D2D44; font-size: 28px; font-weight: bold; margin: 0;">New Quote Request</h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px 20px; text-align: center;">
+                    <p style="color: #587C88; font-size: 16px; line-height: 26px; margin: 0;">A new quote request has been submitted and requires your attention.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px;">
+                    <h2 style="color: #0D2D44; font-size: 20px; font-weight: 600; margin: 0 0 12px;">Customer Information</h2>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Name:</strong> ${data.customerName}</p>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Email:</strong> ${data.customerEmail}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px;">
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px;">
+                    <h2 style="color: #0D2D44; font-size: 20px; font-weight: 600; margin: 0 0 12px;">Requested Items</h2>
+                    ${itemsList}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px;">
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px; text-align: center;">
+                    <p style="color: #587C88; font-size: 16px; line-height: 26px; margin: 0;">Please log in to the admin dashboard to review and respond to this quote request.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 48px 20px 0; text-align: center;">
+                    <p style="color: #8898aa; font-size: 12px; line-height: 16px; margin: 4px 0;">© 2025 Metro Pools W.L.L. | Swimming Pool Specialists in Qatar</p>
+                    <p style="color: #8898aa; font-size: 12px; line-height: 16px; margin: 4px 0;">
+                      <a href="https://metro-pools.com" style="color: #00A99D; text-decoration: none;">www.metro-pools.com</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
   `;
 }
 
 function generateInquiryEmailHTML(data: InquiryNotification): string {
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #8CC63F;">New ${data.inquiryType}</h2>
-      <p>A new inquiry has been submitted:</p>
-      
-      <h3>Customer Information</h3>
-      <ul style="list-style: none; padding: 0;">
-        <li><strong>Name:</strong> ${data.fullName}</li>
-        <li><strong>Email:</strong> ${data.email}</li>
-        <li><strong>Phone:</strong> ${data.phone}</li>
-      </ul>
-      
-      <h3>Inquiry Details</h3>
-      <ul style="list-style: none; padding: 0;">
-        <li><strong>Type:</strong> ${data.inquiryType}</li>
-        <li><strong>Service:</strong> ${data.serviceType}</li>
-      </ul>
-      
-      <h3>Message</h3>
-      <p style="background: #f4f4f4; padding: 15px; border-radius: 5px;">
-        ${data.message}
-      </p>
-      
-      <p style="margin-top: 20px; color: #666;">
-        Please log in to the admin dashboard to review and respond to this inquiry.
-      </p>
-    </div>
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #f6f9fc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f6f9fc;">
+          <tr>
+            <td align="center" style="padding: 20px 0;">
+              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; margin: 0 auto;">
+                <tr>
+                  <td style="padding: 32px 20px; text-align: center; background-color: #051B2C;">
+                    <img src="https://ieuzdcrjvvimtmknycmh.supabase.co/storage/v1/object/public/pre-consultation-files/metro-pools-logo.png" alt="Metro Pools" style="max-width: 200px; height: auto;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 40px 20px 20px; text-align: center;">
+                    <h1 style="color: #0D2D44; font-size: 28px; font-weight: bold; margin: 0;">New ${data.inquiryType}</h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px 20px; text-align: center;">
+                    <p style="color: #587C88; font-size: 16px; line-height: 26px; margin: 0;">A new inquiry has been submitted and requires your attention.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px;">
+                    <h2 style="color: #0D2D44; font-size: 20px; font-weight: 600; margin: 0 0 12px;">Customer Information</h2>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Name:</strong> ${data.fullName}</p>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Email:</strong> ${data.email}</p>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Phone:</strong> ${data.phone}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px;">
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px;">
+                    <h2 style="color: #0D2D44; font-size: 20px; font-weight: 600; margin: 0 0 12px;">Inquiry Details</h2>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Type:</strong> ${data.inquiryType}</p>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Service:</strong> ${data.serviceType}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px;">
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px;">
+                    <h2 style="color: #0D2D44; font-size: 20px; font-weight: 600; margin: 0 0 12px;">Message</h2>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 20px; border: 1px solid #e2e8f0; margin-top: 12px;">
+                      <p style="color: #0D2D44; font-size: 15px; line-height: 24px; margin: 0; white-space: pre-wrap;">${data.message}</p>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px;">
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px; text-align: center;">
+                    <p style="color: #587C88; font-size: 16px; line-height: 26px; margin: 0;">Please log in to the admin dashboard to review and respond to this inquiry.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 48px 20px 0; text-align: center;">
+                    <p style="color: #8898aa; font-size: 12px; line-height: 16px; margin: 4px 0;">© 2025 Metro Pools W.L.L. | Swimming Pool Specialists in Qatar</p>
+                    <p style="color: #8898aa; font-size: 12px; line-height: 16px; margin: 4px 0;">
+                      <a href="https://metro-pools.com" style="color: #00A99D; text-decoration: none;">www.metro-pools.com</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
   `;
 }
 
 function generatePreConsultationEmailHTML(data: PreConsultationNotification): string {
   const dimensionsText = data.dimensions 
-    ? `<li><strong>Dimensions:</strong> ${data.dimensions.length || 'N/A'}m × ${data.dimensions.width || 'N/A'}m × ${data.dimensions.depth || 'N/A'}m</li>`
+    ? `<div style="background: #f8fafc; border-radius: 8px; padding: 16px; border: 1px solid #e2e8f0; margin-top: 12px;">
+        <p style="color: #0D2D44; font-size: 14px; font-weight: 600; margin: 0 0 8px;">Dimensions</p>
+        <p style="color: #587C88; font-size: 15px; margin: 0;">
+          ${data.dimensions.length || 'N/A'}m × ${data.dimensions.width || 'N/A'}m × ${data.dimensions.depth || 'N/A'}m
+        </p>
+      </div>`
+    : '';
+
+  const facilityTypeText = data.facilityType 
+    ? `<p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Facility Type:</strong> ${data.facilityType}</p>`
     : '';
 
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #8CC63F;">New Pre-Consultation Request</h2>
-      <p>A new pre-consultation has been submitted:</p>
-      
-      <h3>Customer Information</h3>
-      <ul style="list-style: none; padding: 0;">
-        <li><strong>Name:</strong> ${data.customerName}</li>
-        <li><strong>Email:</strong> ${data.customerEmail}</li>
-        <li><strong>Phone:</strong> ${data.customerPhone}</li>
-      </ul>
-      
-      <h3>Project Details</h3>
-      <ul style="list-style: none; padding: 0;">
-        <li><strong>Service Required:</strong> ${data.serviceRequired}</li>
-        ${data.facilityType ? `<li><strong>Facility Type:</strong> ${data.facilityType}</li>` : ''}
-        ${dimensionsText}
-      </ul>
-      
-      <p style="margin-top: 20px; color: #666;">
-        Please log in to the admin dashboard to review the full details and respond to this pre-consultation request.
-      </p>
-    </div>
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #f6f9fc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Ubuntu, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f6f9fc;">
+          <tr>
+            <td align="center" style="padding: 20px 0;">
+              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; margin: 0 auto;">
+                <tr>
+                  <td style="padding: 32px 20px; text-align: center; background-color: #051B2C;">
+                    <img src="https://ieuzdcrjvvimtmknycmh.supabase.co/storage/v1/object/public/pre-consultation-files/metro-pools-logo.png" alt="Metro Pools" style="max-width: 200px; height: auto;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 40px 20px 20px; text-align: center;">
+                    <h1 style="color: #0D2D44; font-size: 28px; font-weight: bold; margin: 0;">New Pre-Consultation Request</h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px 20px; text-align: center;">
+                    <p style="color: #587C88; font-size: 16px; line-height: 26px; margin: 0;">A new pre-consultation has been submitted and requires your attention.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px;">
+                    <h2 style="color: #0D2D44; font-size: 20px; font-weight: 600; margin: 0 0 12px;">Customer Information</h2>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Name:</strong> ${data.customerName}</p>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Email:</strong> ${data.customerEmail}</p>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Phone:</strong> ${data.customerPhone}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px;">
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px;">
+                    <h2 style="color: #0D2D44; font-size: 20px; font-weight: 600; margin: 0 0 12px;">Project Details</h2>
+                    <p style="color: #587C88; font-size: 15px; line-height: 24px; margin: 8px 0;"><strong>Service Required:</strong> ${data.serviceRequired}</p>
+                    ${facilityTypeText}
+                    ${dimensionsText}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 20px;">
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 32px 20px; text-align: center;">
+                    <p style="color: #587C88; font-size: 16px; line-height: 26px; margin: 0;">Please log in to the admin dashboard to review the full details and respond to this pre-consultation request.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 48px 20px 0; text-align: center;">
+                    <p style="color: #8898aa; font-size: 12px; line-height: 16px; margin: 4px 0;">© 2025 Metro Pools W.L.L. | Swimming Pool Specialists in Qatar</p>
+                    <p style="color: #8898aa; font-size: 12px; line-height: 16px; margin: 4px 0;">
+                      <a href="https://metro-pools.com" style="color: #00A99D; text-decoration: none;">www.metro-pools.com</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
   `;
 }
 
