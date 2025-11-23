@@ -49,6 +49,24 @@ const Quote = () => {
         message: formData.get("message") as string,
       });
 
+      // Send email notification to admins
+      try {
+        await supabase.functions.invoke('send-notification-email', {
+          body: {
+            type: 'inquiry',
+            inquiryType: 'Quote',
+            fullName: formData.get("name") as string,
+            email: formData.get("email") as string,
+            phone: `${selectedCountryCode} ${formData.get("mobile")}`,
+            serviceType: formData.get("service") as string || "General",
+            message: formData.get("message") as string,
+          },
+        });
+      } catch (emailError) {
+        console.error('Error sending notification email:', emailError);
+        // Don't fail the submission if email fails
+      }
+
       toast({
         title: "Quote Request Sent!",
         description: "We'll get back to you within 24 hours.",

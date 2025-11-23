@@ -264,6 +264,28 @@ ${fileData ? `Reference File: ${fileData.name}` : ""}
         message: messageDetails,
       });
 
+      // Send email notification to admins
+      try {
+        await supabase.functions.invoke('send-notification-email', {
+          body: {
+            type: 'pre-consultation',
+            customerName: formData.name,
+            customerEmail: formData.email,
+            customerPhone: formData.phone,
+            serviceRequired: formData.service,
+            facilityType: formData.facility,
+            dimensions: {
+              length: formData.length ? parseFloat(formData.length) : undefined,
+              width: formData.width ? parseFloat(formData.width) : undefined,
+              depth: formData.depth ? parseFloat(formData.depth) : undefined,
+            },
+          },
+        });
+      } catch (emailError) {
+        console.error('Error sending notification email:', emailError);
+        // Don't fail the submission if email fails
+      }
+
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
