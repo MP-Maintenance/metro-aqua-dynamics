@@ -96,7 +96,7 @@ const ServiceAreaMap = () => {
           />
 
           {/* Service Locations */}
-          {serviceLocations.map((location) => (
+          {serviceLocations.map((location, index) => (
             <motion.div
               key={location.id}
               className="absolute cursor-pointer"
@@ -105,6 +105,9 @@ const ServiceAreaMap = () => {
                 top: `${location.coordinates.y}%`,
                 transform: "translate(-50%, -50%)",
               }}
+              initial={{ opacity: 0, scale: 0.8, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.12, ease: "easeOut" }}
               onHoverStart={() => setHoveredLocation(location.id)}
               onHoverEnd={() => setHoveredLocation(null)}
               onClick={() => setSelectedLocation(location)}
@@ -113,13 +116,13 @@ const ServiceAreaMap = () => {
             >
               {/* Pulsing ring */}
               <motion.div
-                className="absolute inset-0 rounded-full bg-primary/30"
+                className="absolute inset-0 rounded-full bg-primary/40 shadow-glow-primary"
                 animate={{
                   scale: [1, 2, 1],
-                  opacity: [0.6, 0, 0.6],
+                  opacity: [0.7, 0, 0.7],
                 }}
                 transition={{
-                  duration: 2,
+                  duration: 2.2,
                   repeat: Infinity,
                   ease: "easeOut",
                 }}
