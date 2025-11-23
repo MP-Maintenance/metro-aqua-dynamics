@@ -30,6 +30,7 @@ const AdminReviews = lazy(() => import("./pages/AdminReviews"));
 const AdminFAQs = lazy(() => import("./pages/AdminFAQs"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminCompany = lazy(() => import("./pages/AdminCompany"));
+const AdminInquiries = lazy(() => import("./pages/AdminInquiries"));
 
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -57,6 +58,7 @@ const AnimatedRoutes = () => {
         <Route path="/admin/categories" element={<PageTransition><AdminCategories /></PageTransition>} />
         <Route path="/admin/quotes" element={<PageTransition><AdminQuotes /></PageTransition>} />
         <Route path="/admin/consultations" element={<PageTransition><AdminConsultations /></PageTransition>} />
+        <Route path="/admin/inquiries" element={<PageTransition><AdminInquiries /></PageTransition>} />
         <Route path="/admin/reviews" element={<PageTransition><AdminReviews /></PageTransition>} />
         <Route path="/admin/company" element={<PageTransition><AdminCompany /></PageTransition>} />
         <Route path="/admin/users" element={<PageTransition><AdminUsers /></PageTransition>} />

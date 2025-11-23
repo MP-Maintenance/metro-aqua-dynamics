@@ -216,7 +216,8 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
         if (!fileData) return;
       }
 
-      const { error } = await supabase
+      // Save to pre_consultations table
+      const { error: preConsultError } = await supabase
         .from("pre_consultations")
         .insert({
           user_id: user.id,
@@ -236,7 +237,32 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
           reference_file_name: fileData?.name || null,
         });
 
-      if (error) throw error;
+      if (preConsultError) throw preConsultError;
+
+      // Also save to inquiries table
+      const { inquiriesService } = await import("@/features/inquiries/services/inquiries.service");
+      
+      const messageDetails = `
+Pre-Consultation Details:
+Service: ${formData.service}
+Facility: ${formData.facility}
+Surface Type: ${formData.surface || "Not specified"}
+Finishing: ${formData.finishing || "Not specified"}
+Dimensions: ${formData.length ? `L:${formData.length}m` : ""} ${formData.width ? `W:${formData.width}m` : ""} ${formData.depth ? `D:${formData.depth}m` : ""}
+Filtration: ${formData.filtration || "Not specified"}
+Preferred Contact: ${formData.contactMethod || "Not specified"}
+${fileData ? `Reference File: ${fileData.name}` : ""}
+      `.trim();
+
+      await inquiriesService.create({
+        inquirytype: "Pre-Consultation",
+        fullname: formData.name,
+        email: formData.email,
+        countrycode: "+974", // Default country code
+        mobilenumber: formData.phone,
+        servicetype: formData.service,
+        message: messageDetails,
+      });
 
       setShowSuccess(true);
       setTimeout(() => {

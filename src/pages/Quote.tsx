@@ -32,16 +32,39 @@ const Quote = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const formElement = e.target as HTMLFormElement;
+    const formData = new FormData(formElement);
 
-    toast({
-      title: "Quote Request Sent!",
-      description: "We'll get back to you within 24 hours.",
-    });
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { inquiriesService } = await import("@/features/inquiries/services/inquiries.service");
 
-    setIsSubmitting(false);
-    (e.target as HTMLFormElement).reset();
+      await inquiriesService.create({
+        inquirytype: "Quote",
+        fullname: formData.get("name") as string,
+        email: formData.get("email") as string,
+        countrycode: selectedCountryCode,
+        mobilenumber: formData.get("mobile") as string,
+        servicetype: formData.get("service") as string || "General",
+        message: formData.get("message") as string,
+      });
+
+      toast({
+        title: "Quote Request Sent!",
+        description: "We'll get back to you within 24 hours.",
+      });
+
+      formElement.reset();
+    } catch (error) {
+      console.error("Error submitting quote:", error);
+      toast({
+        title: "Error",
+        description: "Failed to submit quote request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

@@ -438,6 +438,77 @@ export type Database = {
         }
         Relationships: []
       }
+      tblinquiries: {
+        Row: {
+          countrycode: string
+          email: string
+          fullname: string
+          inquiryid: number
+          inquirytype: string
+          message: string
+          mobilenumber: string
+          servicetype: string
+          status: string
+          submittedat: string
+        }
+        Insert: {
+          countrycode?: string
+          email: string
+          fullname: string
+          inquiryid?: number
+          inquirytype: string
+          message: string
+          mobilenumber: string
+          servicetype: string
+          status?: string
+          submittedat?: string
+        }
+        Update: {
+          countrycode?: string
+          email?: string
+          fullname?: string
+          inquiryid?: number
+          inquirytype?: string
+          message?: string
+          mobilenumber?: string
+          servicetype?: string
+          status?: string
+          submittedat?: string
+        }
+        Relationships: []
+      }
+      tblinquirypolicies: {
+        Row: {
+          accepted: boolean
+          acceptedat: string
+          inquiryid: number
+          policyid: number
+          policyname: string
+        }
+        Insert: {
+          accepted?: boolean
+          acceptedat?: string
+          inquiryid: number
+          policyid?: number
+          policyname: string
+        }
+        Update: {
+          accepted?: boolean
+          acceptedat?: string
+          inquiryid?: number
+          policyid?: number
+          policyname?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tblinquirypolicies_inquiryid_fkey"
+            columns: ["inquiryid"]
+            isOneToOne: false
+            referencedRelation: "tblinquiries"
+            referencedColumns: ["inquiryid"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
