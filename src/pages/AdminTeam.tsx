@@ -5,6 +5,7 @@ import { teamService, type TeamMember } from "@/features/team/services/team.serv
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage, validateImageFile, generateUniqueFilename } from "@/lib/imageUtils";
 import {
   Table,
   TableBody,
@@ -71,21 +72,12 @@ const AdminTeam = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
+    // Validate file
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
       toast({
         title: "Error",
-        description: "Please upload an image file",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "Error",
-        description: "Image size must be less than 5MB",
+        description: validation.error,
         variant: "destructive",
       });
       return;
@@ -93,26 +85,34 @@ const AdminTeam = () => {
 
     setUploading(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${fileName}`;
+      // Compress image before upload
+      const compressedBlob = await compressImage(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.85,
+      });
+
+      const fileName = generateUniqueFilename(file.name);
+      const compressedFile = new File([compressedBlob], fileName, {
+        type: "image/jpeg",
+      });
 
       const { error: uploadError } = await supabase.storage
         .from("team-images")
-        .upload(filePath, file);
+        .upload(fileName, compressedFile);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
         .from("team-images")
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       setFormData({ ...formData, imageurl: publicUrl });
       setImagePreview(publicUrl);
 
       toast({
         title: "Success",
-        description: "Image uploaded successfully",
+        description: "Image uploaded and compressed successfully",
       });
     } catch (error: any) {
       console.error("Upload error:", error);
