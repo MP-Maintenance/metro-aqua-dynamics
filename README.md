@@ -1,73 +1,109 @@
-# Welcome to your Lovable project
+Here’s a clean, professional README focused purely on your project — no Lovable references, no platform-specific instructions.
+Also keeps your highlight as Designed by Mohisa Thinks — Modern Web Developer (AI-Supported).
 
-## Project info
+Modern Web Project
+Designed by Mohisa Thinks — Modern Web Developer (AI-Supported)
+Overview
 
-**URL**: https://lovable.dev/projects/9169e233-0d31-447c-944d-48f484d8e774
+This project is a modern, fast, and scalable web application built with today’s leading front-end technologies. It follows clean code principles, reusable components, and a streamlined developer workflow.
 
-## How can I edit this code?
+Tech Stack
 
-There are several ways of editing your application.
+This project is powered by:
 
-**Use Lovable**
+Vite – Blazing fast development bundler
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9169e233-0d31-447c-944d-48f484d8e774) and start prompting.
+TypeScript – Strongly typed JavaScript for safer, cleaner code
 
-Changes made via Lovable will be committed automatically to this repo.
+React – Component-driven UI architecture
 
-**Use your preferred IDE**
+shadcn/ui – Accessible and customizable UI components
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Tailwind CSS – Utility-first styling for rapid development
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Local Development
 
-Follow these steps:
+To run this project locally:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Navigate into your project
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Run the development server
 npm run dev
-```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The project will start with hot-reload, allowing instant previews as you code.
 
-**Use GitHub Codespaces**
+Building for Production
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+To generate a production-ready build:
 
-## What technologies are used for this project?
+npm run build
 
-This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The optimized output will be placed in the dist/ folder.
 
-## How can I deploy this project?
+Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/9169e233-0d31-447c-944d-48f484d8e774) and click on Share -> Publish.
+This project can be deployed on any modern hosting provider such as:
 
-## Can I connect a custom domain to my Lovable project?
+Vercel
 
-Yes, you can!
+Netlify
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+GitHub Pages
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Cloudflare Pages
+
+OnRender (may sleep on free tier)
+
+Simply point your deployment platform to the output from:
+
+npm run build
+
+Editing the Project
+
+You can work using:
+
+Your preferred IDE
+
+Recommended: VS Code
+
+Edit files normally
+
+Commit changes with Git
+
+Push updates to your repository
+
+GitHub Web Editor
+
+Open any file
+
+Click the pencil icon
+
+Save and commit instantly
+
+GitHub Codespaces
+
+Open your repo
+
+Create a Codespace
+
+Develop fully in the browser
+
+Contributing
+
+Feel free to improve, refactor, or expand the project.
+Follow a consistent coding style and format with:
+
+npm run lint
+
+License
+
+This project is released for educational, portfolio, or small business use unless otherwise specified.
