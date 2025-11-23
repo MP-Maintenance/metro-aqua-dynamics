@@ -4,7 +4,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Droplets, Wrench, Sparkles, CheckCircle } from "lucide-react";
+import { Droplets, Wrench, Sparkles, CheckCircle, Layers } from "lucide-react";
 import maintenanceImg from "@/assets/service-maintenance.jpg";
 import inspectionImg from "@/assets/service-inspection.jpg";
 import renovationImg from "@/assets/service-renovation.jpg";
@@ -60,6 +60,23 @@ const Services = () => {
         "Deck restoration and refinishing",
         "Water feature integration",
         "Modern aesthetic enhancements",
+      ],
+    },
+    {
+      id: "design-build",
+      icon: Layers,
+      title: "Design & Build",
+      image: renovationImg,
+      description: "Custom pool design and construction tailored to your vision and space",
+      features: [
+        "Conceptual design & 3D visualization",
+        "Pool construction and excavation",
+        "Custom finishes, materials, and surfaces",
+        "Integration of water features and lighting",
+        "Automation and smart controls installation",
+        "Deck and landscape design coordination",
+        "Energy-efficient and sustainable solutions",
+        "Complete project management from start to finish",
       ],
     },
   ];

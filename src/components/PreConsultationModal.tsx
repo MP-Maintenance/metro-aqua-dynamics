@@ -65,7 +65,8 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
   const services: { value: string; label: string; icon: LucideIcon; description: string }[] = [
     { value: "maintenance", label: "Maintenance / Cleaning", icon: Sparkles, description: "Regular pool maintenance and cleaning services" },
     { value: "inspection", label: "Inspection / Repairs", icon: Wrench, description: "Professional inspection and repair work" },
-    { value: "renovation", label: "Renovation", icon: Hammer, description: "Complete pool renovation and upgrades" },
+    { value: "renovation", label: "Renovation", icon: Hammer, description: "Transform your pool with modern upgrades and energy-efficient solutions" },
+    { value: "design-build", label: "Design & Build", icon: Layers, description: "Custom pool design and construction tailored to your vision and space" },
   ];
 
   const facilities: { value: string; label: string; icon: LucideIcon; description: string }[] = [
@@ -102,6 +103,44 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
   ];
 
   const handleNext = () => {
+    // Validation for each step
+    if (step === 1 && !formData.service) {
+      toast.error("Please select a service");
+      return;
+    }
+    if (step === 2 && !formData.facility) {
+      toast.error("Please select a facility type");
+      return;
+    }
+    if (step === 3 && !formData.surface) {
+      toast.error("Please select a surface type");
+      return;
+    }
+    if (step === 4 && !formData.finishing) {
+      toast.error("Please select a finishing type");
+      return;
+    }
+    if (step === 6 && !formData.filtration) {
+      toast.error("Please select a filtration system");
+      return;
+    }
+    if (step === 7) {
+      if (!formData.name || !formData.email || !formData.phone) {
+        toast.error("Please fill in all contact details");
+        return;
+      }
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        toast.error("Please enter a valid email address");
+        return;
+      }
+    }
+    if (step === 8 && !formData.contactMethod) {
+      toast.error("Please select a preferred contact method");
+      return;
+    }
+    
     if (step < totalSteps) {
       setStep(step + 1);
     }

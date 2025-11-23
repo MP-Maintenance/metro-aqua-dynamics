@@ -4,18 +4,15 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import PreConsultationModal from "./PreConsultationModal";
 
 interface ServiceCardProps {
   title: string;
   description: string;
   image: string;
   link: string;
-  serviceType?: string;
 }
 
-const ServiceCard = ({ title, description, image, link, serviceType }: ServiceCardProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const ServiceCard = ({ title, description, image, link }: ServiceCardProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -30,12 +27,6 @@ const ServiceCard = ({ title, description, image, link, serviceType }: ServiceCa
   };
 
   return (
-    <>
-      <PreConsultationModal 
-        open={isModalOpen} 
-        onOpenChange={setIsModalOpen}
-        defaultService={serviceType}
-      />
     <Card className="group overflow-hidden hover:shadow-strong transition-all duration-300 border-border">
       <motion.div 
         className="relative overflow-hidden h-64"
@@ -66,16 +57,15 @@ const ServiceCard = ({ title, description, image, link, serviceType }: ServiceCa
             </Link>
           </Button>
           <Button 
-            onClick={() => setIsModalOpen(true)}
+            asChild
             variant="default"
             className="w-full"
           >
-            Pre-Consultation Form
+            <Link to="/quote">Request a Quote</Link>
           </Button>
         </div>
       </CardContent>
     </Card>
-    </>
   );
 };
 

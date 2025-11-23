@@ -232,11 +232,12 @@ const Index = () => {
                 Professional solutions for all your pool maintenance needs
               </p>
             </motion.div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 { title: "Maintenance / Cleaning", description: "Routine and preventive cleaning to keep your pool safe, hygienic, and sparkling.", image: maintenanceImg, link: "/services#maintenance" },
                 { title: "Inspection / Repairs", description: "Professional assessment and corrective actions for leaks, pumps, and structural issues.", image: inspectionImg, link: "/services#inspection" },
-                { title: "Renovation", description: "Transform and upgrade old facilities with modern fittings, finishes, and energy-efficient systems.", image: renovationImg, link: "/services#renovation" }
+                { title: "Renovation", description: "Transform your pool with modern upgrades and energy-efficient solutions.", image: renovationImg, link: "/services#renovation" },
+                { title: "Design & Build", description: "Custom pool design and construction tailored to your vision and space.", image: renovationImg, link: "/services#design-build" }
               ].map((service, index) => (
                 <motion.div
                   key={service.title}
