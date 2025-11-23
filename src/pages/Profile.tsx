@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuoteDetailsModal from "@/components/QuoteDetailsModal";
 import ConsultationDetailsModal from "@/components/ConsultationDetailsModal";
+import InquiryDetailsModal from "@/components/InquiryDetailsModal";
 import { User, Mail, Phone, Calendar, Package, FileText } from "lucide-react";
 import { format } from "date-fns";
 import type { Inquiry } from "@/features/inquiries/services/inquiries.service";
@@ -51,6 +52,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "profile");
   const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<InquiryDisplay | null>(null);
   const [selectedConsultation, setSelectedConsultation] = useState<PreConsultation | null>(null);
 
   useEffect(() => {
@@ -299,7 +301,8 @@ const Profile = () => {
                       {inquiries.map((inquiry) => (
                         <Card 
                           key={inquiry.inquiryid} 
-                          className="border-border"
+                          className="border-border cursor-pointer hover:shadow-medium transition-all duration-300"
+                          onClick={() => setSelectedInquiry(inquiry)}
                         >
                           <CardContent className="pt-6">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -384,6 +387,12 @@ const Profile = () => {
         quote={selectedQuote}
         isOpen={!!selectedQuote}
         onClose={() => setSelectedQuote(null)}
+      />
+
+      <InquiryDetailsModal 
+        inquiry={selectedInquiry}
+        isOpen={!!selectedInquiry}
+        onClose={() => setSelectedInquiry(null)}
       />
       
       <ConsultationDetailsModal 
