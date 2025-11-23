@@ -30,14 +30,14 @@ const FloatingActionButton = () => {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-40">
+    <div className="fixed bottom-6 left-6 z-40">
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute bottom-20 right-0 flex flex-col gap-3 mb-2"
+            className="absolute bottom-20 left-0 flex flex-col gap-3 mb-2"
           >
             {menuItems.map((item, index) => (
               <motion.div
@@ -55,7 +55,7 @@ const FloatingActionButton = () => {
                     )}
                   >
                     <item.icon className="h-5 w-5" />
-                    <span className="absolute right-14 whitespace-nowrap bg-card text-foreground px-3 py-1.5 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity shadow-medium">
+                    <span className="absolute left-14 whitespace-nowrap bg-card text-foreground px-3 py-1.5 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity shadow-medium">
                       {item.label}
                     </span>
                   </Button>
