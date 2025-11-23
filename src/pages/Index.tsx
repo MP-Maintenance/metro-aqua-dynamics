@@ -9,7 +9,9 @@ import Hero from "@/components/Hero";
 import WaveBackground from "@/components/WaveBackground";
 import ServiceCard from "@/components/ServiceCard";
 import FlipCard from "@/components/FlipCard";
-import StatsCounter from "@/components/StatsCounter";
+import AnimatedCounter from "@/components/AnimatedCounter";
+import CompanyTimeline from "@/components/CompanyTimeline";
+import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import ParallaxSection from "@/components/ParallaxSection";
 import ReviewsList from "@/features/reviews/components/ReviewsList";
 import ReviewSubmissionForm from "@/features/reviews/components/ReviewSubmissionForm";
@@ -188,7 +190,13 @@ const Index = () => {
       {/* About Us Section */}
       <section id="about" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center animate-fade-in">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto text-center"
+          >
             <h2 className="text-4xl md:text-5xl font-bold mb-6">About Metro Pools</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Metro Pools has been a trusted name in facility management for over a decade, 
@@ -198,10 +206,13 @@ const Index = () => {
               made us the preferred choice for villas, hotels, compounds, parks, and commercial 
               properties across the region.
             </p>
-            <StatsCounter />
-          </div>
+            <AnimatedCounter />
+          </motion.div>
         </div>
       </section>
+
+      {/* Company Timeline */}
+      <CompanyTimeline />
 
       {/* Services Section with Parallax */}
       <ParallaxSection speed={0.2}>
@@ -343,13 +354,16 @@ const Index = () => {
       {/* FAQ Section */}
       <FAQSection />
 
+      {/* Testimonials Carousel */}
+      <TestimonialsCarousel />
+
       {/* Reviews Section */}
       <section id="contact" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Client Reviews</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Get In Touch</h2>
             <p className="text-lg text-muted-foreground">
-              See what our clients have to say
+              Share your experience or reach out to us
             </p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
