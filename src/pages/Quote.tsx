@@ -39,6 +39,19 @@ const Quote = () => {
       const { supabase } = await import("@/integrations/supabase/client");
       const { inquiriesService } = await import("@/features/inquiries/services/inquiries.service");
 
+      // Check authentication
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Sign In Required",
+          description: "Please sign in to submit a quote request. This allows us to track your inquiries and provide personalized follow-ups.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       await inquiriesService.create({
         inquirytype: "Quote",
         fullname: formData.get("name") as string,
@@ -47,6 +60,7 @@ const Quote = () => {
         mobilenumber: formData.get("mobile") as string,
         servicetype: formData.get("service") as string || "General",
         message: formData.get("message") as string,
+        user_id: user.id,
       });
 
       // Send email notification to admins

@@ -10,11 +10,12 @@ interface QuoteModalProps {
   isOpen: boolean;
   onClose: () => void;
   product: {
+    id?: string;
     name: string;
-    description: string;
-    icon: any;
+    description: string | null;
+    icon?: any;
     category: string;
-    availability: "available" | "not-available";
+    availability: string | null;
   } | null;
 }
 
@@ -32,12 +33,12 @@ const QuoteModal = ({ isOpen, onClose, product }: QuoteModalProps) => {
 
     if (product) {
       addItem({
-        id: `${product.category}-${product.name}`,
+        id: product.id || `${product.category}-${product.name}`,
         name: product.name,
-        description: product.description,
+        description: product.description || "",
         category: product.category,
         icon: product.icon,
-        availability: product.availability,
+        availability: (product.availability as "available" | "not-available") || "available",
       });
       
       toast.success("Added to Quote Cart", {
@@ -51,7 +52,11 @@ const QuoteModal = ({ isOpen, onClose, product }: QuoteModalProps) => {
 
   if (!product) return null;
 
-  const Icon = product.icon;
+  // Import Package icon as fallback
+  const Icon = product.icon || (() => {
+    const { Package } = require("lucide-react");
+    return Package;
+  })();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -79,13 +84,13 @@ const QuoteModal = ({ isOpen, onClose, product }: QuoteModalProps) => {
             <div className="flex items-center gap-2">
               <div
                 className={`w-3 h-3 rounded-full ${
-                  product.availability === "available"
+                  product.availability === "available" || product.availability === "in_stock"
                     ? "bg-green-500"
                     : "bg-red-500"
                 }`}
               />
               <span className="text-sm font-medium">
-                {product.availability === "available"
+                {product.availability === "available" || product.availability === "in_stock"
                   ? "Available"
                   : "Currently Unavailable"}
               </span>
