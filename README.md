@@ -4,7 +4,7 @@ Overview
 
 This project is a modern, fast, and scalable web application built with today’s leading front-end technologies. It follows clean code principles, reusable components, and a streamlined developer workflow.
 
-Tech Stack
+# Tech Stack
 
 This project is powered by:
 
@@ -18,7 +18,7 @@ shadcn/ui – Accessible and customizable UI components
 
 Tailwind CSS – Utility-first styling for rapid development
 
-Local Development
+# Local Development
 
 To run this project locally:
 
@@ -46,7 +46,7 @@ npm run build
 
 The optimized output will be placed in the dist/ folder.
 
-Deployment
+# Deployment
 
 This project can be deployed on any modern hosting provider such as:
 
@@ -64,11 +64,11 @@ Simply point your deployment platform to the output from:
 
 npm run build
 
-Editing the Project
+# Editing the Project
 
 You can work using:
 
-Your preferred IDE
+# Your preferred IDE
 
 Recommended: VS Code
 
@@ -78,7 +78,7 @@ Commit changes with Git
 
 Push updates to your repository
 
-GitHub Web Editor
+# GitHub Web Editor
 
 Open any file
 
@@ -86,7 +86,7 @@ Click the pencil icon
 
 Save and commit instantly
 
-GitHub Codespaces
+# GitHub Codespaces
 
 Open your repo
 
@@ -94,13 +94,13 @@ Create a Codespace
 
 Develop fully in the browser
 
-Contributing
+# Contributing
 
 Feel free to improve, refactor, or expand the project.
 Follow a consistent coding style and format with:
 
 npm run lint
 
-License
+# License
 
 This project is released for educational, portfolio, or small business use unless otherwise specified.
