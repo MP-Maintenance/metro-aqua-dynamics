@@ -356,9 +356,6 @@ const Index = () => {
       {/* FAQ Section */}
       <FAQSection />
 
-      {/* Testimonials Carousel */}
-      <TestimonialsCarousel />
-
       {/* Before/After Renovation Slider */}
       <section className="py-20 bg-gradient-to-b from-background to-card">
         <div className="container mx-auto px-4">
@@ -424,71 +421,101 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Reviews Section */}
+      {/* Get In Touch Section */}
       <section id="contact" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Get In Touch</h2>
-            <p className="text-lg text-muted-foreground">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-[#E0F7FA]">Get In Touch</h2>
+            <p className="text-lg text-[#587C88]">
               Share your experience or reach out to us
             </p>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Reviews List */}
-            <div>
-              <h3 className="text-2xl font-semibold mb-6">What Our Clients Say</h3>
-              <ReviewsList />
-            </div>
+          </motion.div>
 
+          {/* What Our Clients Say - Carousel */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="mb-16"
+          >
+            <h3 className="text-2xl md:text-3xl font-semibold mb-8 text-center text-[#E0F7FA]">
+              What Our Clients Say
+            </h3>
+            <TestimonialsCarousel />
+          </motion.div>
+
+          {/* Review Form and Contact Details */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto mt-8 md:mt-12">
             {/* Review Submission Form */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-xl font-semibold mb-6 text-[#E0F7FA]">Share Your Experience</h3>
               <ReviewSubmissionForm />
-              
-              {/* Contact Info */}
-              <div className="space-y-4 mt-8">
-                <Card>
+            </motion.div>
+
+            {/* Company Contact Details */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-xl font-semibold mb-6 text-[#E0F7FA]">Contact Information</h3>
+              <div className="space-y-4">
+                <Card className="bg-card border-border/50 hover:border-secondary/50 transition-all duration-300">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-lg bg-primary/10">
-                        <Mail className="w-6 h-6 text-primary" />
+                      <div className="p-3 rounded-lg bg-secondary/10">
+                        <Mail className="w-6 h-6 text-secondary" />
                       </div>
                       <div>
-                        <h3 className="font-semibold mb-1">Email</h3>
-                        <a href="mailto:info@metropools.com" className="text-muted-foreground hover:text-primary transition-colors">
+                        <h4 className="font-semibold mb-1 text-[#E0F7FA]">Email</h4>
+                        <a href="mailto:info@metropools.com" className="text-[#587C88] hover:text-secondary transition-colors">
                           info@metropools.com
                         </a>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-card border-border/50 hover:border-secondary/50 transition-all duration-300">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-lg bg-primary/10">
-                        <Phone className="w-6 h-6 text-primary" />
+                      <div className="p-3 rounded-lg bg-secondary/10">
+                        <Phone className="w-6 h-6 text-secondary" />
                       </div>
                       <div>
-                        <h3 className="font-semibold mb-1">Phone</h3>
-                        <a href="tel:+97444771588" className="text-muted-foreground hover:text-primary transition-colors">
+                        <h4 className="font-semibold mb-1 text-[#E0F7FA]">Phone</h4>
+                        <a href="tel:+97444771588" className="text-[#587C88] hover:text-secondary transition-colors">
                           +974 4477 1588
                         </a>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-card border-border/50 hover:border-secondary/50 transition-all duration-300">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-lg bg-primary/10">
-                        <MessageCircle className="w-6 h-6 text-primary" />
+                      <div className="p-3 rounded-lg bg-secondary/10">
+                        <MessageCircle className="w-6 h-6 text-secondary" />
                       </div>
                       <div>
-                        <h3 className="font-semibold mb-1">WhatsApp</h3>
+                        <h4 className="font-semibold mb-1 text-[#E0F7FA]">WhatsApp</h4>
                         <a 
                           href="https://wa.me/97317000000" 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-lg transition-colors font-medium"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/80 text-primary-foreground rounded-lg transition-all duration-200 font-medium shadow-glow-primary"
                         >
                           <MessageCircle className="w-4 h-4" />
                           Message on WhatsApp
@@ -497,19 +524,19 @@ const Index = () => {
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-card border-border/50 hover:border-secondary/50 transition-all duration-300">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-lg bg-primary/10">
-                        <MapPin className="w-6 h-6 text-primary" />
+                      <div className="p-3 rounded-lg bg-secondary/10">
+                        <MapPin className="w-6 h-6 text-secondary" />
                       </div>
                       <div>
-                        <h3 className="font-semibold mb-1">Address</h3>
+                        <h4 className="font-semibold mb-1 text-[#E0F7FA]">Address</h4>
                         <a 
                           href="https://maps.app.goo.gl/hsDcLnTRTu6NYreyk9" 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-primary transition-colors"
+                          className="text-[#587C88] hover:text-secondary transition-colors"
                         >
                           Building No. 225, Zone 44, Street No. 250<br />
                           Nuaija Area, P.O. Box: 32163<br />
@@ -520,7 +547,7 @@ const Index = () => {
                   </CardContent>
                 </Card>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
