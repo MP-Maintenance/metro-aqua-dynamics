@@ -77,8 +77,8 @@ export default {
 
         /**
          * ---------------------------------------------------------
-         * CUSTOM SYSTEM COLORS
-         * These are your new dark palette enhancements.
+         * CUSTOM SYSTEM COLORS (DEEP WATER PALETTE)
+         * These are your deep water dark palette enhancements.
          * ---------------------------------------------------------
          */
         "surface-hover": "hsl(var(--surface-hover))",
