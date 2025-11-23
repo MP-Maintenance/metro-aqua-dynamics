@@ -3,10 +3,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import FloatingActionButton from "@/components/FloatingActionButton";
+import ScrollToTop from "@/components/ScrollToTop";
+import ScrollProgress from "@/components/ScrollProgress";
 import Hero from "@/components/Hero";
 import WaveBackground from "@/components/WaveBackground";
 import ServiceCard from "@/components/ServiceCard";
-import ScrollArrows from "@/components/ScrollArrows";
+import FlipCard from "@/components/FlipCard";
 import StatsCounter from "@/components/StatsCounter";
 import ParallaxSection from "@/components/ParallaxSection";
 import ReviewsList from "@/features/reviews/components/ReviewsList";
@@ -126,14 +128,15 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background font-['Inter',sans-serif] relative">
+      <ScrollProgress />
       <WaveBackground />
       <Navbar />
       <FloatingActionButton />
+      <ScrollToTop />
       <div id="hero">
         <Hero />
       </div>
       <WhatsAppButton />
-      <ScrollArrows />
 
       {/* Dark Mode Showcase Section with Parallax */}
       <ParallaxSection speed={0.3}>
@@ -253,20 +256,33 @@ const Index = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {teamMembers.map((member, idx) => (
-              <Card 
-                key={idx} 
-                className="text-center hover:shadow-medium transition-shadow cursor-pointer"
-                onClick={() => setSelectedTeamMember(member)}
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="h-[280px]"
               >
-                <CardContent className="pt-6">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  <h3 className="font-semibold text-lg mb-1">{member.name}</h3>
-                  <p className="text-sm text-primary mb-2">{member.role}</p>
-                  <p className="text-sm text-muted-foreground">{member.desc}</p>
-                </CardContent>
-              </Card>
+                <FlipCard
+                  type="team"
+                  frontContent={
+                    <CardContent className="pt-6 text-center">
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold shadow-glow-primary">
+                        {member.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <h3 className="font-semibold text-lg mb-1">{member.name}</h3>
+                      <p className="text-sm text-primary mb-2">{member.role}</p>
+                      <p className="text-sm text-muted-foreground">{member.desc}</p>
+                    </CardContent>
+                  }
+                  backContent={{
+                    name: member.name,
+                    email: member.email,
+                    mobile: member.mobile,
+                  }}
+                />
+              </motion.div>
             ))}
           </div>
         </div>
@@ -296,19 +312,25 @@ const Index = () => {
             <CarouselContent className="-ml-4">
               {partners.map((partner, idx) => (
                 <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                  <Card 
-                    className="border-2 hover:border-primary transition-all duration-300 cursor-pointer h-full"
-                    onClick={() => setSelectedPartner(partner)}
-                  >
-                    <CardContent className="flex flex-col items-center justify-center p-6 min-h-[180px]">
-                      <div className="text-3xl font-bold text-primary mb-3 text-center">
-                        {partner.name}
-                      </div>
-                      <p className="text-xs text-muted-foreground text-center italic">
-                        {partner.tagline}
-                      </p>
-                    </CardContent>
-                  </Card>
+                  <div className="h-[220px]">
+                    <FlipCard
+                      type="partner"
+                      frontContent={
+                        <CardContent className="flex flex-col items-center justify-center p-6 min-h-[220px]">
+                          <div className="text-3xl font-bold text-primary mb-3 text-center">
+                            {partner.name}
+                          </div>
+                          <p className="text-xs text-muted-foreground text-center italic">
+                            {partner.tagline}
+                          </p>
+                        </CardContent>
+                      }
+                      backContent={{
+                        name: partner.name,
+                        description: partner.description,
+                      }}
+                    />
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
