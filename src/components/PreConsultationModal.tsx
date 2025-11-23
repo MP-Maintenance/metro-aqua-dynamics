@@ -200,7 +200,10 @@ const PreConsultationModal = ({ open, onOpenChange, defaultService }: PreConsult
 
   const handleSubmit = async () => {
     if (!user) {
-      toast.error("Please sign in to submit the form");
+      toast.error("Sign In Required", {
+        description: "Please sign in to submit a pre-consultation. This allows us to track your inquiries and provide personalized follow-ups.",
+      });
+      onOpenChange(false);
       return;
     }
 
@@ -262,6 +265,7 @@ ${fileData ? `Reference File: ${fileData.name}` : ""}
         mobilenumber: formData.phone,
         servicetype: formData.service,
         message: messageDetails,
+        user_id: user.id,
       });
 
       // Send email notification to admins

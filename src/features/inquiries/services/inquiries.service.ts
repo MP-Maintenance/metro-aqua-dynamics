@@ -21,6 +21,7 @@ export interface CreateInquiryData {
   mobilenumber: string;
   servicetype: string;
   message: string;
+  user_id?: string | null;
 }
 
 export const inquiriesService = {
