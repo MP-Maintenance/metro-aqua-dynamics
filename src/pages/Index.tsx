@@ -8,6 +8,7 @@ import FloatingActionButton from "@/components/FloatingActionButton";
 import ScrollToTop from "@/components/ScrollToTop";
 import ScrollProgress from "@/components/ScrollProgress";
 import Hero from "@/components/Hero";
+import GMWelcome from "@/components/GMWelcome";
 import WaveBackground from "@/components/WaveBackground";
 import ServiceCard from "@/components/ServiceCard";
 import FlipCard from "@/components/FlipCard";
@@ -78,6 +79,9 @@ const Index = () => {
       <div id="hero">
         <Hero />
       </div>
+
+      {/* GM Welcome Section */}
+      <GMWelcome />
 
       {/* About Us Section */}
       <section id="about" className="py-20 bg-muted/30">
