@@ -42,8 +42,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   return (
     <div className="min-h-screen flex bg-background">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-card flex flex-col">
-        <div className="p-6 border-b">
+      <aside className="w-64 border-r bg-navbar-bg flex flex-col">
+        <div className="p-6 border-b border-border">
           <Link to="/" className="flex items-center gap-2">
             <Building className="h-6 w-6 text-primary" />
             <span className="font-bold text-lg">Metro Pools Admin</span>
@@ -60,10 +60,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-glow-primary"
+                    : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -73,10 +73,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           })}
         </nav>
 
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-border">
           <Button
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start hover:bg-surface-hover"
             onClick={handleLogout}
           >
             <LogOut className="h-4 w-4 mr-2" />

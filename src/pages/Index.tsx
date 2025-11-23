@@ -131,6 +131,49 @@ const Index = () => {
       <WhatsAppButton />
       <ScrollArrows />
 
+      {/* Dark Mode Showcase Section */}
+      <section className="py-20 bg-gradient-to-b from-background via-card to-background overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center animate-fade-in mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              Experience the Deep Water Theme
+            </h2>
+            <p className="text-lg text-text-secondary leading-relaxed">
+              Immerse yourself in our premium, underwater-inspired interface designed for modern pool management
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <Card className="bg-card border-primary/20 hover:border-primary/50 transition-all duration-300 hover:shadow-glow-primary">
+              <CardContent className="pt-6 text-center">
+                <div className="w-16 h-16 rounded-full bg-primary/20 mx-auto mb-4 flex items-center justify-center shadow-glow-primary">
+                  <div className="w-8 h-8 rounded-full bg-primary animate-pulse" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-text-primary">Electric Lime Accents</h3>
+                <p className="text-sm text-text-secondary">Vibrant primary actions that pop against deep navy</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-card border-secondary/20 hover:border-secondary/50 transition-all duration-300 hover:shadow-glow-secondary">
+              <CardContent className="pt-6 text-center">
+                <div className="w-16 h-16 rounded-full bg-secondary/20 mx-auto mb-4 flex items-center justify-center shadow-glow-secondary">
+                  <div className="w-8 h-8 rounded-full bg-secondary animate-pulse" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-text-primary">Pool Teal Highlights</h3>
+                <p className="text-sm text-text-secondary">Cool water tones for secondary elements</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-card border-accent/20 hover:border-accent/50 transition-all duration-300">
+              <CardContent className="pt-6 text-center">
+                <div className="w-16 h-16 rounded-full bg-accent/20 mx-auto mb-4 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-accent animate-pulse" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-text-primary">Metro Indigo Depth</h3>
+                <p className="text-sm text-text-secondary">Deep ocean surfaces for premium feel</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* About Us Section */}
       <section id="about" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
