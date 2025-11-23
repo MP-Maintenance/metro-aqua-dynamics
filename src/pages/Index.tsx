@@ -237,7 +237,7 @@ const Index = () => {
                 { title: "Maintenance / Cleaning", description: "Routine and preventive cleaning to keep your pool safe, hygienic, and sparkling.", image: maintenanceImg, link: "/services#maintenance" },
                 { title: "Inspection / Repairs", description: "Professional assessment and corrective actions for leaks, pumps, and structural issues.", image: inspectionImg, link: "/services#inspection" },
                 { title: "Renovation", description: "Transform your pool with modern upgrades and energy-efficient solutions.", image: renovationImg, link: "/services#renovation" },
-                { title: "Design & Build", description: "Custom pool design and construction tailored to your vision and space.", image: renovationImg, link: "/services#design-build" }
+                { title: "Design & Build", description: "Custom aesthetic pool design and construction tailored to your vision and space.", image: renovationImg, link: "/services#design-build" }
               ].map((service, index) => (
                 <motion.div
                   key={service.title}
