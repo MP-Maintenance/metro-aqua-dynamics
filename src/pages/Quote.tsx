@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import PreConsultationModal from "@/components/PreConsultationModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,8 @@ const Quote = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCountryCode, setSelectedCountryCode] = useState("+974");
+  const [selectedOption, setSelectedOption] = useState<"quote" | "consultation">("quote");
+  const [isConsultationModalOpen, setIsConsultationModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,6 +73,29 @@ const Quote = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
+            {/* Option Selector */}
+            <div className="flex gap-4 mb-8 justify-center">
+              <Button
+                size="lg"
+                variant={selectedOption === "quote" ? "default" : "outline"}
+                onClick={() => setSelectedOption("quote")}
+                className="min-w-[180px]"
+              >
+                Request a Quote
+              </Button>
+              <Button
+                size="lg"
+                variant={selectedOption === "consultation" ? "default" : "outline"}
+                onClick={() => {
+                  setSelectedOption("consultation");
+                  setIsConsultationModalOpen(true);
+                }}
+                className="min-w-[180px]"
+              >
+                Pre-Consultation
+              </Button>
+            </div>
+
             <Card className="shadow-strong">
               <CardContent className="pt-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -195,6 +221,15 @@ const Quote = () => {
           </div>
         </div>
       </section>
+
+      {/* Pre-Consultation Modal */}
+      <PreConsultationModal 
+        open={isConsultationModalOpen} 
+        onOpenChange={(open) => {
+          setIsConsultationModalOpen(open);
+          if (!open) setSelectedOption("quote");
+        }}
+      />
 
       <Footer />
     </div>
