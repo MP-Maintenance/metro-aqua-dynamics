@@ -18,6 +18,8 @@ import ParallaxSection from "@/components/ParallaxSection";
 import ReviewsList from "@/features/reviews/components/ReviewsList";
 import ReviewSubmissionForm from "@/features/reviews/components/ReviewSubmissionForm";
 import FAQSection from "@/features/faqs/components/FAQSection";
+import { useTeam } from "@/features/team/hooks/useTeam";
+import { usePartners } from "@/features/partners/hooks/usePartners";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
@@ -45,6 +47,9 @@ const countries = [
 ];
 
 const Index = () => {
+  const { team: teamMembers, loading: teamLoading } = useTeam();
+  const { partners, loading: partnersLoading } = usePartners();
+  
   const [selectedTeamMember, setSelectedTeamMember] = useState<{
     name: string;
     role: string;
@@ -60,75 +65,6 @@ const Index = () => {
     tagline: string;
     logo: string;
   } | null>(null);
-
-  const teamMembers = [
-    { 
-      name: "Ahmed Al-Khalifa", 
-      role: "Operations Manager", 
-      email: "ahmed@metropools.com",
-      mobile: "+973 3300 0001",
-      desc: "15+ years in facility management" 
-    },
-    { 
-      name: "Mohammed Hassan", 
-      role: "Lead Technician", 
-      email: "mohammed@metropools.com",
-      mobile: "+973 3300 0002",
-      desc: "Expert in pool systems & automation" 
-    },
-    { 
-      name: "Fatima Al-Mansour", 
-      role: "Quality Supervisor", 
-      email: "fatima@metropools.com",
-      mobile: "+973 3300 0003",
-      desc: "Ensuring top-tier service standards" 
-    },
-    { 
-      name: "Khalid Ibrahim", 
-      role: "Technical Specialist", 
-      email: "khalid@metropools.com",
-      mobile: "+973 3300 0004",
-      desc: "Advanced diagnostics & repairs" 
-    },
-  ];
-
-  const partners = [
-    { 
-      name: "AstralPool", 
-      tagline: "Innovative Water Solutions",
-      country: "Spain",
-      description: "Global leader in pool and wellness equipment, offering filtration systems, pumps, and automation solutions.",
-      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
-    },
-    { 
-      name: "Hayward", 
-      tagline: "Efficiency & Performance",
-      country: "United States",
-      description: "Industry pioneer in residential and commercial pool equipment including pumps, filters, heaters, and automation.",
-      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
-    },
-    { 
-      name: "Emaux", 
-      tagline: "Quality Pool Equipment",
-      country: "China",
-      description: "Manufacturer of comprehensive pool equipment including sand filters, heat pumps, and water treatment systems.",
-      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
-    },
-    { 
-      name: "Pentair", 
-      tagline: "Smart & Sustainable",
-      country: "United States",
-      description: "Leading provider of smart pool technology, variable speed pumps, and energy-efficient water solutions.",
-      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
-    },
-    { 
-      name: "Zodiac", 
-      tagline: "Advanced Pool Technology",
-      country: "France",
-      description: "Specialist in robotic pool cleaners, water treatment, and connected pool management systems.",
-      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=100&fit=crop"
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-background font-['Inter',sans-serif] relative">
@@ -269,7 +205,11 @@ const Index = () => {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            {teamMembers.map((member, idx) => (
+            {teamLoading ? (
+              <div className="col-span-full text-center text-muted-foreground">Loading team...</div>
+            ) : teamMembers.length === 0 ? (
+              <div className="col-span-full text-center text-muted-foreground">No team members found.</div>
+            ) : teamMembers.map((member, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 30 }}
@@ -287,7 +227,7 @@ const Index = () => {
                       </div>
                       <h3 className="font-semibold text-lg mb-1">{member.name}</h3>
                       <p className="text-sm text-primary mb-2">{member.role}</p>
-                      <p className="text-sm text-muted-foreground">{member.desc}</p>
+                      <p className="text-sm text-muted-foreground">{member.description}</p>
                     </CardContent>
                   }
                   backContent={{
@@ -324,7 +264,11 @@ const Index = () => {
             className="w-full max-w-6xl mx-auto"
           >
             <CarouselContent className="-ml-4">
-              {partners.map((partner, idx) => (
+              {partnersLoading ? (
+                <div className="w-full text-center text-muted-foreground py-12">Loading partners...</div>
+              ) : partners.length === 0 ? (
+                <div className="w-full text-center text-muted-foreground py-12">No partners found.</div>
+              ) : partners.map((partner, idx) => (
                 <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3">
                   <div className="h-[220px]">
                     <FlipCard

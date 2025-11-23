@@ -185,6 +185,39 @@ export type Database = {
         }
         Relationships: []
       }
+      partners: {
+        Row: {
+          country: string | null
+          createdat: string
+          description: string | null
+          logo: string | null
+          name: string
+          partnerid: number
+          tagline: string | null
+          updatedat: string
+        }
+        Insert: {
+          country?: string | null
+          createdat?: string
+          description?: string | null
+          logo?: string | null
+          name: string
+          partnerid?: number
+          tagline?: string | null
+          updatedat?: string
+        }
+        Update: {
+          country?: string | null
+          createdat?: string
+          description?: string | null
+          logo?: string | null
+          name?: string
+          partnerid?: number
+          tagline?: string | null
+          updatedat?: string
+        }
+        Relationships: []
+      }
       pre_consultations: {
         Row: {
           contact_email: string | null
@@ -477,6 +510,39 @@ export type Database = {
           role?: string | null
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      team: {
+        Row: {
+          createdat: string
+          description: string | null
+          email: string
+          imageurl: string | null
+          mobile: string
+          name: string
+          role: string
+          teamid: number
+        }
+        Insert: {
+          createdat?: string
+          description?: string | null
+          email: string
+          imageurl?: string | null
+          mobile: string
+          name: string
+          role: string
+          teamid?: number
+        }
+        Update: {
+          createdat?: string
+          description?: string | null
+          email?: string
+          imageurl?: string | null
+          mobile?: string
+          name?: string
+          role?: string
+          teamid?: number
         }
         Relationships: []
       }
