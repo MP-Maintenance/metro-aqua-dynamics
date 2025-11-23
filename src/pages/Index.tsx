@@ -329,8 +329,8 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary">Get In Touch</h2>
-            <p className="text-lg text-primary">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Get In Touch</h2>
+            <p className="text-lg text-muted-foreground">
               Share your experience or reach out to us
             </p>
           </motion.div>
@@ -343,7 +343,7 @@ const Index = () => {
             viewport={{ once: true }}
             className="mb-16"
           >
-            <h3 className="text-2xl md:text-3xl font-semibold mb-8 text-center text-primary">
+            <h3 className="text-2xl md:text-3xl font-semibold mb-8 text-center text-foreground">
               What Our Clients Say
             </h3>
             <TestimonialsCarousel />
@@ -378,8 +378,8 @@ const Index = () => {
                         <Mail className="w-6 h-6 text-secondary" />
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-1 text-primary">Email</h4>
-                        <a href="mailto:info@metropools.com" className="text-[#587C88] hover:text-secondary transition-colors">
+                        <h4 className="font-semibold mb-1 text-foreground">Email</h4>
+                        <a href="mailto:info@metropools.com" className="text-muted-foreground hover:text-secondary transition-colors">
                           info@metropools.com
                         </a>
                       </div>
@@ -393,8 +393,8 @@ const Index = () => {
                         <Phone className="w-6 h-6 text-secondary" />
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-1 text-primary">Phone</h4>
-                        <a href="tel:+97444771588" className="text-[#587C88] hover:text-secondary transition-colors">
+                        <h4 className="font-semibold mb-1 text-foreground">Phone</h4>
+                        <a href="tel:+97444771588" className="text-muted-foreground hover:text-secondary transition-colors">
                           +974 4477 1588
                         </a>
                       </div>
@@ -429,12 +429,12 @@ const Index = () => {
                         <MapPin className="w-6 h-6 text-secondary" />
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-1 text-primary">Address</h4>
+                        <h4 className="font-semibold mb-1 text-foreground">Address</h4>
                         <a 
                           href="https://maps.app.goo.gl/hsDcLnTRTu6NYreyk9" 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-[#587C88] hover:text-secondary transition-colors"
+                          className="text-muted-foreground hover:text-secondary transition-colors"
                         >
                           Building No. 225, Zone 44, Street No. 250<br />
                           Nuaija Area, P.O. Box: 32163<br />

@@ -375,8 +375,8 @@ ${fileData ? `Reference File: ${fileData.name}` : ""}
                         >
                           <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
                             <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                            <p className="font-bold text-[#E0F7FA] mb-2">{service.label}</p>
-                            <p className="text-xs text-[#587C88]">{service.description}</p>
+                            <p className="font-bold text-foreground mb-2">{service.label}</p>
+                            <p className="text-xs text-muted-foreground">{service.description}</p>
                           </CardContent>
                         </Card>
                       </CarouselItem>
@@ -413,8 +413,8 @@ ${fileData ? `Reference File: ${fileData.name}` : ""}
                         >
                           <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
                             <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                            <p className="font-bold text-[#E0F7FA] mb-2">{facility.label}</p>
-                            <p className="text-xs text-[#587C88]">{facility.description}</p>
+                            <p className="font-bold text-foreground mb-2">{facility.label}</p>
+                            <p className="text-xs text-muted-foreground">{facility.description}</p>
                           </CardContent>
                         </Card>
                       </CarouselItem>
@@ -451,8 +451,8 @@ ${fileData ? `Reference File: ${fileData.name}` : ""}
                         >
                           <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
                             <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                            <p className="font-bold text-[#E0F7FA] mb-2">{surface.label}</p>
-                            <p className="text-xs text-[#587C88]">{surface.description}</p>
+                            <p className="font-bold text-foreground mb-2">{surface.label}</p>
+                            <p className="text-xs text-muted-foreground">{surface.description}</p>
                           </CardContent>
                         </Card>
                       </CarouselItem>
@@ -489,8 +489,8 @@ ${fileData ? `Reference File: ${fileData.name}` : ""}
                         >
                           <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
                             <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                            <p className="font-bold text-[#E0F7FA] mb-2">{finishing.label}</p>
-                            <p className="text-xs text-[#587C88]">{finishing.description}</p>
+                            <p className="font-bold text-foreground mb-2">{finishing.label}</p>
+                            <p className="text-xs text-muted-foreground">{finishing.description}</p>
                           </CardContent>
                         </Card>
                       </CarouselItem>
@@ -569,8 +569,8 @@ ${fileData ? `Reference File: ${fileData.name}` : ""}
                         >
                           <CardContent className="p-6 text-center flex flex-col items-center justify-center min-h-[180px]">
                             <Icon className={`w-10 h-10 mb-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                            <p className="font-bold text-[#E0F7FA] mb-2">{filtration.label}</p>
-                            <p className="text-xs text-[#587C88]">{filtration.description}</p>
+                            <p className="font-bold text-foreground mb-2">{filtration.label}</p>
+                            <p className="text-xs text-muted-foreground">{filtration.description}</p>
                           </CardContent>
                         </Card>
                       </CarouselItem>

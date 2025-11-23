@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage, validateImageFile, generateUniqueFilename } from "@/lib/imageUtils";
 
 interface Product {
   id: string;
@@ -56,38 +57,41 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file");
-      return;
-    }
-
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size must be less than 5MB");
+    // Validate file
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      toast.error(validation.error);
       return;
     }
 
     setUploading(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${fileName}`;
+      // Compress image before upload
+      const compressedBlob = await compressImage(file, {
+        maxWidth: 1600,
+        maxHeight: 1600,
+        quality: 0.85,
+      });
+
+      const fileName = generateUniqueFilename(file.name);
+      const compressedFile = new File([compressedBlob], fileName, {
+        type: "image/jpeg",
+      });
 
       const { error: uploadError } = await supabase.storage
         .from("product-images")
-        .upload(filePath, file);
+        .upload(fileName, compressedFile);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
         .from("product-images")
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       setFormData({ ...formData, image_url: publicUrl });
       setImagePreview(publicUrl);
 
-      toast.success("Image uploaded successfully");
+      toast.success("Image uploaded and compressed successfully");
     } catch (error: any) {
       console.error("Upload error:", error);
       toast.error(error.message || "Failed to upload image");
