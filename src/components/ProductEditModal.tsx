@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { compressImage, validateImageFile, generateUniqueFilename } from "@/lib/imageUtils";
+import { compressImage, generateUniqueFilename } from "@/lib/imageUtils";
+import { ImageUploadZone } from "./ImageUploadZone";
 
 interface Product {
   id: string;
@@ -53,17 +53,7 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
     }
   }, [product]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      toast.error(validation.error);
-      return;
-    }
-
+  const handleImageUpload = async (file: File) => {
     setUploading(true);
     try {
       // Compress image before upload
@@ -184,60 +174,17 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
             />
           </div>
 
-          <div>
-            <Label>Product Image (Optional)</Label>
-            
-            {imagePreview && (
-              <div className="relative w-32 h-32 mb-2">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-full object-cover rounded-lg border"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
-                  onClick={clearImage}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-
-            <div className="flex gap-2 mb-2">
-              <div className="flex-1">
-                <Label htmlFor="product-image-upload" className="cursor-pointer">
-                  <div className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted/50 transition-colors">
-                    <Upload className="h-4 w-4" />
-                    <span>{uploading ? "Uploading..." : "Upload Image"}</span>
-                  </div>
-                </Label>
-                <Input
-                  id="product-image-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={uploading}
-                  className="hidden"
-                />
-              </div>
-            </div>
-
-            <div className="text-sm text-muted-foreground mb-2">
-              Or paste an image URL:
-            </div>
-            <Input
-              id="image_url"
-              value={formData.image_url}
-              onChange={(e) => {
-                setFormData({ ...formData, image_url: e.target.value });
-                setImagePreview(e.target.value);
-              }}
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
+          <ImageUploadZone
+            imagePreview={imagePreview}
+            onImageSelect={handleImageUpload}
+            onClear={clearImage}
+            onUrlChange={(url) => {
+              setFormData({ ...formData, image_url: url });
+              setImagePreview(url);
+            }}
+            uploading={uploading}
+            label="Product Image"
+          />
 
           <div>
             <Label htmlFor="price">Price (Optional)</Label>
