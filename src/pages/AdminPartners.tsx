@@ -3,9 +3,10 @@ import AdminLayout from "@/components/AdminLayout";
 import { usePartners } from "@/features/partners/hooks/usePartners";
 import { partnersService, type Partner } from "@/features/partners/services/partners.service";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { compressImage, validateImageFile, generateUniqueFilename } from "@/lib/imageUtils";
+import { compressImage, generateUniqueFilename } from "@/lib/imageUtils";
+import { ImageUploadZone } from "@/components/ImageUploadZone";
 import {
   Table,
   TableBody,
@@ -65,21 +66,7 @@ const AdminPartners = () => {
     setImagePreview("");
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      toast({
-        title: "Error",
-        description: validation.error,
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const handleImageUpload = async (file: File) => {
     setUploading(true);
     try {
       // Compress image before upload
@@ -286,60 +273,17 @@ const AdminPartners = () => {
                 />
               </div>
 
-              <div className="grid gap-2">
-                <Label>Partner Logo</Label>
-                
-                {imagePreview && (
-                  <div className="relative w-32 h-32 mb-2">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full h-full object-contain rounded-lg border bg-muted p-2"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
-                      onClick={clearImage}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <Label htmlFor="logo-upload" className="cursor-pointer">
-                      <div className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted/50 transition-colors">
-                        <Upload className="h-4 w-4" />
-                        <span>{uploading ? "Uploading..." : "Upload Logo"}</span>
-                      </div>
-                    </Label>
-                    <Input
-                      id="logo-upload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={uploading}
-                      className="hidden"
-                    />
-                  </div>
-                </div>
-
-                <div className="text-sm text-muted-foreground">
-                  Or paste a logo URL:
-                </div>
-                <Input
-                  id="logo"
-                  value={formData.logo}
-                  onChange={(e) => {
-                    setFormData({ ...formData, logo: e.target.value });
-                    setImagePreview(e.target.value);
-                  }}
-                  placeholder="https://example.com/logo.jpg"
-                />
-              </div>
+              <ImageUploadZone
+                imagePreview={imagePreview}
+                onImageSelect={handleImageUpload}
+                onClear={clearImage}
+                onUrlChange={(url) => {
+                  setFormData({ ...formData, logo: url });
+                  setImagePreview(url);
+                }}
+                uploading={uploading}
+                label="Partner Logo"
+              />
             </div>
 
             <div className="flex justify-end gap-2">

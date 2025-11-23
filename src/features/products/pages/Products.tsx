@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import QuoteModal from "@/components/QuoteModal";
 import ProductEditModal from "@/components/ProductEditModal";
+import { LazyImage } from "@/components/ui/LazyImage";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -421,7 +422,7 @@ const Products = () => {
                           {viewMode === "grid" ? (
                             <CardContent className="pt-6">
                               {product.image_url ? (
-                                <img
+                                <LazyImage
                                   src={product.image_url}
                                   alt={product.name}
                                   className="h-48 w-full object-cover rounded-lg mb-4"
@@ -494,7 +495,7 @@ const Products = () => {
                             // List View
                             <>
                               {product.image_url ? (
-                                <img
+                                <LazyImage
                                   src={product.image_url}
                                   alt={product.name}
                                   className="w-48 h-48 object-cover rounded-l-lg"
@@ -599,7 +600,7 @@ const Products = () => {
                     <Card key={product.id} className="group hover:shadow-medium transition-all duration-300">
                       <CardContent className="pt-6">
                         {product.image_url ? (
-                          <img
+                          <LazyImage
                             src={product.image_url}
                             alt={product.name}
                             className="h-40 w-full object-cover rounded-lg mb-4"
@@ -696,7 +697,7 @@ const Products = () => {
                     <th key={product.id} className="border p-4 bg-muted">
                       <div className="flex flex-col items-center gap-2">
                         {product.image_url ? (
-                          <img
+                          <LazyImage
                             src={product.image_url}
                             alt={product.name}
                             className="w-20 h-20 object-cover rounded"
@@ -787,7 +788,7 @@ const Products = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   {quickViewProduct.image_url ? (
-                    <img
+                    <LazyImage
                       src={quickViewProduct.image_url}
                       alt={quickViewProduct.name}
                       className="w-full h-80 object-cover rounded-lg"
