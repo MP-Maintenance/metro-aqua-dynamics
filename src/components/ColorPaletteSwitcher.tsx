@@ -79,40 +79,26 @@ export function ColorPaletteSwitcher() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute -bottom-2 left-0 right-0 translate-y-full z-50 bg-card border border-border rounded-lg p-3 shadow-lg max-w-xs"
+                    className="absolute -bottom-2 left-0 right-0 translate-y-full z-50 bg-card border border-border rounded-lg p-4 shadow-lg w-64"
                   >
-                    <div className="mb-2">
-                      <div className="text-sm font-semibold text-foreground">{palette.name}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{palette.description}</div>
-                    </div>
-                    <div className="flex gap-2 items-center">
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-5 h-5 rounded border border-border flex-shrink-0"
-                            style={{ backgroundColor: `hsl(${colors.primary})` }}
+                    <div className="flex items-start gap-3">
+                      <div className="flex gap-1.5 flex-shrink-0">
+                        {palette.previewColors.map((color, index) => (
+                          <div
+                            key={index}
+                            className="w-4 h-4 rounded-sm border border-border"
+                            style={{ backgroundColor: color }}
                           />
-                          <span className="text-xs">Primary</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-5 h-5 rounded border border-border flex-shrink-0"
-                            style={{ backgroundColor: `hsl(${colors.secondary})` }}
-                          />
-                          <span className="text-xs">Secondary</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-5 h-5 rounded border border-border flex-shrink-0"
-                            style={{ backgroundColor: `hsl(${colors.accent})` }}
-                          />
-                          <span className="text-xs">Accent</span>
-                        </div>
+                        ))}
                       </div>
                       <div 
-                        className="w-14 h-14 rounded-lg border border-border flex-shrink-0"
+                        className="w-16 h-16 rounded-lg border border-border flex-shrink-0 ml-auto"
                         style={{ background: colors.gradientHero }}
                       />
+                    </div>
+                    <div className="mt-3">
+                      <div className="text-sm font-semibold text-foreground">{palette.name}</div>
+                      <div className="text-xs text-muted-foreground mt-1">{palette.description}</div>
                     </div>
                   </motion.div>
                 )}
