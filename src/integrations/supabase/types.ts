@@ -546,6 +546,48 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activity_logs: {
+        Row: {
+          created_at: string | null
+          event_category: string
+          event_data: Json | null
+          event_type: string
+          id: number
+          ip_address: string | null
+          page_url: string | null
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_category: string
+          event_data?: Json | null
+          event_type: string
+          id?: number
+          ip_address?: string | null
+          page_url?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_category?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: number
+          ip_address?: string | null
+          page_url?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -569,7 +611,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      daily_analytics: {
+        Row: {
+          date: string | null
+          event_category: string | null
+          event_count: number | null
+          event_type: string | null
+          unique_sessions: number | null
+          unique_users: number | null
+        }
+        Relationships: []
+      }
+      hourly_analytics: {
+        Row: {
+          event_category: string | null
+          event_count: number | null
+          event_type: string | null
+          hour: string | null
+          unique_users: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
