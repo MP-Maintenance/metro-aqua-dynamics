@@ -1,7 +1,9 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import ChatbotWidget from "@/components/ChatbotWidget";
+import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import ServiceAreaMap from "@/components/ServiceAreaMap";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import ScrollToTop from "@/components/ScrollToTop";
 import ScrollProgress from "@/components/ScrollProgress";
@@ -26,7 +28,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
 import maintenanceImg from "@/assets/service-maintenance.jpg";
 import inspectionImg from "@/assets/service-inspection.jpg";
@@ -138,7 +140,6 @@ const Index = () => {
       <div id="hero">
         <Hero />
       </div>
-      <WhatsAppButton />
 
       {/* Dark Mode Showcase Section with Parallax */}
       <ParallaxSection speed={0.3}>
@@ -357,6 +358,71 @@ const Index = () => {
       {/* Testimonials Carousel */}
       <TestimonialsCarousel />
 
+      {/* Before/After Renovation Slider */}
+      <section className="py-20 bg-gradient-to-b from-background to-card">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Transformation Gallery</h2>
+            <p className="text-lg text-muted-foreground">
+              See the stunning results of our renovation projects
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <BeforeAfterSlider
+                beforeImage="https://images.unsplash.com/photo-1576610616656-d3aa5d1f4534?w=800&h=600&fit=crop"
+                afterImage="https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=800&h=600&fit=crop"
+                alt="Pool Renovation Project 1"
+              />
+              <p className="text-center mt-4 text-muted-foreground">Residential Pool - Complete Surface Refinishing</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <BeforeAfterSlider
+                beforeImage="https://images.unsplash.com/photo-1519974719765-e6559eac2575?w=800&h=600&fit=crop"
+                afterImage="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=800&h=600&fit=crop"
+                alt="Pool Renovation Project 2"
+              />
+              <p className="text-center mt-4 text-muted-foreground">Commercial Hotel Pool - Modern Equipment Upgrade</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Service Area Map */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Where We Serve</h2>
+            <p className="text-lg text-muted-foreground">
+              Premium pool services across the Middle East
+            </p>
+          </motion.div>
+          <ServiceAreaMap />
+        </div>
+      </section>
+
       {/* Reviews Section */}
       <section id="contact" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
@@ -404,6 +470,27 @@ const Index = () => {
                         <h3 className="font-semibold mb-1">Phone</h3>
                         <a href="tel:+97444771588" className="text-muted-foreground hover:text-primary transition-colors">
                           +974 4477 1588
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-lg bg-primary/10">
+                        <MessageCircle className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold mb-1">WhatsApp</h3>
+                        <a 
+                          href="https://wa.me/97317000000" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-lg transition-colors font-medium"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          Message on WhatsApp
                         </a>
                       </div>
                     </div>
