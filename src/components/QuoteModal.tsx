@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Package } from "lucide-react";
 import { useQuote } from "@/features/quotes/contexts/QuoteContext";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { toast } from "sonner";
@@ -52,17 +52,17 @@ const QuoteModal = ({ isOpen, onClose, product }: QuoteModalProps) => {
 
   if (!product) return null;
 
-  // Import Package icon as fallback
-  const Icon = product.icon || (() => {
-    const { Package } = require("lucide-react");
-    return Package;
-  })();
+  // Use Package icon as fallback
+  const Icon = product.icon || Package;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Request a quote for {product.name}
+          </DialogDescription>
         </DialogHeader>
         
         <div className="grid md:grid-cols-2 gap-6 mt-4">
