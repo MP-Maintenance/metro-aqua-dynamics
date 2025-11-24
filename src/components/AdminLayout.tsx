@@ -94,7 +94,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       {/* Main Content */}
       <main className="flex-1 overflow-auto relative">
         <div className="border-b bg-background sticky top-0 z-10 px-8 py-4 flex items-center justify-end">
-          <NotificationBell />
+          {/* <NotificationBell /> */}
         </div>
         <div className="p-8">
           {children}
