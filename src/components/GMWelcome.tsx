@@ -31,7 +31,7 @@ const GMWelcome = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500" />
                 <div className="relative w-72 h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden shadow-lg ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
                   <LazyImage
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+                    src="/assets/manager.jpg" // <-- Updated to local image
                     alt="Ayman Almaghrabi - General Manager"
                     className="w-full h-full object-cover"
                   />
