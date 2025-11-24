@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Notification } from "./notifications.service";
 
 // src/features/notifications/services/notifications.service.ts
 export interface Notification {
@@ -13,20 +14,20 @@ export interface Notification {
 }
 
 export const notificationsService = {
-  async getUnread() {
+  async getUnread(): Promise<Notification[]> {
     const { data, error } = await supabase
-      .from("notifications")
+      .from<Notification>("notifications")
       .select("*")
       .eq("is_read", false)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data as Notification[];
+    return data || [];
   },
 
   async markAsRead(notificationId: number) {
     const { error } = await supabase
-      .from("notifications")
+      .from<Notification>("notifications")
       .update({ is_read: true })
       .eq("id", notificationId);
 
@@ -38,9 +39,9 @@ export const notificationsService = {
     referenceId: number,
     message: string,
     userId: string | null = null
-  ) {
+  ): Promise<Notification> {
     const { data, error } = await supabase
-      .from("notifications")
+      .from<Notification>("notifications")
       .insert({
         type,
         reference_id: referenceId,
@@ -52,6 +53,6 @@ export const notificationsService = {
       .single();
 
     if (error) throw error;
-    return data as Notification;
+    return data;
   },
 };
