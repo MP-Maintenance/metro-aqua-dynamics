@@ -6,33 +6,88 @@ import { Button } from "@/components/ui/button";
 import { Users, Package, FileText, MessageSquare, CheckCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+// -------------------------
+// Types
+// -------------------------
+type Stats = {
+  users: number;
+  products: number;
+  quotes: number;
+  consultations: number;
+  pendingReviews: number;
+};
+
+type Review = {
+  id: number;
+  name: string;
+  role?: string;
+  comment: string;
+  rating: number;
+  is_approved: boolean;
+};
+
+// -------------------------
+// Component
+// -------------------------
 const Admin = () => {
-  const [stats, setStats] = useState({ users: 0, products: 0, quotes: 0, consultations: 0, pendingReviews: 0 });
-  const [pendingReviews, setPendingReviews] = useState<any[]>([]);
+  const [stats, setStats] = useState<Stats>({
+    users: 0,
+    products: 0,
+    quotes: 0,
+    consultations: 0,
+    pendingReviews: 0,
+  });
+
+  const [pendingReviews, setPendingReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const [profilesRes, productsRes, quotesRes, consultationsRes, reviewsRes] = await Promise.all([
-          (supabase as any).from("profiles").select("id", { count: "exact", head: true }),
-          supabase.from("products").select("id", { count: "exact", head: true }),
-          supabase.from("quote_requests").select("id", { count: "exact", head: true }),
-          supabase.from("pre_consultations").select("id", { count: "exact", head: true }),
-          (supabase as any).from("reviews").select("*").eq("is_approved", false),
-        ]);
+        // Users count
+        const { count: usersCount, error: usersError } = await supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true });
+        if (usersError) throw usersError;
+
+        // Products count
+        const { count: productsCount, error: productsError } = await supabase
+          .from("products")
+          .select("id", { count: "exact", head: true });
+        if (productsError) throw productsError;
+
+        // Quote requests count
+        const { count: quotesCount, error: quotesError } = await supabase
+          .from("quote_requests")
+          .select("id", { count: "exact", head: true });
+        if (quotesError) throw quotesError;
+
+        // Pre-consultations count
+        const { count: consultationsCount, error: consultationsError } = await supabase
+          .from("pre_consultations")
+          .select("id", { count: "exact", head: true });
+        if (consultationsError) throw consultationsError;
+
+        // Pending reviews
+        const { data: reviewsData, error: reviewsError } = await supabase
+          .from<Review>("reviews")
+          .select("*")
+          .eq("is_approved", false);
+        if (reviewsError) throw reviewsError;
 
         setStats({
-          users: profilesRes.count || 0,
-          products: productsRes.count || 0,
-          quotes: quotesRes.count || 0,
-          consultations: consultationsRes.count || 0,
-          pendingReviews: reviewsRes.data?.length || 0,
+          users: usersCount || 0,
+          products: productsCount || 0,
+          quotes: quotesCount || 0,
+          consultations: consultationsCount || 0,
+          pendingReviews: reviewsData?.length || 0,
         });
 
-        setPendingReviews(reviewsRes.data || []);
-      } catch (error) {
+        setPendingReviews(reviewsData || []);
+      } catch (error: any) {
         console.error("Error fetching admin data:", error);
+        toast.error(error.message || "Failed to fetch admin data");
       } finally {
         setLoading(false);
       }
@@ -41,30 +96,38 @@ const Admin = () => {
     fetchData();
   }, []);
 
+  // -------------------------
+  // Handlers
+  // -------------------------
   const handleApproveReview = async (id: number) => {
     try {
-      const { error } = await (supabase as any).from("reviews").update({ is_approved: true }).eq("id", id);
+      const { error } = await supabase.from("reviews").update({ is_approved: true }).eq("id", id);
       if (error) throw error;
+
       toast.success("Review approved!");
-      setPendingReviews(pendingReviews.filter(r => r.id !== id));
+      setPendingReviews(prev => prev.filter(r => r.id !== id));
       setStats(prev => ({ ...prev, pendingReviews: prev.pendingReviews - 1 }));
     } catch (error: any) {
       toast.error(error.message || "Failed to approve review");
     }
   };
- 
+
   const handleDeleteReview = async (id: number) => {
     try {
-      const { error } = await (supabase as any).from("reviews").delete().eq("id", id);
+      const { error } = await supabase.from("reviews").delete().eq("id", id);
       if (error) throw error;
+
       toast.success("Review deleted!");
-      setPendingReviews(pendingReviews.filter(r => r.id !== id));
+      setPendingReviews(prev => prev.filter(r => r.id !== id));
       setStats(prev => ({ ...prev, pendingReviews: prev.pendingReviews - 1 }));
     } catch (error: any) {
       toast.error(error.message || "Failed to delete review");
     }
   };
 
+  // -------------------------
+  // Loading state
+  // -------------------------
   if (loading) {
     return (
       <AdminLayout>
@@ -75,14 +138,19 @@ const Admin = () => {
     );
   }
 
+  // -------------------------
+  // JSX
+  // -------------------------
   return (
     <AdminLayout>
       <div className="space-y-6">
+        {/* Dashboard header */}
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
           <p className="text-muted-foreground">Manage all your business operations</p>
         </div>
 
+        {/* Stats cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -91,6 +159,7 @@ const Admin = () => {
             </CardHeader>
             <CardContent><div className="text-2xl font-bold">{stats.users}</div></CardContent>
           </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Products</CardTitle>
@@ -98,6 +167,7 @@ const Admin = () => {
             </CardHeader>
             <CardContent><div className="text-2xl font-bold">{stats.products}</div></CardContent>
           </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Quote Requests</CardTitle>
@@ -105,6 +175,7 @@ const Admin = () => {
             </CardHeader>
             <CardContent><div className="text-2xl font-bold">{stats.quotes}</div></CardContent>
           </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Consultations</CardTitle>
@@ -112,6 +183,7 @@ const Admin = () => {
             </CardHeader>
             <CardContent><div className="text-2xl font-bold">{stats.consultations}</div></CardContent>
           </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pending Reviews</CardTitle>
@@ -121,6 +193,7 @@ const Admin = () => {
           </Card>
         </div>
 
+        {/* Pending reviews list */}
         <Card>
           <CardHeader><CardTitle>Pending Reviews</CardTitle></CardHeader>
           <CardContent>
