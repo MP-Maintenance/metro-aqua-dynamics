@@ -15,11 +15,11 @@ const Admin = () => {
     const fetchData = async () => {
       try {
         const [profilesRes, productsRes, quotesRes, consultationsRes, reviewsRes] = await Promise.all([
-          supabase.from("profiles").select("*", { count: "exact", head: true }),
-          supabase.from("products").select("*", { count: "exact", head: true }),
-          supabase.from("quote_requests").select("*", { count: "exact", head: true }),
-          supabase.from("pre_consultations").select("*", { count: "exact", head: true }),
-          supabase.from("reviews").select("*").eq("is_approved", false),
+          (supabase as any).from("profiles").select("id", { count: "exact", head: true }),
+          supabase.from("products").select("id", { count: "exact", head: true }),
+          supabase.from("quote_requests").select("id", { count: "exact", head: true }),
+          supabase.from("pre_consultations").select("id", { count: "exact", head: true }),
+          (supabase as any).from("reviews").select("*").eq("is_approved", false),
         ]);
 
         setStats({
@@ -43,7 +43,7 @@ const Admin = () => {
 
   const handleApproveReview = async (id: number) => {
     try {
-      const { error } = await supabase.from("reviews").update({ is_approved: true }).eq("id", id);
+      const { error } = await (supabase as any).from("reviews").update({ is_approved: true }).eq("id", id);
       if (error) throw error;
       toast.success("Review approved!");
       setPendingReviews(pendingReviews.filter(r => r.id !== id));
@@ -52,10 +52,10 @@ const Admin = () => {
       toast.error(error.message || "Failed to approve review");
     }
   };
-
+ 
   const handleDeleteReview = async (id: number) => {
     try {
-      const { error } = await supabase.from("reviews").delete().eq("id", id);
+      const { error } = await (supabase as any).from("reviews").delete().eq("id", id);
       if (error) throw error;
       toast.success("Review deleted!");
       setPendingReviews(pendingReviews.filter(r => r.id !== id));
