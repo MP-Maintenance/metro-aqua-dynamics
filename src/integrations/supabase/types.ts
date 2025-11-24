@@ -185,6 +185,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          created_by: string | null
+          id: number
+          is_read: boolean | null
+          message: string
+          reference_id: number
+          type: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: never
+          is_read?: boolean | null
+          message: string
+          reference_id: number
+          type: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: never
+          is_read?: boolean | null
+          message?: string
+          reference_id?: number
+          type?: string
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           country: string | null

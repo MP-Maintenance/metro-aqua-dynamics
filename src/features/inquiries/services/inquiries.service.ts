@@ -33,6 +33,23 @@ export const inquiriesService = {
       .single();
 
     if (error) throw error;
+
+    // Create notification for admins (non-blocking)
+    if (inquiry) {
+      supabase
+        .from("notifications")
+        .insert({
+          type: "inquiry",
+          reference_id: inquiry.inquiryid,
+          message: `New ${inquiry.inquirytype} inquiry from ${inquiry.fullname}`,
+          created_by: data.user_id,
+          assigned_to: null,
+        })
+        .then(({ error: notifError }) => {
+          if (notifError) console.error("Error creating notification:", notifError);
+        });
+    }
+
     return inquiry as Inquiry;
   },
 
