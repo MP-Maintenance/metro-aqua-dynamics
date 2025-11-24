@@ -1,13 +1,14 @@
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useNotifications } from "../hooks/useNotifications";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
+import { useNotifications } from "../hooks/useNotifications";
 
 export const NotificationBell = () => {
-  const { unreadNotifications, unreadCount, handleNotificationClick } =
-    useNotifications();
+  const { unreadNotifications, unreadCount, handleNotificationClick, loading } = useNotifications();
+
+  if (loading) return null;
 
   return (
     <Popover>
@@ -24,12 +25,12 @@ export const NotificationBell = () => {
           )}
         </Button>
       </PopoverTrigger>
-
       <PopoverContent className="w-80 p-0" align="end">
         <div className="border-b p-4">
-          <h3 className="font-semibold text-sm">Notifications ({unreadCount})</h3>
+          <h3 className="font-semibold text-sm">
+            Notifications ({unreadCount})
+          </h3>
         </div>
-
         <div className="max-h-96 overflow-y-auto">
           {unreadNotifications.length === 0 ? (
             <div className="p-4 text-center text-sm text-muted-foreground">
@@ -37,17 +38,15 @@ export const NotificationBell = () => {
             </div>
           ) : (
             <div className="divide-y">
-              {unreadNotifications.map((notification) => (
+              {unreadNotifications.map((n) => (
                 <button
-                  key={notification.id}
-                  onClick={() => handleNotificationClick(notification)}
+                  key={n.id}
+                  onClick={() => handleNotificationClick(n)}
                   className="w-full p-4 text-left hover:bg-accent transition-colors"
                 >
-                  <p className="text-sm font-medium text-foreground mb-1">
-                    {notification.message}
-                  </p>
+                  <p className="text-sm font-medium text-foreground mb-1">{n.message}</p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                   </p>
                 </button>
               ))}
