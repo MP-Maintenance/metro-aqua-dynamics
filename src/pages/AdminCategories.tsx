@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { useToast } from "@/hooks/use-toast";
 import { Search, Plus, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -41,7 +42,7 @@ const AdminCategories = () => {
 
   const fetchCategories = async () => {
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("categories")
         .select("*")
         .order("name", { ascending: true });
@@ -99,9 +100,15 @@ const AdminCategories = () => {
         icon: formData.icon || undefined,
       });
 
-      const { error } = await (supabase as any)
+      const insertData: TablesInsert<"categories"> = {
+        name: validatedData.name,
+        slug: validatedData.slug,
+        icon: validatedData.icon ?? null,
+      };
+
+      const { error } = await supabase
         .from("categories")
-        .insert([validatedData]);
+        .insert([insertData]);
 
       if (error) throw error;
 
@@ -129,7 +136,6 @@ const AdminCategories = () => {
       }
     }
   };
-
   const handleUpdate = async () => {
     if (!editingCategory) return;
 
@@ -141,9 +147,15 @@ const AdminCategories = () => {
         icon: formData.icon || undefined,
       });
 
-      const { error } = await (supabase as any)
+      const updateData: TablesUpdate<"categories"> = {
+        name: validatedData.name,
+        slug: validatedData.slug,
+        icon: validatedData.icon ?? null,
+      };
+
+      const { error } = await supabase
         .from("categories")
-        .update(validatedData)
+        .update(updateData)
         .eq("id", editingCategory.id);
 
       if (error) throw error;
@@ -171,12 +183,11 @@ const AdminCategories = () => {
       }
     }
   };
-
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this category? This may affect products using this category.")) return;
 
     try {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from("categories")
         .delete()
         .eq("id", id);
