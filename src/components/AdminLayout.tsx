@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, LayoutDashboard, Package, FileText, MessageSquare, Building, Users, HelpCircle, Inbox, UsersRound, Handshake, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AdminChatbot from "@/features/admin/components/AdminChatbot";
+import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -92,6 +93,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto relative">
+        <div className="border-b bg-background sticky top-0 z-10 px-8 py-4 flex items-center justify-end">
+          <NotificationBell />
+        </div>
         <div className="p-8">
           {children}
         </div>

@@ -74,15 +74,33 @@ export const QuoteProvider = ({ children }: { children: ReactNode }) => {
       }));
 
       // Insert quote request
-      const { error } = await supabase
+      const { data: quoteRequest, error } = await supabase
         .from("quote_requests")
         .insert({
           user_id: user.id,
           items: quoteItems,
           status: "pending",
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Create notification for admins (non-blocking)
+      if (quoteRequest) {
+        supabase
+          .from("notifications")
+          .insert({
+            type: "quote_request",
+            reference_id: parseInt(quoteRequest.id),
+            message: `New quote request from ${contactInfo.fullName || user.email}`,
+            created_by: user.id,
+            assigned_to: null,
+          })
+          .then(({ error: notifError }) => {
+            if (notifError) console.error("Error creating notification:", notifError);
+          });
+      }
 
       // Update user profile with contact info if provided
       if (contactInfo.fullName || contactInfo.phone) {
@@ -95,24 +113,22 @@ export const QuoteProvider = ({ children }: { children: ReactNode }) => {
           .eq("id", user.id);
       }
 
-      // Send email notification to admins
-      try {
-        await supabase.functions.invoke('send-notification-email', {
-          body: {
-            type: 'quote',
-            customerName: contactInfo.fullName || user.email || 'Unknown',
-            customerEmail: user.email || '',
-            items: items.map(item => ({
-              name: item.name,
-              quantity: item.quantity,
-              category: item.category,
-            })),
-          },
-        });
-      } catch (emailError) {
+      // Send email notification to admins (non-blocking)
+      supabase.functions.invoke('send-notification-email', {
+        body: {
+          type: 'quote',
+          customerName: contactInfo.fullName || user.email || 'Unknown',
+          customerEmail: user.email || '',
+          items: items.map(item => ({
+            name: item.name,
+            quantity: item.quantity,
+            category: item.category,
+          })),
+        },
+      }).catch(emailError => {
         console.error('Error sending notification email:', emailError);
-        // Don't fail the quote submission if email fails
-      }
+        // Email failure doesn't block quote submission
+      });
 
       // Clear cart after successful submission
       clearCart();

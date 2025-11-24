@@ -41,6 +41,23 @@ export const reviewsService = {
       .single();
 
     if (error) throw error;
+
+    // Create notification for admins (non-blocking)
+    if (data) {
+      supabase
+        .from("notifications")
+        .insert({
+          type: "review",
+          reference_id: data.id,
+          message: `New review from ${data.name}`,
+          created_by: review.user_id,
+          assigned_to: null,
+        })
+        .then(({ error: notifError }) => {
+          if (notifError) console.error("Error creating notification:", notifError);
+        });
+    }
+
     return data as Review;
   },
 };
