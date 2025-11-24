@@ -28,8 +28,8 @@ const GMWelcome = () => {
               className="flex justify-center md:justify-end"
             >
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500" />
-                <div className="relative w-72 h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden shadow-lg ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500" />                
+                <div className="relative w-96 h-96 md:w-[28rem] md:h-[28rem] rounded-2xl overflow-hidden shadow-lg ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
                   {/* Normal image without LazyImage */}
                   <img
                     src={managerImg}
