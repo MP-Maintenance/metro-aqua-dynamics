@@ -1,44 +1,47 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { notificationsService } from "../services/notifications.service";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Notification } from "../services/notifications.service";
+import { notificationsService, Notification } from "../services/notifications.service";
 
 export const useNotifications = () => {
-  const queryClient = useQueryClient();
+  const [unreadNotifications, setUnreadNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const { data: unreadNotifications = [], isLoading } = useQuery({
-    queryKey: ["notifications", "unread"],
-    queryFn: () => notificationsService.getUnread(),
-    refetchInterval: 30000,
-  });
+  const fetchNotifications = async () => {
+    setLoading(true);
+    const notifications = await notificationsService.getUnread();
+    setUnreadNotifications(notifications);
+    setLoading(false);
+  };
 
-  const markAsReadMutation = useMutation({
-    mutationFn: (notificationId: number) =>
-      notificationsService.markAsRead(notificationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications", "unread"] });
-    },
-  });
+  useEffect(() => {
+    fetchNotifications();
+
+    // Poll every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const unreadCount = unreadNotifications.length;
 
   const handleNotificationClick = async (notification: Notification) => {
-    await markAsReadMutation.mutateAsync(notification.id);
+    try {
+      await notificationsService.markAsRead(notification.id);
+      setUnreadNotifications(prev => prev.filter(n => n.id !== notification.id));
 
-    const routes: Record<string, string> = {
-      inquiry: `/admin/inquiries`,
-      pre_consultation: `/admin/consultations`,
-      quote_request: `/admin/quotes`,
-      review: `/admin/reviews`,
-    };
+      const routes: Record<string, string> = {
+        inquiry: "/admin/inquiries",
+        pre_consultation: "/admin/consultations",
+        quote_request: "/admin/quotes",
+        review: "/admin/reviews",
+      };
 
-    const route = routes[notification.type];
-    if (route) navigate(route);
+      const route = routes[notification.type];
+      if (route) navigate(route);
+    } catch (err) {
+      console.error("Error handling notification click:", err);
+    }
   };
 
-  return {
-    unreadNotifications,
-    isLoading,
-    unreadCount: unreadNotifications.length,
-    handleNotificationClick,
-  };
+  return { unreadNotifications, unreadCount, handleNotificationClick, loading };
 };
