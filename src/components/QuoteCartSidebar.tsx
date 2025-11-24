@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, Package } from "lucide-react";
 import { useQuote } from "@/features/quotes/contexts/QuoteContext";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { toast } from "sonner";
@@ -45,7 +45,7 @@ const QuoteCartSidebar = () => {
             <>
               <div className="flex-1 overflow-y-auto space-y-4">
                 {items.map((item) => {
-                  const Icon = item.icon;
+                  const Icon = item.icon || Package;
                   return (
                     <div
                       key={item.id}
