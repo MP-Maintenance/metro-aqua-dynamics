@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { LazyImage } from "@/components/ui/LazyImage";
+import managerImg from "@/assets/manager.jpg";
 
 const GMWelcome = () => {
   return (
@@ -32,7 +33,7 @@ const GMWelcome = () => {
                 <div className="relative w-72 h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden shadow-lg ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
                   <LazyImage
                     src="/assets/manager.jpg" // <-- Updated to local image
-                    alt="Ayman Almaghrabi - General Manager"
+                    alt="Mohamed Marzouk - Operations Manager"
                     className="w-full h-full object-cover"
                   />
                 </div>
