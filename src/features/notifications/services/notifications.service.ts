@@ -1,7 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 
+// src/features/notifications/services/notifications.service.ts
 export interface Notification {
-  id: number;
+  id: number; // matches your bigint PK
   type: string;
   reference_id: number;
   message: string;
