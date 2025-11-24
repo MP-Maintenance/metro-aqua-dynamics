@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { notificationsService } from "../services/notifications.service";
 import { useNavigate } from "react-router-dom";
+import type { Notification } from "../services/notifications.service";
 
 export const useNotifications = () => {
   const queryClient = useQueryClient();
@@ -9,7 +10,7 @@ export const useNotifications = () => {
   const { data: unreadNotifications = [], isLoading } = useQuery({
     queryKey: ["notifications", "unread"],
     queryFn: () => notificationsService.getUnread(),
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 
   const markAsReadMutation = useMutation({
@@ -20,11 +21,9 @@ export const useNotifications = () => {
     },
   });
 
-  const handleNotificationClick = async (notification: any) => {
-    // Mark as read
+  const handleNotificationClick = async (notification: Notification) => {
     await markAsReadMutation.mutateAsync(notification.id);
 
-    // Navigate to appropriate page
     const routes: Record<string, string> = {
       inquiry: `/admin/inquiries`,
       pre_consultation: `/admin/consultations`,
@@ -33,9 +32,7 @@ export const useNotifications = () => {
     };
 
     const route = routes[notification.type];
-    if (route) {
-      navigate(route);
-    }
+    if (route) navigate(route);
   };
 
   return {
