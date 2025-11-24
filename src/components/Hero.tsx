@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion, useScroll, useTransform } from "framer-motion";
 import heroImage1 from "@/assets/hero-metro.jpg";
-import heroImage2 from "@/assets/hero-pool.jpg";
-import heroImage3 from "@/assets/service-maintenance.jpg";
-import heroImage4 from "@/assets/service-renovation.jpg";
+import heroImage2 from "@/assets/hero-image-1.jpg";
+import heroImage3 from "@/assets/hero-image-2.jpg";
+import heroImage4 from "@/assets/hero-image-3.jpg";
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
