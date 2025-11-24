@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { useQuote } from "@/features/quotes/contexts/QuoteContext";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Package } from "lucide-react";
 import { toast } from "sonner";
 
 interface CheckoutModalProps {
@@ -79,7 +79,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
             <div className="space-y-4">
               <div className="space-y-3">
                 {items.map((item) => {
-                  const Icon = item.icon;
+                  const Icon = item.icon || Package;
                   return (
                     <div
                       key={item.id}
