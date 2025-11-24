@@ -12,32 +12,45 @@ export interface Notification {
 }
 
 export const notificationsService = {
-  async getUnread(): Promise<Notification[]> {
-    try {
-      const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .eq("is_read", false)
-        .order("created_at", { ascending: false });
+  async getUnread() {
+    const { data, error } = await supabase
+      .from("notifications")
+      .select("*")
+      .eq("is_read", false)
+      .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data ?? [];
-    } catch (err) {
-      console.error("Failed to fetch unread notifications:", err);
-      return [];
-    }
+    if (error) throw error;
+    return data as Notification[];
   },
 
-  async markAsRead(id: number) {
-    try {
-      const { error } = await supabase
-        .from("notifications")
-        .update({ is_read: true })
-        .eq("id", id);
+  async markAsRead(notificationId: number) {
+    const { error } = await supabase
+      .from("notifications")
+      .update({ is_read: true })
+      .eq("id", notificationId);
 
-      if (error) throw error;
-    } catch (err) {
-      console.error("Failed to mark notification as read:", err);
-    }
+    if (error) throw error;
+  },
+
+  async create(
+    type: string,
+    referenceId: number,
+    message: string,
+    userId: string | null = null
+  ) {
+    const { data, error } = await supabase
+      .from("notifications")
+      .insert({
+        type,
+        reference_id: referenceId,
+        message,
+        created_by: userId,
+        assigned_to: null,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Notification;
   },
 };

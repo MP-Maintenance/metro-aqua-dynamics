@@ -1,47 +1,47 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { notificationsService } from "../services/notifications.service";
 import { useNavigate } from "react-router-dom";
-import { notificationsService, Notification } from "../services/notifications.service";
 
 export const useNotifications = () => {
-  const [unreadNotifications, setUnreadNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const fetchNotifications = async () => {
-    setLoading(true);
-    const notifications = await notificationsService.getUnread();
-    setUnreadNotifications(notifications);
-    setLoading(false);
-  };
+  const { data: unreadNotifications = [], isLoading } = useQuery({
+    queryKey: ["notifications", "unread"],
+    queryFn: () => notificationsService.getUnread(),
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
 
-  useEffect(() => {
-    fetchNotifications();
+  const markAsReadMutation = useMutation({
+    mutationFn: (notificationId: number) =>
+      notificationsService.markAsRead(notificationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications", "unread"] });
+    },
+  });
 
-    // Poll every 30 seconds
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  const handleNotificationClick = async (notification: any) => {
+    // Mark as read
+    await markAsReadMutation.mutateAsync(notification.id);
 
-  const unreadCount = unreadNotifications.length;
+    // Navigate to appropriate page
+    const routes: Record<string, string> = {
+      inquiry: `/admin/inquiries`,
+      pre_consultation: `/admin/consultations`,
+      quote_request: `/admin/quotes`,
+      review: `/admin/reviews`,
+    };
 
-  const handleNotificationClick = async (notification: Notification) => {
-    try {
-      await notificationsService.markAsRead(notification.id);
-      setUnreadNotifications(prev => prev.filter(n => n.id !== notification.id));
-
-      const routes: Record<string, string> = {
-        inquiry: "/admin/inquiries",
-        pre_consultation: "/admin/consultations",
-        quote_request: "/admin/quotes",
-        review: "/admin/reviews",
-      };
-
-      const route = routes[notification.type];
-      if (route) navigate(route);
-    } catch (err) {
-      console.error("Error handling notification click:", err);
+    const route = routes[notification.type];
+    if (route) {
+      navigate(route);
     }
   };
 
-  return { unreadNotifications, unreadCount, handleNotificationClick, loading };
+  return {
+    unreadNotifications,
+    isLoading,
+    unreadCount: unreadNotifications.length,
+    handleNotificationClick,
+  };
 };

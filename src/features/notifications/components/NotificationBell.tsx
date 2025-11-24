@@ -1,14 +1,17 @@
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useNotifications } from "../hooks/useNotifications";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
-import { useNotifications } from "../hooks/useNotifications";
 
 export const NotificationBell = () => {
-  const { unreadNotifications, unreadCount, handleNotificationClick, loading } = useNotifications();
-
-  if (loading) return null;
+  const { unreadNotifications, unreadCount, handleNotificationClick } =
+    useNotifications();
 
   return (
     <Popover>
@@ -38,15 +41,19 @@ export const NotificationBell = () => {
             </div>
           ) : (
             <div className="divide-y">
-              {unreadNotifications.map((n) => (
+              {unreadNotifications.map((notification) => (
                 <button
-                  key={n.id}
-                  onClick={() => handleNotificationClick(n)}
+                  key={notification.id}
+                  onClick={() => handleNotificationClick(notification)}
                   className="w-full p-4 text-left hover:bg-accent transition-colors"
                 >
-                  <p className="text-sm font-medium text-foreground mb-1">{n.message}</p>
+                  <p className="text-sm font-medium text-foreground mb-1">
+                    {notification.message}
+                  </p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(notification.created_at), {
+                      addSuffix: true,
+                    })}
                   </p>
                 </button>
               ))}
