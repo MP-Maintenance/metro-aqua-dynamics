@@ -86,21 +86,27 @@ export const QuoteProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) throw error;
 
-      // Create notification for admins (non-blocking)
+      // Insert quote request lines
       if (quoteRequest) {
-        supabase
-          .from("notifications")
-          .insert({
-            type: "quote_request",
-            reference_id: parseInt(quoteRequest.id),
-            message: `New quote request from ${contactInfo.fullName || user.email}`,
-            created_by: user.id,
-            assigned_to: null,
-          })
-          .then(({ error: notifError }) => {
-            if (notifError) console.error("Error creating notification:", notifError);
-          });
+        const lines = items.map(item => ({
+          quote_request_id: quoteRequest.id,
+          product_id: item.id,
+          product_name: item.name,
+          quantity: item.quantity,
+        }));
+
+        const { error: linesError } = await supabase
+          .from("quote_request_lines")
+          .insert(lines);
+
+        if (linesError) {
+          console.error("Error creating quote lines:", linesError);
+          // Non-blocking - quote was already created
+        }
       }
+
+      // Note: Notifications skipped for quote_requests due to UUID/BIGINT mismatch
+      // The notifications.reference_id expects BIGINT but quote_requests.id is UUID
 
       // Update user profile with contact info if provided
       if (contactInfo.fullName || contactInfo.phone) {
