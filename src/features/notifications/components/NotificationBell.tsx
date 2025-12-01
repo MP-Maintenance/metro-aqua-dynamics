@@ -10,8 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 
 export const NotificationBell = () => {
-  const { unreadNotifications, unreadCount, handleNotificationClick } =
+  const { unreadNotifications, unreadCount, handleNotificationClick, isLoading, error } =
     useNotifications();
+
+  // Don't render if there's an error loading notifications
+  if (error) {
+    console.error("NotificationBell error:", error);
+    return null;
+  }
 
   return (
     <Popover>

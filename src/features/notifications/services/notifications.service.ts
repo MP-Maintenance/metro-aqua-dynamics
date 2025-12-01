@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Notification {
-  id: number;
+  id: string; // Changed to string to handle BIGINT safely
   type: string;
   reference_id: number;
   message: string;
@@ -23,7 +23,7 @@ export const notificationsService = {
     return data as Notification[];
   },
 
-  async markAsRead(notificationId: number) {
+  async markAsRead(notificationId: string) {
     const { error } = await supabase
       .from("notifications")
       .update({ is_read: true })

@@ -190,7 +190,7 @@ export type Database = {
           assigned_to: string | null
           created_at: string | null
           created_by: string | null
-          id: number
+          id: string
           is_read: boolean | null
           message: string
           reference_id: number
@@ -200,7 +200,7 @@ export type Database = {
           assigned_to?: string | null
           created_at?: string | null
           created_by?: string | null
-          id?: never
+          id?: string
           is_read?: boolean | null
           message: string
           reference_id: number
@@ -210,7 +210,7 @@ export type Database = {
           assigned_to?: string | null
           created_at?: string | null
           created_by?: string | null
-          id?: never
+          id?: string
           is_read?: boolean | null
           message?: string
           reference_id?: number
