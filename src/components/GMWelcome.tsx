@@ -68,10 +68,10 @@ const GMWelcome = () => {
 
               <div className="pt-4 border-t border-border/50">
                 <p className="font-semibold text-lg text-foreground">
-                  Ayman Almaghrabi
+                  Mohamed Marzouk
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  General Manager
+                  Operations Manager
                 </p>
                 <motion.div
                   initial={{ width: 0 }}
