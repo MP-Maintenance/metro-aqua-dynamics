@@ -58,13 +58,13 @@ const Footer = () => {
                 <Mail className="w-4 h-4" />
                 info@metropools.com
               </a>
-              <a href="tel:+97317000000" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+              <a href="tel:+97444771588" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
                 <Phone className="w-4 h-4" />
-                +973 1700 0000
+                +974 4477 1588
               </a>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4" />
-                Bahrain
+                Doha, Qatar
               </div>
               <a href="https://www.linkedin.com/company/metropools" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
                 <Linkedin className="w-4 h-4" />
