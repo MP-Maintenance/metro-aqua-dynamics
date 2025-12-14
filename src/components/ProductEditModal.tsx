@@ -17,6 +17,9 @@ interface Product {
   availability: string;
   image_url?: string;
   price?: number;
+  brand?: string | null;
+  model?: string | null;
+  origin?: string | null;
 }
 
 interface ProductEditModalProps {
@@ -34,6 +37,9 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
     availability: "available",
     image_url: "",
     price: "",
+    brand: "",
+    model: "",
+    origin: "",
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -48,6 +54,9 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
         availability: product.availability || "available",
         image_url: product.image_url || "",
         price: product.price?.toString() || "",
+        brand: product.brand || "",
+        model: product.model || "",
+        origin: product.origin || "",
       });
       setImagePreview(product.image_url || "");
     }
@@ -106,6 +115,9 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
         category: formData.category,
         availability: formData.availability,
         image_url: formData.image_url || null,
+        brand: formData.brand || null,
+        model: formData.model || null,
+        origin: formData.origin || null,
       };
 
       if (formData.price) {
@@ -185,6 +197,36 @@ const ProductEditModal = ({ product, isOpen, onClose, onSave }: ProductEditModal
             uploading={uploading}
             label="Product Image"
           />
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="brand">Brand</Label>
+              <Input
+                id="brand"
+                value={formData.brand}
+                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                placeholder="Brand name"
+              />
+            </div>
+            <div>
+              <Label htmlFor="model">Model</Label>
+              <Input
+                id="model"
+                value={formData.model}
+                onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+                placeholder="Model number"
+              />
+            </div>
+            <div>
+              <Label htmlFor="origin">Origin</Label>
+              <Input
+                id="origin"
+                value={formData.origin}
+                onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
+                placeholder="Country of origin"
+              />
+            </div>
+          </div>
 
           <div>
             <Label htmlFor="price">Price (Optional)</Label>

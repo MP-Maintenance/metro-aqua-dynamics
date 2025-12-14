@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -5,10 +6,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useFAQs } from "../hooks/useFAQs";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const FAQSection = () => {
   const { faqs, loading } = useFAQs(true);
+  const [showAll, setShowAll] = useState(false);
 
   if (loading) {
     return (
@@ -36,6 +40,9 @@ const FAQSection = () => {
     return null;
   }
 
+  const visibleFaqs = showAll ? faqs : faqs.slice(0, 3);
+  const remainingCount = faqs.length - 3;
+
   return (
     <section className="py-24 px-4 bg-muted/50">
       <div className="container mx-auto max-w-4xl">
@@ -45,7 +52,7 @@ const FAQSection = () => {
         </p>
         
         <Accordion type="single" collapsible className="space-y-4">
-          {faqs.map((faq) => (
+          {visibleFaqs.map((faq) => (
             <AccordionItem
               key={faq.id}
               value={faq.id}
@@ -60,6 +67,28 @@ const FAQSection = () => {
             </AccordionItem>
           ))}
         </Accordion>
+
+        {faqs.length > 3 && (
+          <div className="flex justify-center mt-8">
+            <Button
+              variant="outline"
+              onClick={() => setShowAll(!showAll)}
+              className="gap-2"
+            >
+              {showAll ? (
+                <>
+                  <ChevronUp className="h-4 w-4" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4" />
+                  Show {remainingCount} More FAQ{remainingCount > 1 ? 's' : ''}
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

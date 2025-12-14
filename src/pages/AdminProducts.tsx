@@ -25,6 +25,9 @@ interface Product {
   image_url: string;
   availability: string;
   created_at: string;
+  brand: string | null;
+  model: string | null;
+  origin: string | null;
 }
 
 const AdminProducts = () => {
@@ -40,6 +43,9 @@ const AdminProducts = () => {
     price: 0,
     image_url: "",
     availability: "available",
+    brand: "",
+    model: "",
+    origin: "",
   });
   const { toast } = useToast();
 
@@ -90,6 +96,9 @@ const AdminProducts = () => {
         price: 0,
         image_url: "",
         availability: "available",
+        brand: "",
+        model: "",
+        origin: "",
       });
       fetchProducts();
     } catch (error: any) {
@@ -186,6 +195,9 @@ const AdminProducts = () => {
                   <TableRow>
                     <TableHead>Product</TableHead>
                     <TableHead>Category</TableHead>
+                    <TableHead>Brand</TableHead>
+                    <TableHead>Model</TableHead>
+                    <TableHead>Origin</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Availability</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -194,7 +206,7 @@ const AdminProducts = () => {
                 <TableBody>
                   {filteredProducts.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                         No products found
                       </TableCell>
                     </TableRow>
@@ -219,6 +231,9 @@ const AdminProducts = () => {
                           </div>
                         </TableCell>
                         <TableCell>{product.category}</TableCell>
+                        <TableCell>{product.brand || "—"}</TableCell>
+                        <TableCell>{product.model || "—"}</TableCell>
+                        <TableCell>{product.origin || "—"}</TableCell>
                         <TableCell>${product.price}</TableCell>
                         <TableCell>
                           <Badge variant={product.availability === "available" ? "default" : "secondary"}>
@@ -303,6 +318,32 @@ const AdminProducts = () => {
                 onChange={(e) => setNewProduct({ ...newProduct, image_url: e.target.value })}
                 placeholder="Enter image URL"
               />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label>Brand</Label>
+                <Input
+                  value={newProduct.brand}
+                  onChange={(e) => setNewProduct({ ...newProduct, brand: e.target.value })}
+                  placeholder="Brand name"
+                />
+              </div>
+              <div>
+                <Label>Model</Label>
+                <Input
+                  value={newProduct.model}
+                  onChange={(e) => setNewProduct({ ...newProduct, model: e.target.value })}
+                  placeholder="Model number"
+                />
+              </div>
+              <div>
+                <Label>Origin</Label>
+                <Input
+                  value={newProduct.origin}
+                  onChange={(e) => setNewProduct({ ...newProduct, origin: e.target.value })}
+                  placeholder="Country of origin"
+                />
+              </div>
             </div>
             <div>
               <Label>Price</Label>

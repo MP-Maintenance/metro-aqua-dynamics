@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +13,7 @@ interface ServiceCardProps {
 }
 
 const ServiceCard = ({ title, description, image, link }: ServiceCardProps) => {
+  const navigate = useNavigate();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -50,11 +51,21 @@ const ServiceCard = ({ title, description, image, link }: ServiceCardProps) => {
         <h3 className="text-xl font-semibold mb-3">{title}</h3>
         <p className="text-muted-foreground mb-4">{description}</p>
         <div className="flex flex-col gap-2">
-          <Button asChild variant="outline" className="group/btn">
-            <Link to={link} className="flex items-center gap-2">
-              Learn More
-              <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-            </Link>
+          <Button 
+            variant="outline" 
+            className="group/btn"
+            onClick={() => {
+              const [path, hash] = link.split('#');
+              navigate(path);
+              if (hash) {
+                setTimeout(() => {
+                  document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }
+            }}
+          >
+            Learn More
+            <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
           </Button>
           <Button 
             asChild

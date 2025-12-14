@@ -328,32 +328,41 @@ export type Database = {
       products: {
         Row: {
           availability: string | null
+          brand: string | null
           category: string
           created_at: string
           description: string | null
           id: string
           image_url: string | null
+          model: string | null
           name: string
+          origin: string | null
           price: number | null
         }
         Insert: {
           availability?: string | null
+          brand?: string | null
           category: string
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          model?: string | null
           name: string
+          origin?: string | null
           price?: number | null
         }
         Update: {
           availability?: string | null
+          brand?: string | null
           category?: string
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          model?: string | null
           name?: string
+          origin?: string | null
           price?: number | null
         }
         Relationships: []

@@ -2,7 +2,6 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatbotWidget from "@/components/ChatbotWidget";
-import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -11,29 +10,20 @@ import Hero from "@/components/Hero";
 import GMWelcome from "@/components/GMWelcome";
 import WaveBackground from "@/components/WaveBackground";
 import ServiceCard from "@/components/ServiceCard";
-import FlipCard from "@/components/FlipCard";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import CompanyTimeline from "@/components/CompanyTimeline";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import ParallaxSection from "@/components/ParallaxSection";
-import ReviewsList from "@/features/reviews/components/ReviewsList";
+import TeamCarousel from "@/components/TeamCarousel";
+import PartnersCarousel from "@/components/PartnersCarousel";
 import ReviewSubmissionForm from "@/features/reviews/components/ReviewSubmissionForm";
 import FAQSection from "@/features/faqs/components/FAQSection";
 import { useTeam } from "@/features/team/hooks/useTeam";
 import { usePartners } from "@/features/partners/hooks/usePartners";
 import { Card, CardContent } from "@/components/ui/card";
-import { LazyImage } from "@/components/ui/LazyImage";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
-import Autoplay from "embla-carousel-autoplay";
 import maintenanceImg from "@/assets/service-maintenance.jpg";
 import inspectionImg from "@/assets/service-inspection.jpg";
 import renovationImg from "@/assets/service-renovation.jpg";
@@ -162,67 +152,7 @@ const Index = () => {
               Expert professionals dedicated to excellence
             </p>
           </div>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            plugins={[
-              Autoplay({
-                delay: 4000,
-              }),
-            ]}
-            className="w-full max-w-6xl mx-auto"
-          >
-            <CarouselContent className="-ml-4">
-              {teamLoading ? (
-                <div className="w-full text-center text-muted-foreground py-12">Loading team...</div>
-              ) : teamMembers.length === 0 ? (
-                <div className="w-full text-center text-muted-foreground py-12">No team members found.</div>
-              ) : teamMembers.map((member, idx) => (
-                <CarouselItem key={idx} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: idx * 0.1 }}
-                    viewport={{ once: true }}
-                    className="h-[280px]"
-                  >
-                    <FlipCard
-                      type="team"
-                      frontContent={
-                        <CardContent className="pt-6 text-center">
-                          {member.imageurl ? (
-                            <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 shadow-glow-primary">
-                              <LazyImage
-                                src={member.imageurl}
-                                alt={member.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold shadow-glow-primary">
-                              {member.name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                          )}
-                          <h3 className="font-semibold text-lg mb-1">{member.name}</h3>
-                          <p className="text-sm text-primary mb-2">{member.role}</p>
-                          <p className="text-sm text-muted-foreground">{member.description}</p>
-                        </CardContent>
-                      }
-                      backContent={{
-                        name: member.name,
-                        email: member.email,
-                        mobile: member.mobile,
-                      }}
-                    />
-                  </motion.div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+          <TeamCarousel teamMembers={teamMembers} teamLoading={teamLoading} />
         </div>
       </section>
 
@@ -235,101 +165,12 @@ const Index = () => {
               Working with industry-leading brands
             </p>
           </div>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            plugins={[
-              Autoplay({
-                delay: 3000,
-              }),
-            ]}
-            className="w-full max-w-6xl mx-auto"
-          >
-            <CarouselContent className="-ml-4">
-              {partnersLoading ? (
-                <div className="w-full text-center text-muted-foreground py-12">Loading partners...</div>
-              ) : partners.length === 0 ? (
-                <div className="w-full text-center text-muted-foreground py-12">No partners found.</div>
-              ) : partners.map((partner, idx) => (
-                <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                  <div className="h-[220px]">
-                    <FlipCard
-                      type="partner"
-                      frontContent={
-                        <CardContent className="flex flex-col items-center justify-center p-6 min-h-[220px]">
-                          <div className="text-3xl font-bold text-primary mb-3 text-center">
-                            {partner.name}
-                          </div>
-                          <p className="text-xs text-muted-foreground text-center italic">
-                            {partner.tagline}
-                          </p>
-                        </CardContent>
-                      }
-                      backContent={{
-                        name: partner.name,
-                        description: partner.description,
-                      }}
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+          <PartnersCarousel partners={partners} partnersLoading={partnersLoading} />
         </div>
       </section>
 
       {/* FAQ Section */}
       <FAQSection />
-
-      {/* Before/After Renovation Slider */}
-      <section className="py-20 bg-gradient-to-b from-background to-card">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Transformation Gallery</h2>
-            <p className="text-lg text-muted-foreground">
-              See the stunning results of our renovation projects
-            </p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <BeforeAfterSlider
-                beforeImage="https://images.unsplash.com/photo-1576610616656-d3aa5d1f4534?w=800&h=600&fit=crop"
-                afterImage="https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=800&h=600&fit=crop"
-                alt="Pool Renovation Project 1"
-              />
-              <p className="text-center mt-4 text-muted-foreground">Residential Pool - Complete Surface Refinishing</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <BeforeAfterSlider
-                beforeImage="https://images.unsplash.com/photo-1519974719765-e6559eac2575?w=800&h=600&fit=crop"
-                afterImage="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=800&h=600&fit=crop"
-                alt="Pool Renovation Project 2"
-              />
-              <p className="text-center mt-4 text-muted-foreground">Commercial Hotel Pool - Modern Equipment Upgrade</p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
       {/* Service Area Map */}
       <section className="py-20">
