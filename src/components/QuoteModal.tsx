@@ -32,17 +32,20 @@ const QuoteModal = ({ isOpen, onClose, product }: QuoteModalProps) => {
     }
 
     if (product) {
-      addItem({
-        id: product.id || `${product.category}-${product.name}`,
-        name: product.name,
-        description: product.description || "",
-        category: product.category,
-        icon: product.icon,
-        availability: (product.availability as "available" | "not-available") || "available",
-      });
+      // Add item with the specified quantity
+      for (let i = 0; i < quantity; i++) {
+        addItem({
+          id: product.id || `${product.category}-${product.name}`,
+          name: product.name,
+          description: product.description || "",
+          category: product.category,
+          icon: product.icon,
+          availability: (product.availability as "available" | "not-available") || "available",
+        });
+      }
       
       toast.success("Added to Quote Cart", {
-        description: `${product.name} has been added to your quote request.`,
+        description: `${quantity}x ${product.name} has been added to your quote request.`,
       });
       
       setQuantity(1);

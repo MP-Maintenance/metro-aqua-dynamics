@@ -132,14 +132,6 @@ const Quote = () => {
             <div className="flex gap-4 mb-8 justify-center">
               <Button
                 size="lg"
-                variant={selectedOption === "quote" ? "default" : "outline"}
-                onClick={() => setSelectedOption("quote")}
-                className="min-w-[180px]"
-              >
-                Request a Quote
-              </Button>
-              <Button
-                size="lg"
                 variant={selectedOption === "consultation" ? "default" : "outline"}
                 onClick={() => {
                   setSelectedOption("consultation");
@@ -148,6 +140,14 @@ const Quote = () => {
                 className="min-w-[180px]"
               >
                 Pre-Consultation
+              </Button>
+              <Button
+                size="lg"
+                variant={selectedOption === "quote" ? "default" : "outline"}
+                onClick={() => setSelectedOption("quote")}
+                className="min-w-[180px]"
+              >
+                General Inquiry
               </Button>
             </div>
 

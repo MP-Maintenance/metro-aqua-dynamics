@@ -102,6 +102,9 @@ const Navbar = () => {
                 <DropdownMenuItem onSelect={() => handleAnchorClick("/services", "renovation")}>
                   Renovation
                 </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleAnchorClick("/services", "design-build")}>
+                  Design & Build
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 

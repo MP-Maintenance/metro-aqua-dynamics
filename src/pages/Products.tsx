@@ -27,6 +27,9 @@ interface Product {
   image_url: string | null;
   price: number | null;
   created_at: string;
+  brand: string | null;
+  model: string | null;
+  origin: string | null;
 }
 
 interface Category {
@@ -491,73 +494,78 @@ const Products = () => {
                               </div>
                             </CardContent>
                           ) : (
-                            // List View
-                            <>
+                            // List View - Redesigned
+                            <div className="flex flex-col md:flex-row w-full">
                               {product.image_url ? (
                                 <img
                                   src={product.image_url}
                                   alt={product.name}
-                                  className="w-48 h-48 object-cover rounded-l-lg"
+                                  className="w-full md:w-40 h-40 object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none flex-shrink-0"
                                 />
                               ) : (
-                                <div className="w-48 h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-l-lg flex items-center justify-center flex-shrink-0">
-                                  <Icon className="w-16 h-16 text-primary/30" />
+                                <div className="w-full md:w-40 h-40 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg md:rounded-l-lg md:rounded-t-none flex items-center justify-center flex-shrink-0">
+                                  <Icon className="w-12 h-12 text-primary/30" />
                                 </div>
                               )}
-                              <CardContent className="flex-1 p-6 flex flex-col justify-between">
-                                <div>
-                                  <div className="mb-2">
+                              <CardContent className="flex-1 p-4 flex flex-col md:flex-row justify-between gap-4">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex flex-wrap items-center gap-2 mb-2">
                                     {getAvailabilityBadge(product.availability)}
+                                    <Badge variant="outline" className="text-xs">{categories.find(c => c.slug === product.category)?.name || product.category}</Badge>
                                   </div>
-                                  <h3 className="font-semibold text-xl mb-2">{product.name}</h3>
-                                  <p className="text-muted-foreground mb-4">{product.description}</p>
+                                  <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
+                                  <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{product.description}</p>
+                                  
+                                  {/* Brand, Model, Origin */}
+                                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                                    {product.brand && <span><strong>Brand:</strong> {product.brand}</span>}
+                                    {product.model && <span><strong>Model:</strong> {product.model}</span>}
+                                    {product.origin && <span><strong>Origin:</strong> {product.origin}</span>}
+                                  </div>
+                                </div>
+                                
+                                <div className="flex flex-col items-end justify-between gap-2 flex-shrink-0">
                                   {product.price && (
-                                    <p className="text-primary font-bold text-xl mb-4">
+                                    <p className="text-primary font-bold text-xl">
                                       ${product.price.toFixed(2)}
                                     </p>
                                   )}
-                                </div>
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setQuickViewProduct(product)}
-                                  >
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    Quick View
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => {
-                                      setSelectedProduct(product);
-                                      setIsQuoteModalOpen(true);
-                                    }}
-                                  >
-                                    Get Quote
-                                  </Button>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
-                                        <Checkbox
-                                          id={`compare-list-${product.id}`}
-                                          checked={isInComparison(product.id)}
-                                          onCheckedChange={() => toggleComparison(product)}
-                                        />
-                                        <label
-                                          htmlFor={`compare-list-${product.id}`}
-                                          className="text-xs font-medium cursor-pointer whitespace-nowrap"
-                                        >
-                                          Compare
-                                        </label>
-                                      </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top" className="max-w-xs">
-                                      <p className="text-xs">Select up to 4 products to compare features and prices side-by-side</p>
-                                    </TooltipContent>
-                                  </Tooltip>
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => setQuickViewProduct(product)}
+                                    >
+                                      <Eye className="h-4 w-4 mr-1" />
+                                      View
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => {
+                                        setSelectedProduct(product);
+                                        setIsQuoteModalOpen(true);
+                                      }}
+                                    >
+                                      Get Quote
+                                    </Button>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <div className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-muted/50">
+                                          <Checkbox
+                                            id={`compare-list-${product.id}`}
+                                            checked={isInComparison(product.id)}
+                                            onCheckedChange={() => toggleComparison(product)}
+                                          />
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="top">
+                                        <p className="text-xs">Compare products</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </div>
                                 </div>
                               </CardContent>
-                            </>
+                            </div>
                           )}
                         </Card>
                       ))}
@@ -811,6 +819,30 @@ const Products = () => {
                       {categories.find((c) => c.slug === quickViewProduct.category)?.name || quickViewProduct.category}
                     </p>
                   </div>
+
+                  {/* Brand, Model, Origin */}
+                  {(quickViewProduct.brand || quickViewProduct.model || quickViewProduct.origin) && (
+                    <div className="grid grid-cols-2 gap-2">
+                      {quickViewProduct.brand && (
+                        <div>
+                          <h4 className="font-semibold text-sm mb-1">Brand</h4>
+                          <p className="text-muted-foreground text-sm">{quickViewProduct.brand}</p>
+                        </div>
+                      )}
+                      {quickViewProduct.model && (
+                        <div>
+                          <h4 className="font-semibold text-sm mb-1">Model</h4>
+                          <p className="text-muted-foreground text-sm">{quickViewProduct.model}</p>
+                        </div>
+                      )}
+                      {quickViewProduct.origin && (
+                        <div>
+                          <h4 className="font-semibold text-sm mb-1">Origin</h4>
+                          <p className="text-muted-foreground text-sm">{quickViewProduct.origin}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div>
                     <h4 className="font-semibold mb-2">Description</h4>
