@@ -3,14 +3,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import QuoteModal from "@/components/QuoteModal";
-import ProductEditModal from "@/components/ProductEditModal";
-import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil, Package, Search, SlidersHorizontal, Eye, GitCompare, X, Check, Grid3x3, List } from "lucide-react";
+import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Package, Search, SlidersHorizontal, Eye, GitCompare, X, Check, Grid3x3, List } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -40,11 +38,9 @@ interface Category {
 }
 
 const Products = () => {
-  const { isAdmin } = useAuth();
   const { toast } = useToast();
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -405,21 +401,6 @@ const Products = () => {
                             viewMode === "list" ? "flex flex-row" : ""
                           }`}
                         >
-                          {/* Admin Edit Button */}
-                          {isAdmin && (
-                            <Button
-                              size="icon"
-                              variant="secondary"
-                              className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setEditingProduct(product);
-                              }}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                          )}
-                          
 
                           {viewMode === "grid" ? (
                             <CardContent className="pt-6">
@@ -494,75 +475,96 @@ const Products = () => {
                               </div>
                             </CardContent>
                           ) : (
-                            // List View - Redesigned
-                            <div className="flex flex-col md:flex-row w-full">
+                            // List View - Redesigned with better space utilization
+                            <div className="flex flex-col sm:flex-row w-full">
                               {product.image_url ? (
                                 <img
                                   src={product.image_url}
                                   alt={product.name}
-                                  className="w-full md:w-40 h-40 object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none flex-shrink-0"
+                                  className="w-full sm:w-32 h-32 object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-t-none flex-shrink-0"
                                 />
                               ) : (
-                                <div className="w-full md:w-40 h-40 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg md:rounded-l-lg md:rounded-t-none flex items-center justify-center flex-shrink-0">
-                                  <Icon className="w-12 h-12 text-primary/30" />
+                                <div className="w-full sm:w-32 h-32 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg sm:rounded-l-lg sm:rounded-t-none flex items-center justify-center flex-shrink-0">
+                                  <Icon className="w-10 h-10 text-primary/30" />
                                 </div>
                               )}
-                              <CardContent className="flex-1 p-4 flex flex-col md:flex-row justify-between gap-4">
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                                    {getAvailabilityBadge(product.availability)}
-                                    <Badge variant="outline" className="text-xs">{categories.find(c => c.slug === product.category)?.name || product.category}</Badge>
+                              <CardContent className="flex-1 p-3 sm:p-4 flex flex-col sm:flex-row gap-3">
+                                {/* Product Info - takes available space */}
+                                <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-2">
+                                  <div>
+                                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                                      {getAvailabilityBadge(product.availability)}
+                                      <Badge variant="outline" className="text-xs">{categories.find(c => c.slug === product.category)?.name || product.category}</Badge>
+                                    </div>
+                                    <h3 className="font-semibold text-base mb-1">{product.name}</h3>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
                                   </div>
-                                  <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
-                                  <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{product.description}</p>
                                   
-                                  {/* Brand, Model, Origin */}
-                                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                                    {product.brand && <span><strong>Brand:</strong> {product.brand}</span>}
-                                    {product.model && <span><strong>Model:</strong> {product.model}</span>}
-                                    {product.origin && <span><strong>Origin:</strong> {product.origin}</span>}
+                                  {/* Brand, Model, Origin - second column on lg */}
+                                  <div className="flex flex-col gap-1 text-sm">
+                                    {product.brand && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-muted-foreground w-14">Brand:</span>
+                                        <span className="font-medium">{product.brand}</span>
+                                      </div>
+                                    )}
+                                    {product.model && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-muted-foreground w-14">Model:</span>
+                                        <span className="font-medium">{product.model}</span>
+                                      </div>
+                                    )}
+                                    {product.origin && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-muted-foreground w-14">Origin:</span>
+                                        <span className="font-medium">{product.origin}</span>
+                                      </div>
+                                    )}
+                                    {product.price && (
+                                      <div className="flex items-center gap-2 mt-1">
+                                        <span className="text-muted-foreground w-14">Price:</span>
+                                        <span className="text-primary font-bold text-lg">${product.price.toFixed(2)}</span>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                                 
-                                <div className="flex flex-col items-end justify-between gap-2 flex-shrink-0">
-                                  {product.price && (
-                                    <p className="text-primary font-bold text-xl">
-                                      ${product.price.toFixed(2)}
-                                    </p>
-                                  )}
-                                  <div className="flex flex-wrap items-center gap-2">
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => setQuickViewProduct(product)}
-                                    >
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      View
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      onClick={() => {
-                                        setSelectedProduct(product);
-                                        setIsQuoteModalOpen(true);
-                                      }}
-                                    >
-                                      Get Quote
-                                    </Button>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <div className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-muted/50">
-                                          <Checkbox
-                                            id={`compare-list-${product.id}`}
-                                            checked={isInComparison(product.id)}
-                                            onCheckedChange={() => toggleComparison(product)}
-                                          />
-                                        </div>
-                                      </TooltipTrigger>
-                                      <TooltipContent side="top">
-                                        <p className="text-xs">Compare products</p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </div>
+                                {/* Actions - right side */}
+                                <div className="flex sm:flex-col items-center sm:items-end justify-end gap-2 flex-shrink-0 sm:min-w-[120px]">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full sm:w-auto"
+                                    onClick={() => setQuickViewProduct(product)}
+                                  >
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    View
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    className="w-full sm:w-auto"
+                                    onClick={() => {
+                                      setSelectedProduct(product);
+                                      setIsQuoteModalOpen(true);
+                                    }}
+                                  >
+                                    Get Quote
+                                  </Button>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-muted/50">
+                                        <Checkbox
+                                          id={`compare-list-${product.id}`}
+                                          checked={isInComparison(product.id)}
+                                          onCheckedChange={() => toggleComparison(product)}
+                                        />
+                                        <span className="text-xs">Compare</span>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                      <p className="text-xs">Compare products</p>
+                                    </TooltipContent>
+                                  </Tooltip>
                                 </div>
                               </CardContent>
                             </div>
@@ -903,13 +905,6 @@ const Products = () => {
           setSelectedProduct(null);
         }}
         product={selectedProduct}
-      />
-
-      <ProductEditModal
-        product={editingProduct}
-        isOpen={!!editingProduct}
-        onClose={() => setEditingProduct(null)}
-        onSave={fetchData}
       />
 
       <Footer />
