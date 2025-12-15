@@ -102,7 +102,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       {/* Sidebar - Mobile */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 border-r bg-navbar-bg flex flex-col transform transition-transform duration-200 lg:hidden",
+        "fixed inset-y-0 left-0 z-50 w-64 border-r border-border flex flex-col transform transition-transform duration-200 lg:hidden",
+        "bg-background",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-6 border-b border-border flex items-center justify-between">
