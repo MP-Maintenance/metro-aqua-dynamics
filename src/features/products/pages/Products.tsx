@@ -3,15 +3,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import QuoteModal from "@/components/QuoteModal";
-import ProductEditModal from "@/components/ProductEditModal";
 import { LazyImage } from "@/components/ui/LazyImage";
-import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Pencil, Package, Search, SlidersHorizontal, Eye, GitCompare, X, Check, Grid3x3, List } from "lucide-react";
+import { Filter, Thermometer, Lightbulb, Droplets, Square, Cpu, Sparkles, Wind, Zap, Waves, Shield, Package, Search, SlidersHorizontal, Eye, GitCompare, X, Check, Grid3x3, List } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -28,6 +26,9 @@ interface Product {
   image_url: string | null;
   price: number | null;
   created_at: string;
+  brand: string | null;
+  model: string | null;
+  origin: string | null;
 }
 
 interface Category {
@@ -38,11 +39,9 @@ interface Category {
 }
 
 const Products = () => {
-  const { isAdmin } = useAuth();
   const { toast } = useToast();
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -400,25 +399,9 @@ const Products = () => {
                         <Card
                           key={product.id}
                           className={`group hover:shadow-medium transition-all duration-300 relative ${
-                            viewMode === "list" ? "flex flex-row" : ""
+                            viewMode === "list" ? "flex flex-col sm:flex-row" : ""
                           }`}
                         >
-                          {/* Admin Edit Button */}
-                          {isAdmin && (
-                            <Button
-                              size="icon"
-                              variant="secondary"
-                              className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setEditingProduct(product);
-                              }}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                          )}
-                          
-
                           {viewMode === "grid" ? (
                             <CardContent className="pt-6">
                               {product.image_url ? (
@@ -439,7 +422,17 @@ const Products = () => {
                               </div>
 
                               <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                              <p className="text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
+                              <p className="text-muted-foreground mb-2 line-clamp-2">{product.description}</p>
+                              
+                              {/* Brand, Model, Origin */}
+                              {(product.brand || product.model || product.origin) && (
+                                <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground mb-3">
+                                  {product.brand && <span>Brand: <span className="text-foreground">{product.brand}</span></span>}
+                                  {product.model && <span>Model: <span className="text-foreground">{product.model}</span></span>}
+                                  {product.origin && <span>Origin: <span className="text-foreground">{product.origin}</span></span>}
+                                </div>
+                              )}
+                              
                               {product.price && (
                                 <p className="text-primary font-semibold mb-4">
                                   ${product.price.toFixed(2)}
@@ -492,40 +485,65 @@ const Products = () => {
                               </div>
                             </CardContent>
                           ) : (
-                            // List View
+                            // List View - Compact Design
                             <>
                               {product.image_url ? (
                                 <LazyImage
                                   src={product.image_url}
                                   alt={product.name}
-                                  className="w-48 h-48 object-cover rounded-l-lg"
+                                  className="w-full sm:w-32 h-32 object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex-shrink-0"
                                 />
                               ) : (
-                                <div className="w-48 h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-l-lg flex items-center justify-center flex-shrink-0">
-                                  <Icon className="w-16 h-16 text-primary/30" />
+                                <div className="w-full sm:w-32 h-32 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex items-center justify-center flex-shrink-0">
+                                  <Icon className="w-10 h-10 text-primary/30" />
                                 </div>
                               )}
-                              <CardContent className="flex-1 p-6 flex flex-col justify-between">
-                                <div>
-                                  <div className="mb-2">
-                                    {getAvailabilityBadge(product.availability)}
+                              <CardContent className="flex-1 p-3 sm:p-4 flex flex-col sm:flex-row gap-3">
+                                {/* Product Info */}
+                                <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-2">
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      {getAvailabilityBadge(product.availability)}
+                                    </div>
+                                    <h3 className="font-semibold text-base truncate">{product.name}</h3>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
                                   </div>
-                                  <h3 className="font-semibold text-xl mb-2">{product.name}</h3>
-                                  <p className="text-muted-foreground mb-4">{product.description}</p>
-                                  {product.price && (
-                                    <p className="text-primary font-bold text-xl mb-4">
-                                      ${product.price.toFixed(2)}
-                                    </p>
-                                  )}
+                                  <div className="flex flex-col gap-1 text-sm">
+                                    {product.brand && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-muted-foreground w-14">Brand:</span>
+                                        <span className="font-medium">{product.brand}</span>
+                                      </div>
+                                    )}
+                                    {product.model && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-muted-foreground w-14">Model:</span>
+                                        <span className="font-medium">{product.model}</span>
+                                      </div>
+                                    )}
+                                    {product.origin && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-muted-foreground w-14">Origin:</span>
+                                        <span className="font-medium">{product.origin}</span>
+                                      </div>
+                                    )}
+                                    {product.price && (
+                                      <div className="flex items-center gap-2 mt-1">
+                                        <span className="text-muted-foreground w-14">Price:</span>
+                                        <span className="text-primary font-bold text-lg">${product.price.toFixed(2)}</span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                                <div className="flex flex-wrap items-center gap-2">
+                                {/* Actions */}
+                                <div className="flex sm:flex-col items-center gap-2 flex-shrink-0">
                                   <Button
                                     variant="outline"
                                     size="sm"
                                     onClick={() => setQuickViewProduct(product)}
                                   >
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    Quick View
+                                    <Eye className="h-4 w-4 sm:mr-2" />
+                                    <span className="hidden sm:inline">View</span>
                                   </Button>
                                   <Button
                                     size="sm"
@@ -534,7 +552,7 @@ const Products = () => {
                                       setIsQuoteModalOpen(true);
                                     }}
                                   >
-                                    Get Quote
+                                    Quote
                                   </Button>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
@@ -546,14 +564,14 @@ const Products = () => {
                                         />
                                         <label
                                           htmlFor={`compare-list-${product.id}`}
-                                          className="text-xs font-medium cursor-pointer whitespace-nowrap"
+                                          className="text-xs font-medium cursor-pointer whitespace-nowrap hidden sm:inline"
                                         >
                                           Compare
                                         </label>
                                       </div>
                                     </TooltipTrigger>
                                     <TooltipContent side="top" className="max-w-xs">
-                                      <p className="text-xs">Select up to 4 products to compare features and prices side-by-side</p>
+                                      <p className="text-xs">Select up to 4 products to compare side-by-side</p>
                                     </TooltipContent>
                                   </Tooltip>
                                 </div>
@@ -813,6 +831,30 @@ const Products = () => {
                     </p>
                   </div>
 
+                  {/* Brand, Model, Origin in Quick View */}
+                  {(quickViewProduct.brand || quickViewProduct.model || quickViewProduct.origin) && (
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      {quickViewProduct.brand && (
+                        <div>
+                          <span className="text-muted-foreground">Brand:</span>
+                          <p className="font-medium">{quickViewProduct.brand}</p>
+                        </div>
+                      )}
+                      {quickViewProduct.model && (
+                        <div>
+                          <span className="text-muted-foreground">Model:</span>
+                          <p className="font-medium">{quickViewProduct.model}</p>
+                        </div>
+                      )}
+                      {quickViewProduct.origin && (
+                        <div>
+                          <span className="text-muted-foreground">Origin:</span>
+                          <p className="font-medium">{quickViewProduct.origin}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div>
                     <h4 className="font-semibold mb-2">Description</h4>
                     <p className="text-muted-foreground">
@@ -872,13 +914,6 @@ const Products = () => {
           setSelectedProduct(null);
         }}
         product={selectedProduct}
-      />
-
-      <ProductEditModal
-        product={editingProduct}
-        isOpen={!!editingProduct}
-        onClose={() => setEditingProduct(null)}
-        onSave={fetchData}
       />
 
       <Footer />
