@@ -17,6 +17,7 @@ import ParallaxSection from "@/components/ParallaxSection";
 import TeamCarousel from "@/components/TeamCarousel";
 import PartnersCarousel from "@/components/PartnersCarousel";
 import ReviewSubmissionForm from "@/features/reviews/components/ReviewSubmissionForm";
+import FeaturedProducts from "@/components/FeaturedProducts";
 import FAQSection from "@/features/faqs/components/FAQSection";
 import { useTeam } from "@/features/team/hooks/useTeam";
 import { usePartners } from "@/features/partners/hooks/usePartners";
@@ -142,6 +143,9 @@ const Index = () => {
           </div>
         </section>
       </ParallaxSection>
+
+      {/* Featured Products Section */}
+      <FeaturedProducts />
 
       {/* Team Section */}
       <section id="team" className="py-20 bg-muted/30">
