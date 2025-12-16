@@ -486,67 +486,64 @@ const Products = () => {
                             </CardContent>
                           ) : (
                             // List View - Compact Design
-                            <>
+                            <div className="flex flex-col sm:flex-row w-full">
+                              {/* Image */}
                               {product.image_url ? (
                                 <LazyImage
                                   src={product.image_url}
                                   alt={product.name}
-                                  className="w-full sm:w-32 h-32 object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex-shrink-0"
+                                  className="w-full sm:w-32 md:w-40 h-40 sm:h-32 md:h-40 object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex-shrink-0"
                                 />
                               ) : (
-                                <div className="w-full sm:w-32 h-32 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex items-center justify-center flex-shrink-0">
+                                <div className="w-full sm:w-32 md:w-40 h-40 sm:h-32 md:h-40 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex items-center justify-center flex-shrink-0">
                                   <Icon className="w-10 h-10 text-primary/30" />
                                 </div>
                               )}
-                              <CardContent className="flex-1 p-3 sm:p-4 flex flex-col sm:flex-row gap-3">
-                                {/* Product Info */}
-                                <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-2">
-                                  <div className="space-y-1">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                      {getAvailabilityBadge(product.availability)}
-                                    </div>
-                                    <h3 className="font-semibold text-base truncate">{product.name}</h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+                              
+                              {/* Content Area */}
+                              <div className="flex-1 flex flex-col sm:flex-row p-4 gap-4">
+                                {/* Product Details - Takes all available space */}
+                                <div className="flex-1 min-w-0 space-y-2">
+                                  {/* Name with Badge inline */}
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h3 className="font-semibold text-base">{product.name}</h3>
+                                    {getAvailabilityBadge(product.availability)}
                                   </div>
-                                  <div className="flex flex-col gap-1 text-sm">
+                                  
+                                  {/* Description */}
+                                  <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+                                  
+                                  {/* Brand/Model/Origin/Price - Horizontal row */}
+                                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
                                     {product.brand && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-muted-foreground w-14">Brand:</span>
-                                        <span className="font-medium">{product.brand}</span>
-                                      </div>
+                                      <span><span className="text-muted-foreground">Brand:</span> <span className="font-medium">{product.brand}</span></span>
                                     )}
                                     {product.model && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-muted-foreground w-14">Model:</span>
-                                        <span className="font-medium">{product.model}</span>
-                                      </div>
+                                      <span><span className="text-muted-foreground">Model:</span> <span className="font-medium">{product.model}</span></span>
                                     )}
                                     {product.origin && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-muted-foreground w-14">Origin:</span>
-                                        <span className="font-medium">{product.origin}</span>
-                                      </div>
+                                      <span><span className="text-muted-foreground">Origin:</span> <span className="font-medium">{product.origin}</span></span>
                                     )}
                                     {product.price && (
-                                      <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-muted-foreground w-14">Price:</span>
-                                        <span className="text-primary font-bold text-lg">${product.price.toFixed(2)}</span>
-                                      </div>
+                                      <span className="text-primary font-bold">${product.price.toFixed(2)}</span>
                                     )}
                                   </div>
                                 </div>
-                                {/* Actions */}
-                                <div className="flex sm:flex-col items-center gap-2 flex-shrink-0">
+                                
+                                {/* Actions - Fixed width, aligned right */}
+                                <div className="flex sm:flex-col items-center justify-end gap-2 flex-shrink-0 sm:w-24">
                                   <Button
                                     variant="outline"
                                     size="sm"
+                                    className="w-full sm:w-auto"
                                     onClick={() => setQuickViewProduct(product)}
                                   >
-                                    <Eye className="h-4 w-4 sm:mr-2" />
-                                    <span className="hidden sm:inline">View</span>
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    View
                                   </Button>
                                   <Button
                                     size="sm"
+                                    className="w-full sm:w-auto"
                                     onClick={() => {
                                       setSelectedProduct(product);
                                       setIsQuoteModalOpen(true);
@@ -564,7 +561,7 @@ const Products = () => {
                                         />
                                         <label
                                           htmlFor={`compare-list-${product.id}`}
-                                          className="text-xs font-medium cursor-pointer whitespace-nowrap hidden sm:inline"
+                                          className="text-xs font-medium cursor-pointer whitespace-nowrap"
                                         >
                                           Compare
                                         </label>
@@ -575,8 +572,8 @@ const Products = () => {
                                     </TooltipContent>
                                   </Tooltip>
                                 </div>
-                              </CardContent>
-                            </>
+                              </div>
+                            </div>
                           )}
                         </Card>
                       ))}
