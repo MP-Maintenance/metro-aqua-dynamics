@@ -485,45 +485,57 @@ const Products = () => {
                               </div>
                             </CardContent>
                           ) : (
-                            // List View - Proper Layout: Image | Details | Badge+Actions
+                            // List View - Compact Design
                             <div className="flex flex-col sm:flex-row w-full">
-                              {/* Image - Fixed size */}
+                              {/* Image */}
                               {product.image_url ? (
                                 <LazyImage
                                   src={product.image_url}
                                   alt={product.name}
-                                  className="w-full sm:w-32 md:w-36 h-40 sm:h-full object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex-shrink-0"
+                                  className="w-full sm:w-32 md:w-40 h-40 sm:h-32 md:h-40 object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex-shrink-0"
                                 />
                               ) : (
-                                <div className="w-full sm:w-32 md:w-36 h-40 sm:h-auto bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex items-center justify-center flex-shrink-0">
+                                <div className="w-full sm:w-32 md:w-40 h-40 sm:h-32 md:h-40 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex items-center justify-center flex-shrink-0">
                                   <Icon className="w-10 h-10 text-primary/30" />
                                 </div>
                               )}
                               
-                              {/* Product Details - Fills available space */}
-                              <div className="flex-1 p-4 space-y-1.5 min-w-0">
-                                <h3 className="font-semibold text-base">{product.name}</h3>
-                                <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
-                                <div className="space-y-0.5 text-sm">
-                                  {product.brand && (
-                                    <div><span className="text-muted-foreground">Brand:</span> <span className="font-medium">{product.brand}</span></div>
-                                  )}
-                                  {product.model && (
-                                    <div><span className="text-muted-foreground">Model:</span> <span className="font-medium">{product.model}</span></div>
-                                  )}
-                                  {product.origin && (
-                                    <div><span className="text-muted-foreground">Origin:</span> <span className="font-medium">{product.origin}</span></div>
-                                  )}
+                              {/* Content Area */}
+                              <div className="flex-1 flex flex-col sm:flex-row p-4 gap-4">
+                                {/* Product Details - Takes all available space */}
+                                <div className="flex-1 min-w-0 space-y-2">
+                                  {/* Name with Badge inline */}
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h3 className="font-semibold text-base">{product.name}</h3>
+                                    {getAvailabilityBadge(product.availability)}
+                                  </div>
+                                  
+                                  {/* Description */}
+                                  <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+                                  
+                                  {/* Brand/Model/Origin/Price - Horizontal row */}
+                                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                                    {product.brand && (
+                                      <span><span className="text-muted-foreground">Brand:</span> <span className="font-medium">{product.brand}</span></span>
+                                    )}
+                                    {product.model && (
+                                      <span><span className="text-muted-foreground">Model:</span> <span className="font-medium">{product.model}</span></span>
+                                    )}
+                                    {product.origin && (
+                                      <span><span className="text-muted-foreground">Origin:</span> <span className="font-medium">{product.origin}</span></span>
+                                    )}
+                                    {product.price && (
+                                      <span className="text-primary font-bold">${product.price.toFixed(2)}</span>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                              
-                              {/* Badge + Actions - Fixed width on right */}
-                              <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 p-4 sm:pl-0 flex-shrink-0 sm:w-28">
-                                {getAvailabilityBadge(product.availability)}
-                                <div className="flex sm:flex-col items-center gap-2">
+                                
+                                {/* Actions - Fixed width, aligned right */}
+                                <div className="flex sm:flex-col items-center justify-end gap-2 flex-shrink-0 sm:w-24">
                                   <Button
                                     variant="outline"
                                     size="sm"
+                                    className="w-full sm:w-auto"
                                     onClick={() => setQuickViewProduct(product)}
                                   >
                                     <Eye className="h-4 w-4 mr-1" />
@@ -531,6 +543,7 @@ const Products = () => {
                                   </Button>
                                   <Button
                                     size="sm"
+                                    className="w-full sm:w-auto"
                                     onClick={() => {
                                       setSelectedProduct(product);
                                       setIsQuoteModalOpen(true);
