@@ -14,6 +14,7 @@ interface QuoteModalProps {
     name: string;
     description: string | null;
     icon?: any;
+    image_url?: string | null;
     category: string;
     availability: string | null;
   } | null;
@@ -70,8 +71,16 @@ const QuoteModal = ({ isOpen, onClose, product }: QuoteModalProps) => {
         
         <div className="grid md:grid-cols-2 gap-6 mt-4">
           {/* Image Section */}
-          <div className="flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-8 min-h-[300px]">
-            <Icon className="w-32 h-32 text-primary/40" />
+          <div className="flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg overflow-hidden min-h-[300px]">
+            {product.image_url ? (
+              <img 
+                src={product.image_url} 
+                alt={product.name}
+                className="w-full h-full object-cover max-h-[300px]"
+              />
+            ) : (
+              <Icon className="w-32 h-32 text-primary/40" />
+            )}
           </div>
           
           {/* Details Section */}

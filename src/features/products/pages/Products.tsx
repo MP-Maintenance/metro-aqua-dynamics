@@ -485,75 +485,84 @@ const Products = () => {
                               </div>
                             </CardContent>
                           ) : (
-                            // List View - Compact Design
-                            <div className="flex flex-col sm:flex-row w-full">
-                              {/* Image */}
+                            // List View - Full Width Design
+                            <div className="relative flex flex-col sm:flex-row w-full">
+                              {/* Image - Fixed size */}
                               {product.image_url ? (
                                 <LazyImage
                                   src={product.image_url}
                                   alt={product.name}
-                                  className="w-full sm:w-32 md:w-40 h-40 sm:h-32 md:h-40 object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex-shrink-0"
+                                  className="w-full sm:w-40 h-48 sm:h-40 object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex-shrink-0"
                                 />
                               ) : (
-                                <div className="w-full sm:w-32 md:w-40 h-40 sm:h-32 md:h-40 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex items-center justify-center flex-shrink-0">
-                                  <Icon className="w-10 h-10 text-primary/30" />
+                                <div className="w-full sm:w-40 h-48 sm:h-40 bg-gradient-to-br from-primary/10 to-accent/10 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none flex items-center justify-center flex-shrink-0">
+                                  <Icon className="w-12 h-12 text-primary/30" />
                                 </div>
                               )}
                               
-                              {/* Content Area */}
-                              <div className="flex-1 flex flex-col sm:flex-row p-4 gap-4">
-                                {/* Product Details - Takes all available space */}
-                                <div className="flex-1 min-w-0 space-y-2">
-                                  {/* Name with Badge inline */}
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h3 className="font-semibold text-base">{product.name}</h3>
-                                    {getAvailabilityBadge(product.availability)}
-                                  </div>
+                              {/* Availability Badge - Absolute positioned */}
+                              <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
+                                {getAvailabilityBadge(product.availability)}
+                              </div>
+                              
+                              {/* Content Area - Full Width */}
+                              <div className="flex-1 p-4 flex flex-col">
+                                {/* Product Details - Takes full width */}
+                                <div className="flex-1 space-y-2">
+                                  {/* Name */}
+                                  <h3 className="font-semibold text-lg pr-20">{product.name}</h3>
                                   
                                   {/* Description */}
                                   <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
                                   
-                                  {/* Brand/Model/Origin/Price - Horizontal row */}
-                                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                                  {/* Brand/Model/Origin/Price - Full width horizontal row */}
+                                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm pt-1">
                                     {product.brand && (
-                                      <span><span className="text-muted-foreground">Brand:</span> <span className="font-medium">{product.brand}</span></span>
+                                      <span className="flex items-center gap-1">
+                                        <span className="text-muted-foreground">Brand:</span>
+                                        <span className="font-medium">{product.brand}</span>
+                                      </span>
                                     )}
                                     {product.model && (
-                                      <span><span className="text-muted-foreground">Model:</span> <span className="font-medium">{product.model}</span></span>
+                                      <span className="flex items-center gap-1">
+                                        <span className="text-muted-foreground">Model:</span>
+                                        <span className="font-medium">{product.model}</span>
+                                      </span>
                                     )}
                                     {product.origin && (
-                                      <span><span className="text-muted-foreground">Origin:</span> <span className="font-medium">{product.origin}</span></span>
+                                      <span className="flex items-center gap-1">
+                                        <span className="text-muted-foreground">Origin:</span>
+                                        <span className="font-medium">{product.origin}</span>
+                                      </span>
                                     )}
                                     {product.price && (
-                                      <span className="text-primary font-bold">${product.price.toFixed(2)}</span>
+                                      <span className="text-primary font-bold text-base">${product.price.toFixed(2)}</span>
                                     )}
                                   </div>
                                 </div>
                                 
-                                {/* Actions - Fixed width, aligned right */}
-                                <div className="flex sm:flex-col items-center justify-end gap-2 flex-shrink-0 sm:w-24">
+                                {/* Actions - Bottom row, full width */}
+                                <div className="flex items-center gap-3 pt-4 mt-3 border-t border-border/50">
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="w-full sm:w-auto"
                                     onClick={() => setQuickViewProduct(product)}
                                   >
                                     <Eye className="h-4 w-4 mr-1" />
-                                    View
+                                    Quick View
                                   </Button>
                                   <Button
                                     size="sm"
-                                    className="w-full sm:w-auto"
                                     onClick={() => {
                                       setSelectedProduct(product);
                                       setIsQuoteModalOpen(true);
                                     }}
                                   >
-                                    Quote
+                                    Get Quote
                                   </Button>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
+                                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors ml-auto">
                                         <Checkbox
                                           id={`compare-list-${product.id}`}
                                           checked={isInComparison(product.id)}
