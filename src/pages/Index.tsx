@@ -27,7 +27,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, MessageCircle, Package, ArrowRight } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import FeaturedProductsViewer from "@/components/FeaturedProductsViewer";
 import maintenanceImg from "@/assets/service-maintenance.jpg";
 import inspectionImg from "@/assets/service-inspection.jpg";
 import renovationImg from "@/assets/service-renovation.jpg";
@@ -163,73 +164,7 @@ const Index = () => {
 
       {/* Featured Products Section */}
       {featuredProducts.length > 0 && (
-        <section className="py-20 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured Products</h2>
-              <p className="text-lg text-muted-foreground">
-                Premium pool equipment and accessories
-              </p>
-            </motion.div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="group overflow-hidden h-full hover:shadow-lg transition-all duration-300 hover:border-primary/50">
-                    {/* Product Image */}
-                    {product.image_url ? (
-                      <div className="h-48 overflow-hidden">
-                        <img 
-                          src={product.image_url} 
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    ) : (
-                      <div className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
-                        <Package className="w-16 h-16 text-primary/30" />
-                      </div>
-                    )}
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold text-base mb-1 line-clamp-1">{product.name}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{product.description}</p>
-                      {product.price && (
-                        <p className="text-primary font-bold">${product.price.toFixed(2)}</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="text-center mt-10"
-            >
-              <Button asChild size="lg" className="gap-2">
-                <Link to="/products">
-                  View All Products
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </motion.div>
-          </div>
-        </section>
+        <FeaturedProductsViewer products={featuredProducts} />
       )}
 
       {/* Team Section */}
