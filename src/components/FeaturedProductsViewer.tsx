@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Package, ArrowRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Package, ArrowRight, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { useQuote } from "@/features/quotes/contexts/QuoteContext";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface Product {
   id: string;
@@ -11,6 +15,7 @@ interface Product {
   image_url: string | null;
   price: number | null;
   category: string;
+  availability?: string | null;
 }
 
 interface FeaturedProductsViewerProps {
@@ -20,6 +25,8 @@ interface FeaturedProductsViewerProps {
 const FeaturedProductsViewer = ({ products }: FeaturedProductsViewerProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeProduct = products[activeIndex];
+  const { addItem, setIsCartOpen } = useQuote();
+  const { user, setIsAuthModalOpen } = useAuth();
 
   // Auto-rotate every 5 seconds
   useEffect(() => {
@@ -29,6 +36,36 @@ const FeaturedProductsViewer = ({ products }: FeaturedProductsViewerProps) => {
     }, 5000);
     return () => clearInterval(interval);
   }, [products.length]);
+
+  const goToPrevious = () => {
+    setActiveIndex((prev) => (prev - 1 + products.length) % products.length);
+  };
+
+  const goToNext = () => {
+    setActiveIndex((prev) => (prev + 1) % products.length);
+  };
+
+  const handleAddToQuote = () => {
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    if (activeProduct) {
+      addItem({
+        id: activeProduct.id,
+        name: activeProduct.name,
+        description: activeProduct.description || "",
+        category: activeProduct.category,
+        icon: Package,
+        availability: (activeProduct.availability === "available" || activeProduct.availability === "not-available") 
+          ? activeProduct.availability 
+          : "available",
+      });
+      toast.success(`${activeProduct.name} added to quote request`);
+      setIsCartOpen(true);
+    }
+  };
 
   if (products.length === 0) return null;
 
@@ -61,6 +98,22 @@ const FeaturedProductsViewer = ({ products }: FeaturedProductsViewerProps) => {
       {/* Overlay gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/20" />
 
+      {/* Navigation Arrows - Desktop only */}
+      <button
+        onClick={goToPrevious}
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-background/20 backdrop-blur-md border border-border/30 text-foreground hover:bg-background/40 transition-all duration-300 hover:scale-110"
+        aria-label="Previous product"
+      >
+        <ChevronLeft className="w-6 h-6" />
+      </button>
+      <button
+        onClick={goToNext}
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-background/20 backdrop-blur-md border border-border/30 text-foreground hover:bg-background/40 transition-all duration-300 hover:scale-110"
+        aria-label="Next product"
+      >
+        <ChevronRight className="w-6 h-6" />
+      </button>
+
       {/* Content Overlay */}
       <div className="absolute inset-0 flex flex-col justify-center items-center z-10 pointer-events-none px-4">
         <AnimatePresence mode="wait">
@@ -75,6 +128,12 @@ const FeaturedProductsViewer = ({ products }: FeaturedProductsViewerProps) => {
             <p className="text-sm uppercase tracking-wider text-primary font-medium mb-2">
               Featured Products
             </p>
+            
+            {/* Category Badge */}
+            <Badge variant="secondary" className="mb-3 pointer-events-auto">
+              {activeProduct?.category}
+            </Badge>
+            
             <h2 className="text-3xl md:text-5xl font-bold mb-3 text-foreground drop-shadow-lg">
               {activeProduct?.name}
             </h2>
@@ -88,12 +147,24 @@ const FeaturedProductsViewer = ({ products }: FeaturedProductsViewerProps) => {
                 ${activeProduct.price.toFixed(2)}
               </p>
             )}
-            <Button asChild size="lg" className="gap-2 pointer-events-auto">
-              <Link to="/products">
-                View All Products
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+            
+            {/* Action Buttons */}
+            <div className="flex items-center justify-center gap-3 pointer-events-auto">
+              <Button 
+                onClick={handleAddToQuote}
+                size="lg" 
+                className="gap-2"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                Add to Quote
+              </Button>
+              <Button asChild size="lg" variant="outline" className="gap-2">
+                <Link to="/products">
+                  View All Products
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
