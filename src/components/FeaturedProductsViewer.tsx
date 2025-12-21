@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -28,22 +28,36 @@ const FeaturedProductsViewer = ({ products }: FeaturedProductsViewerProps) => {
   const { addItem, setIsCartOpen } = useQuote();
   const { user, setIsAuthModalOpen } = useAuth();
 
+  const goToPrevious = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + products.length) % products.length);
+  }, [products.length]);
+
+  const goToNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % products.length);
+  }, [products.length]);
+
   // Auto-rotate every 5 seconds
   useEffect(() => {
     if (products.length <= 1) return;
     const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % products.length);
+      goToNext();
     }, 5000);
     return () => clearInterval(interval);
-  }, [products.length]);
+  }, [products.length, goToNext]);
 
-  const goToPrevious = () => {
-    setActiveIndex((prev) => (prev - 1 + products.length) % products.length);
-  };
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        goToPrevious();
+      } else if (e.key === "ArrowRight") {
+        goToNext();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [goToPrevious, goToNext]);
 
-  const goToNext = () => {
-    setActiveIndex((prev) => (prev + 1) % products.length);
-  };
 
   const handleAddToQuote = () => {
     if (!user) {
@@ -169,8 +183,27 @@ const FeaturedProductsViewer = ({ products }: FeaturedProductsViewerProps) => {
         </AnimatePresence>
       </div>
 
-      {/* Floating Thumbnail Dock */}
-      <div className="absolute bottom-8 left-0 right-0 flex justify-center z-20 px-4">
+      {/* Floating Thumbnail Dock with Progress Indicator */}
+      <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center z-20 px-4 gap-4">
+        {/* Progress Indicator */}
+        <div className="flex items-center gap-2">
+          {products.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={`
+                h-1.5 rounded-full transition-all duration-300
+                ${activeIndex === index 
+                  ? "w-8 bg-primary" 
+                  : "w-2 bg-foreground/30 hover:bg-foreground/50"
+                }
+              `}
+              aria-label={`Go to product ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Thumbnail Dock */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
