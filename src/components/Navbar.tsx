@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, ChevronDown, Moon, Sun, ShoppingCart, User, LogOut } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Menu, X, ChevronDown, ShoppingCart, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuote } from "@/features/quotes/contexts/QuoteContext";
 import { useAuth } from "@/features/auth/contexts/AuthContext";
@@ -21,7 +20,6 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
   const { items, setIsCartOpen } = useQuote();
   const { user, isAuthenticated, setIsAuthModalOpen, signOut } = useAuth();
   
@@ -229,51 +227,13 @@ const Navbar = () => {
               </Button>
             )}
 
-            {/* Color Palette Switcher */}
+            {/* Color Palette Switcher (includes dark/light mode toggle) */}
             <ColorPaletteSwitcher />
-
-            {/* Theme Toggle */}
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="relative"
-            >
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
           </div>
 
-          {/* Mobile Menu Button, Cart & Theme Toggle */}
+          {/* Mobile Menu Button & Theme Selector Only */}
           <div className="lg:hidden flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setIsCartOpen(true)}
-              className="relative"
-            >
-              <ShoppingCart className="h-[1.2rem] w-[1.2rem]" />
-              {cartItemCount > 0 && (
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                >
-                  {cartItemCount}
-                </Badge>
-              )}
-            </Button>
             <ColorPaletteSwitcher />
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="relative"
-            >
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2"
@@ -323,10 +283,29 @@ const Navbar = () => {
                 Projects
               </Link>
               
+              {/* Cart Button in Mobile Menu */}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsCartOpen(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full justify-start gap-2"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                Quote Cart
+                {cartItemCount > 0 && (
+                  <Badge variant="destructive" className="ml-auto">
+                    {cartItemCount}
+                  </Badge>
+                )}
+              </Button>
+              
               {isAuthenticated && user ? (
                 <>
                   <Button variant="outline" asChild className="w-full">
                     <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                      <User className="h-4 w-4 mr-2" />
                       View Account
                     </Link>
                   </Button>
